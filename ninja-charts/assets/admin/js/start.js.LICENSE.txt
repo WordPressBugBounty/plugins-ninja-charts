@@ -26,9 +26,15 @@
  * Licensed MIT © Zeno Rocha
  */
 
-/*! #__NO_SIDE_EFFECTS__ */
+/*!
+ * escape-html
+ * Copyright(c) 2012-2013 TJ Holowaychuk
+ * Copyright(c) 2015 Andreas Lubbe
+ * Copyright(c) 2015 Tiancheng "Timothy" Gu
+ * MIT Licensed
+ */
 
-/*! Element Plus Icons Vue v2.3.1 */
+/*! Element Plus Icons Vue v2.1.0 */
 
 /**
  * Checks if an event is supported in the current execution environment.
@@ -101,42 +107,6 @@
  *
  * @preserve
  */
-
-/**
-* @vue/compiler-core v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
-
-/**
-* @vue/compiler-dom v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
-
-/**
-* @vue/reactivity v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
-
-/**
-* @vue/runtime-core v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
-
-/**
-* @vue/runtime-dom v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
-
-/**
-* @vue/shared v3.4.21
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/
 
 /**!
  * Sortable 1.14.0

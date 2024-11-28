@@ -3,7 +3,7 @@
 /**
 Plugin Name:    Ninja Charts
 Description:    Ninja Charts - Best WP Charts Plugin for WordPress
-Version:        3.3.0
+Version:        3.3.1
 Author:         WPManageNinja LLC
 Author URI:     https://wpmanageninja.com/
 Plugin URI:     https://wpmanageninja.com/ninja-charts

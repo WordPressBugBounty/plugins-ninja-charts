@@ -3,8 +3,8 @@ Contributors: wpmanageninja, adreastrian, csesumonpro, naeemhaque, hasanuzzamans
 Tags: charts, chart, responsive charts, charts from table, graphs, graph, table, Data Tables, WP Charts, WordPress Chart Plugin, Grid, CSV data, Data visualization, spreadsheet data, Visualization, WordPress data visualization, simple chart, Ninja Tables, table from CSV, table from excel, auto-update, auto update charts, google sheet charts, pie charts, editing charts, chart js, google charts, line chart, donut chart, bar chart, histogram, area chart, bubble chart, scatter chart, polar chart, radar chart.
 Requires at least: 6.0
 Requires PHP: 7.4
-Tested up to: 6.5
-Stable tag: 3.3.0
+Tested up to: 6.7
+Stable tag: 3.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,6 +156,9 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.3.1 (Date: November 28, 2024) =
+* Improved: Chart list design
 
 = 3.3.0 (Date: May 21, 2024) =
 * Added chart.js funnel chart
