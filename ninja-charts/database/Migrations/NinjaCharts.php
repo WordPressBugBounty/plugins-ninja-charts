@@ -21,7 +21,7 @@ class NinjaCharts
                 `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `table_id` BIGINT(20) UNSIGNED NULL,
                 `options` TEXT NOT NULL,
-                `final_keys` VARCHAR(1000) NOT NULL,
+                `final_keys` VARCHAR(5000) NOT NULL,
                 `chart_name` VARCHAR(255) NOT NULL,
                 `render_engine` VARCHAR(20) NOT NULL,
                 `chart_type` VARCHAR(20) NOT NULL,
@@ -48,6 +48,7 @@ class NinjaCharts
         $sql =  "ALTER TABLE $table
         MODIFY COLUMN chart_type VARCHAR(20) NOT NULL,
         MODIFY COLUMN chart_name VARCHAR(255) NOT NULL,
+        MODIFY COLUMN final_keys VARCHAR(5000) NOT NULL,
         MODIFY COLUMN options TEXT NOT NULL";
         $wpdb->query($sql);
     }

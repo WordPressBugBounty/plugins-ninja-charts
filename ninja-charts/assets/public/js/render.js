@@ -50,7 +50,36 @@ jQuery(document).ready(function () {
                             bodyFontSize: Number(options.tooltip.bodyFontSize),
                             displayColors: true,
                             borderColor: options.tooltip.borderColor,
-                            borderWidth: options.tooltip.borderWidth
+                            borderWidth: options.tooltip.borderWidth,
+                            callbacks: {
+                                title: function (context) {
+                                    return context[0].label;
+                                },
+                                label: function (context) {
+                                    // Handle polar charts which have object data with 'r' property
+                                    if (context.parsed && typeof context.parsed === 'object' && context.parsed.r !== undefined) {
+                                        return context.label + ': ' + context.parsed.r;
+                                    }
+                                    
+                                    // Handle bar/line charts which have object data with 'y' property
+                                    if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== undefined) {
+                                        return context.label + ': ' + context.parsed.y;
+                                    }
+                                    
+                                    // Handle simple parsed values
+                                    if (context.parsed !== undefined && context.parsed !== null && typeof context.parsed !== 'object') {
+                                        return context.label + ': ' + context.parsed;
+                                    }
+                                    
+                                    // Handle raw data (for bar charts and other charts)
+                                    if (context.raw !== null) {
+                                        return context.label + ': ' + context.raw;
+                                    }
+                                    
+                                    // Fallback
+                                    return context.label + ': 0';
+                                }
+                            }
                         },
                     },
                     animation: {
@@ -166,7 +195,28 @@ jQuery(document).ready(function () {
                     options: chartOptions
                 };
 
-                const labelsChartTypes = ['pie', 'doughnut', 'polarArea', 'funnel'];
+
+                if (renderData.options && renderData.chart_data.datasets) {
+                    let options = renderData.options;
+                    options = (typeof options) === 'string' ? JSON.parse(options) : options;
+                    
+                    if (options.series && renderData.chart_data.datasets) {
+                        options.series.forEach((series, index) => {
+                            if (renderData.chart_data.datasets[index]) {
+                                if (chartType === 'line' || chartType === 'area') {
+                                    const pointRadius = series.pointRadius || 2;
+                                    renderData.chart_data.datasets[index].pointRadius = pointRadius;
+                                    renderData.chart_data.datasets[index].pointHoverRadius = pointRadius;
+                                    renderData.chart_data.datasets[index].pointBackgroundColor = series.color;
+                                    renderData.chart_data.datasets[index].pointBorderColor = series.color;
+                                    renderData.chart_data.datasets[index].pointBorderWidth = 2;
+                                }
+                            }
+                        });
+                    }
+                }
+
+                const labelsChartTypes = ['pie', 'doughnut', 'polarArea', 'bar', 'funnel'];
                 // const calculativeData = ['radio', 'checkbox', 'select', 'selection', 'multiple-select', 'country'];
 
                 if (labelsChartTypes.includes(chartType)) {

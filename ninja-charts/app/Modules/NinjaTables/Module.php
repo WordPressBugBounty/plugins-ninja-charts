@@ -50,6 +50,7 @@ class Module
             ], 422);
         }
         $values = unserialize($type_keys->meta_value);
+        $keys_types = [];
         foreach ($values as $value) {
             if ($this->inputType(Arr::get($value, 'data_type'))) {
                 $keys_types[] = [
@@ -197,7 +198,7 @@ class Module
         return apply_filters('ninja_charts_ntm_all_table_rows', $tableRows);
     }
 
-    public function getAllRowByDateTime($table_id = null, $rows = [])
+    public function getAllRowByDateTime($table_id, $rows = [])
     {
         $dates =  Arr::get($rows, 'date_range');
         $date_from = isset($dates[0]) ? $dates[0] : '';

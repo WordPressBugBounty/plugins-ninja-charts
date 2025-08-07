@@ -66,7 +66,7 @@ if ( ! function_exists('ninjaChartsGravatar')) {
     {
         $hash = md5(strtolower(trim($email)));
 
-        return "https://www.gravatar.com/avatar/${hash}?s=128";
+        return "https://www.gravatar.com/avatar/{$hash}?s=128";
     }
 }
 

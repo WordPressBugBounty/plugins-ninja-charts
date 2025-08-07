@@ -71,7 +71,7 @@ trait ChartGenerator
                         "pointHoverRadius"     => 4,
                         "borderColor"          => $border_color ? $border_color : $this->randomColor(),
                         "tension"              => $line_tension,
-                        "pointRadius"          => 2,
+                        "pointRadius"          => $pointRadius,
                         //Data to be represented on y-axis
                         "data"                 => $chart_data ? $chart_data : $this->dataFormat($tableRows, $k, $field)
                     ];
@@ -118,7 +118,7 @@ trait ChartGenerator
                 "borderWidth"          => 1,
                 "pointBorderColor"     => 'black',
                 "pointHoverRadius"     => 4,
-                "pointRadius"          => 3,
+                "pointRadius"          => $pointRadius,
                 "borderColor"          => isset($bd_color[0]) ? $bd_color[0] : $this->randomColor(),
                 // Data to be represented on y-axis
                 "data"                 => $data
@@ -143,7 +143,10 @@ trait ChartGenerator
         //     }
         // });
         return array_map(function ($items) use ($k, $field) {
-            return (isset($items[$k]) && $items[$k] != NULL) ? $items[$k] : 'NaN';
+            if (isset($items[$k]) && $items[$k] != NULL) {
+                return is_numeric($items[$k]) ? (float)$items[$k] : $items[$k];
+            }
+            return null;
         }, $tableRows);
     }
 }

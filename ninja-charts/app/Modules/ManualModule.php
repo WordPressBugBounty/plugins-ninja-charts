@@ -134,7 +134,7 @@ class ManualModule
                         "pointBorderColor"     => 'black',
                         "pointHoverRadius"     => 4,
                         "borderColor"          => $border_color ? $border_color : $this->randomColor(),
-                        "pointRadius"          => 2,
+                        "pointRadius"          => $pointRadius,
                         "tension"              => $line_tension,
                         //Data to be represented on y-axis
                         "data"                 => $this->dataFormat($rows, $key, $chart_type)
@@ -163,7 +163,7 @@ class ManualModule
                 "borderWidth" => 1,
                 "pointBorderColor" => 'black',
                 "pointHoverRadius" => 4,
-                "pointRadius" => 3,
+                "pointRadius" => $pointRadius,
                 "borderColor" => $border_color ? $border_color : $this->randomColor(),
                 //  Data to be represented on y-axis
                 "data" => $this->dataFormat($manual_inputs, $k = '', $chart_type)
@@ -185,7 +185,11 @@ class ManualModule
             }
         } else {
             foreach ($rows as $key => $value) {
-                $data[] = (isset($value[$k]) && $value[$k] != NULL) ? $value[$k] : 'NaN';
+                if (isset($value[$k]) && $value[$k] != NULL) {
+                    $data[] = is_numeric($value[$k]) ? (float)$value[$k] : $value[$k];
+                } else {
+                    $data[] = null;
+                }
             }
         }
         return $data;

@@ -43,6 +43,7 @@ trait ChartDesignHelper
         if ($ninja_chart !== null) {
             $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
             if (isset($options->background_color)) {
+                $colors = [];
                 foreach ($options->background_color as $key => $value) {
                     $colors[] = $value;
                 }

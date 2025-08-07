@@ -159,7 +159,7 @@ class Module
         return apply_filters('ninja_charts_ffm_all_table_rows', $tableRows);
     }
 
-    public function getAllRowByDateTime($table_id = null, $rows)
+    public function getAllRowByDateTime($table_id, $rows)
     {
         $dates =  Arr::get($rows, 'date_range');
         $date_from = isset($dates[0]) ? $dates[0] : '';

@@ -1,0 +1,15 @@
+<?php
+
+namespace NinjaCharts\Framework\Database\Orm;
+
+interface Castable
+{
+    /**
+     * Get the name of the caster class to use when casting from / to this cast target.
+     *
+     * @param  array  $arguments
+     * @return string
+     * @return string|\NinjaCharts\Framework\Database\Orm\CastsAttributes|\NinjaCharts\Framework\Database\Orm\CastsInboundAttributes
+     */
+    public static function castUsing(array $arguments);
+}

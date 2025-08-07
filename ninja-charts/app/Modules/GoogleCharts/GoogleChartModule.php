@@ -224,7 +224,7 @@ class GoogleChartModule {
             }
             if (isset($series_data)) {
                 foreach ($series_data as $key => $value) {
-                    if (sizeof($chart_data[$key]) > 1) {
+                    if (isset($chart_data[$key]) && is_array($chart_data[$key]) && sizeof($chart_data[$key]) > 1) {
                          $chart_data[$key][0] = isset($value['label']) ? $value['label'] : '';
                     }
                 }
