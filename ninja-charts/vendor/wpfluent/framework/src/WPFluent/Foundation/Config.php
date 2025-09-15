@@ -14,7 +14,7 @@ class Config
 
     /**
      * Construct the Config instance
-     * @param null
+     * @param array $data
      */
     public function __construct($data)
     {
@@ -68,7 +68,7 @@ class Config
     /**
      * Set an item into the config array on the fly.
      * @param string $key
-     * @param mkixed $value
+     * @param mixed $value
      */
     public function set($key, $value)
     {
@@ -83,6 +83,8 @@ class Config
      */
     protected function resolveKey($key)
     {
+        if (!$key) return $key;
+        
         if (array_key_exists($key, $this->data)) {
             return $key;
         }

@@ -2,6 +2,10 @@
 
 namespace NinjaCharts\Framework\Http\Request;
 
+use WP_User;
+use BadMethodCallException;
+use InvalidArgumentException;
+
 use NinjaCharts\Framework\Support\Str;
 
 /**
@@ -58,6 +62,8 @@ class WPUserProxy
      * Construct the proxy.
      * 
      * @param \WP_User $wpUser
+     * @return void
+     * @throws \InvalidArgumentException
      */
     public function __construct($wpUser)
     {
@@ -67,8 +73,8 @@ class WPUserProxy
             $wpUser = get_user_by('email', $wpUser);
         }
 
-        if (!$wpUser instanceof \WP_User) {
-            throw new \InvalidArgumentException('Invalid user');
+        if (!$wpUser instanceof WP_User) {
+            throw new InvalidArgumentException('Invalid user');
         }
 
         $this->wpUser = $wpUser;
@@ -151,7 +157,7 @@ class WPUserProxy
      */
     public function getPermissions()
     {
-        $getPermissions = [];
+        $permissions = [];
 
         foreach ($this->wpUser->get_role_caps() as $permission => $value) {
             if ($value) $permissions[] = $permission;
@@ -178,7 +184,7 @@ class WPUserProxy
             return $this->meta;
         }
 
-        return $this->meta[$metaKey] ?: $default;
+        return $this->meta[$metaKey] ?? $default;
     }
 
     /**
@@ -199,7 +205,7 @@ class WPUserProxy
 
     /**
      * Get the underlying WP_User instance.
-     * @return [type] [description]
+     * @return \WP_User
      */
     public function toBase()
     {
@@ -223,7 +229,17 @@ class WPUserProxy
      */
     public function isAdmin()
     {
-        return in_array('administrator',  $this->roles);
+        return $this->is('administrator');
+    }
+
+    /**
+     * Check if the currently logged in user has the given role.
+     * 
+     * @return boolean
+     */
+    public function is($role)
+    {
+        return in_array($role,  $this->wpUser->roles);
     }
 
     /**
@@ -280,20 +296,25 @@ class WPUserProxy
      */
     public function __call($method, $args)
     {
-    	if (!method_exists($this->wpUser, $method)) {
-    		if (array_key_exists($method, $this->passthrough)) {
-	            $method = $this->passthrough[$method];
-	        } else {
-	        	$method = Str::snake($method);
-	        }
+        $original = $method;
+
+        // If it's a defined passthrough alias (e.g., can - has_cap)
+        if (array_key_exists($method, $this->passthrough)) {
+            $method = $this->passthrough[$method];
+        }
+        // Or maybe WP_User has the snake_case version
+        elseif (method_exists($this->wpUser, Str::snake($method))) {
+            $method = Str::snake($method);
         }
 
+        // If the WP_User instance has the resolved method, call it
         if (method_exists($this->wpUser, $method)) {
             return $this->wpUser->{$method}(...$args);
         }
 
-        throw new \BadMethodCallException(
-        	"Method {$method} does not exist on WP_User"
+        // Otherwise, throw with the *original* name (not the snake-cased one)
+        throw new BadMethodCallException(
+            "Call to undefined method " . static::class . "::{$original}()"
         );
     }
 }

@@ -14,18 +14,6 @@ if ($app->config->get('app.env') == 'dev') {
     is_readable($globalsDevFile) && include $globalsDevFile;
 }
 
-if ( ! function_exists('dd')) {
-    function dd()
-    {
-        foreach (func_get_args() as $arg) {
-            echo "<pre>";
-            print_r($arg);
-            echo "</pre>";
-        }
-        die();
-    }
-}
-
 
 if ( ! function_exists('ninjaCharts')) {
     function ninjaCharts($module = null)
@@ -37,21 +25,21 @@ if ( ! function_exists('ninjaCharts')) {
 if ( ! function_exists('ninjaChartsTimestamp')) {
     function ninjaChartsTimestamp()
     {
-        return date('Y-m-d H:i:s');
+        return gmdate('Y-m-d H:i:s');
     }
 }
 
 if ( ! function_exists('ninjaChartsDate')) {
     function ninjaChartsDate()
     {
-        return date('Y-m-d');
+        return gmdate('Y-m-d');
     }
 }
 
 if ( ! function_exists('ninjaChartsFormatDate')) {
     function ninjaChartsFormatDate($date)
     {
-        return date('d M, Y', strtotime($date));
+        return gmdate('d M, Y', strtotime($date));
     }
 }
 

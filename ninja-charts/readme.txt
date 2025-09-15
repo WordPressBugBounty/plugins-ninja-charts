@@ -1,15 +1,15 @@
 === Ninja Charts - WordPress Charts and Graphs Plugin ===
 Contributors: wpmanageninja, adreastrian, csesumonpro, naeemhaque, hasanuzzamanshamim
-Tags: charts, chart, responsive charts, charts from table, graphs, graph, table, Data Tables, WP Charts, WordPress Chart Plugin, Grid, CSV data, Data visualization, spreadsheet data, Visualization, WordPress data visualization, simple chart, Ninja Tables, table from CSV, table from excel, auto-update, auto update charts, google sheet charts, pie charts, editing charts, chart js, google charts, line chart, donut chart, bar chart, histogram, area chart, bubble chart, scatter chart, polar chart, radar chart.
+Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive Charts
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 6.8
-Stable tag: 3.3.2
+Stable tag: 3.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
-The easiest way to create responsive, customizable, and reusable charts and graphs for your website. Most powerful data visualization plugin for interactive, and beautiful charts.
+The easiest way to create responsive, customizable, and reusable charts and graphs for your website.
 
 
 == Description ==
@@ -156,6 +156,11 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.3.5 (Date: Sep 15, 2025) =
+* Fixes: Chart.js tooltip label showing issue
+* Updates: Framework library v2.11.6
+* Security: Data preview issue for unauthenticated users (props to patchstack)
 
 = 3.3.2 (Date: Aug 07, 2025) =
 * Fixes: Chart.js line chart disable point issue

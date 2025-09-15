@@ -3,6 +3,7 @@
 namespace NinjaCharts\Framework\Support;
 
 use Exception;
+use Traversable;
 use JsonException;
 use NinjaCharts\Framework\Foundation\App;
 use NinjaCharts\Framework\Support\Helper;
@@ -393,13 +394,26 @@ class Str
      * Determine if a given string contains a given substring.
      *
      * @param  string  $haystack
-     * @param  string|string[]  $needles
+     * @param  string|iterable<string>  $needles
+     * @param  bool  $ignoreCase
      * @return bool
      */
-    public static function contains($haystack, $needles)
+    public static function contains($haystack, $needles, $ignoreCase = false)
     {
-        foreach ((array) $needles as $needle) {
-            if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
+        if ($ignoreCase) {
+            $haystack = mb_strtolower($haystack);
+        }
+
+        if (! is_iterable($needles)) {
+            $needles = (array) $needles;
+        }
+
+        foreach ($needles as $needle) {
+            if ($ignoreCase) {
+                $needle = mb_strtolower($needle);
+            }
+
+            if ($needle !== '' && str_contains($haystack, $needle)) {
                 return true;
             }
         }
@@ -411,13 +425,14 @@ class Str
      * Determine if a given string contains all array values.
      *
      * @param  string  $haystack
-     * @param  string[]  $needles
+     * @param  iterable<string>  $needles
+     * @param  bool  $ignoreCase
      * @return bool
      */
-    public static function containsAll($haystack, array $needles)
+    public static function containsAll($haystack, $needles, $ignoreCase = false)
     {
         foreach ($needles as $needle) {
-            if (! static::contains($haystack, $needle)) {
+            if (! static::contains($haystack, $needle, $ignoreCase)) {
                 return false;
             }
         }
@@ -444,16 +459,21 @@ class Str
      * Determine if a given string ends with a given substring.
      *
      * @param  string  $haystack
-     * @param  string|string[]  $needles
+     * @param  array|string  $needles
      * @return bool
      */
     public static function endsWith($haystack, $needles)
     {
-        foreach ((array) $needles as $needle) {
-            if (
-                $needle !== '' && $needle !== null
-                && substr($haystack, -strlen($needle)) === (string) $needle
-            ) {
+        if (! is_iterable($needles)) {
+            $needles = (array) $needles;
+        }
+
+        if (is_null($haystack)) {
+            return false;
+        }
+
+        foreach ($needles as $needle) {
+            if ((string) $needle !== '' && str_ends_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -495,18 +515,20 @@ class Str
         foreach ($patterns as $pattern) {
             $pattern = (string) $pattern;
 
-            // If the given value is an exact match we can of course return true right
-            // from the beginning. Otherwise, we will translate asterisks and do an
-            // actual pattern match against the two strings to see if they match.
+            // If the given value is an exact match we can of course return
+            // true right from the beginning. Otherwise, we will translate
+            // asterisks and do an actual pattern match against the
+            // two strings to see if they match.
             if ($pattern == $value) {
                 return true;
             }
 
             $pattern = preg_quote($pattern, '#');
 
-            // Asterisks are translated into zero-or-more regular expression wildcards
-            // to make it convenient to check if the strings starts with the given
-            // pattern such as "library/*", making any string check convenient.
+            // Asterisks are translated into zero-or-more regular expression
+            // wildcards to make it convenient to check if the strings
+            // starts with the given pattern such as "library/*",
+            // making any string check convenient.
             $pattern = str_replace('\*', '.*', $pattern);
 
             if (preg_match('#^'.$pattern.'\z#u', $value) === 1) {
@@ -1108,14 +1130,29 @@ class Str
     /**
      * Replace the given value in the given string.
      *
-     * @param  string|string[]  $search
-     * @param  string|string[]  $replace
-     * @param  string|string[]  $subject
-     * @return string
+     * @param  string|iterable<string>  $search
+     * @param  string|iterable<string>  $replace
+     * @param  string|iterable<string>  $subject
+     * @param  bool  $caseSensitive
+     * @return string|string[]
      */
-    public static function replace($search, $replace, $subject)
+    public static function replace($search, $replace, $subject, $caseSensitive = true)
     {
-        return str_replace($search, $replace, $subject);
+        if ($search instanceof Traversable) {
+            $search = (new Collection($search))->all();
+        }
+
+        if ($replace instanceof Traversable) {
+            $replace = (new Collection($replace))->all();
+        }
+
+        if ($subject instanceof Traversable) {
+            $subject = (new Collection($subject))->all();
+        }
+
+        return $caseSensitive
+                ? str_replace($search, $replace, $subject)
+                : str_ireplace($search, $replace, $subject);
     }
 
     /**
@@ -1142,6 +1179,29 @@ class Str
     }
 
     /**
+     * Replace the first occurrence of the given value if it appears at the start of the string.
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $subject
+     * @return string
+     */
+    public static function replaceStart($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::startsWith($subject, $search)) {
+            return static::replaceFirst($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    /**
      * Replace the last occurrence of a given value in the string.
      *
      * @param  string  $search
@@ -1162,6 +1222,47 @@ class Str
         }
 
         return $subject;
+    }
+
+    /**
+     * Replace the last occurrence of a given value if it appears at the end of the string.
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $subject
+     * @return string
+     */
+    public static function replaceEnd($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::endsWith($subject, $search)) {
+            return static::replaceLast($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    /**
+     * Replace the patterns matching the given regular expression.
+     *
+     * @param  array|string  $pattern
+     * @param  \Closure|string[]|string  $replace
+     * @param  array|string  $subject
+     * @param  int  $limit
+     * @return string|string[]|null
+     */
+    public static function replaceMatches($pattern, $replace, $subject, $limit = -1)
+    {
+        if ($replace instanceof \Closure) {
+            return preg_replace_callback($pattern, $replace, $subject, $limit);
+        }
+
+        return preg_replace($pattern, $replace, $subject, $limit);
     }
 
     /**
@@ -1248,6 +1349,57 @@ class Str
     }
 
     /**
+     * Convert the given string to APA-style title case.
+     *
+     * See: https://apastyle.apa.org/style-grammar-guidelines/capitalization/title-case
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function apa($value)
+    {
+        if (trim($value) === '') {
+            return $value;
+        }
+
+        $minorWords = [
+            'and', 'as', 'but', 'for', 'if', 'nor', 'or', 'so', 'yet', 'a', 'an',
+            'the', 'at', 'by', 'for', 'in', 'of', 'off', 'on', 'per', 'to', 'up', 'via',
+            'et', 'ou', 'un', 'une', 'la', 'le', 'les', 'de', 'du', 'des', 'par', 'à',
+        ];
+
+        $endPunctuation = ['.', '!', '?', ':', '—', ','];
+
+        $words = preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY);
+
+        for ($i = 0; $i < count($words); $i++) {
+            $lowercaseWord = mb_strtolower($words[$i]);
+
+            if (str_contains($lowercaseWord, '-')) {
+                $hyphenatedWords = explode('-', $lowercaseWord);
+
+                $hyphenatedWords = array_map(function ($part) use ($minorWords) {
+                    return (in_array($part, $minorWords) && mb_strlen($part) <= 3)
+                        ? $part
+                        : mb_strtoupper(mb_substr($part, 0, 1)).mb_substr($part, 1);
+                }, $hyphenatedWords);
+
+                $words[$i] = implode('-', $hyphenatedWords);
+            } else {
+                if (in_array($lowercaseWord, $minorWords) &&
+                    mb_strlen($lowercaseWord) <= 3 &&
+                    ! ($i === 0 || in_array(mb_substr($words[$i - 1], -1), $endPunctuation))) {
+                    $words[$i] = $lowercaseWord;
+                } else {
+                    $words[$i] = mb_strtoupper(mb_substr($lowercaseWord, 0, 1)).mb_substr($lowercaseWord, 1);
+                }
+            }
+        }
+
+        return implode(' ', $words);
+    }
+
+    /**
      * Get the singular form of an English word.
      *
      * @param  string  $value
@@ -1295,6 +1447,83 @@ class Str
     }
 
     /**
+     * Remove whitespace (including special Unicode spaces) from a string.
+     *
+     * Supports trimming from left, right, or both ends, and allows
+     * specifying additional characters to trim.
+     *
+     * @param string      $value    The string to trim.
+     * @param string|null $charlist Optional additional characters to trim.
+     * @param string      $mode     One of 'both' (default), 'left', 'right'.
+     *
+     * @return string The trimmed string.
+     */
+    protected static function _unicodeTrim(string $value, ?string $charlist = null, string $mode = 'both'): string
+    {
+        $defaultChars = " \n\r\t\v"; // \0 omitted to avoid null byte errors
+
+        $chars = $charlist ?? $defaultChars;
+        $quoted = preg_quote($chars, '~');
+
+        // Unicode invisible spaces we want to include
+        $unicodeSpaces = '\s\x{FEFF}\x{200B}\x{200E}';
+
+        switch ($mode) {
+            case 'left':
+                $pattern = '~^[' . $unicodeSpaces . $quoted . ']+~u';
+                break;
+            case 'right':
+                $pattern = '~[' . $unicodeSpaces . $quoted . ']+$~u';
+                break;
+            case 'both':
+            default:
+                $pattern = '~^[' . $unicodeSpaces . $quoted . ']+|[' . $unicodeSpaces . $quoted . ']+$~u';
+                break;
+        }
+
+        return preg_replace($pattern, '', $value) ?? $value;
+    }
+
+    /**
+     * Remove all whitespace (including special Unicode spaces) from both ends of a string.
+     *
+     * @param string      $value    The string to trim.
+     * @param string|null $charlist Optional additional characters to trim.
+     *
+     * @return string The trimmed string.
+     */
+    public static function trim(string $value, ?string $charlist = null): string
+    {
+        return static::_unicodeTrim($value, $charlist, 'both');
+    }
+
+    /**
+     * Remove all whitespace (including special Unicode spaces) from the beginning of a string.
+     *
+     * @param string      $value    The string to trim.
+     * @param string|null $charlist Optional additional characters to trim.
+     *
+     * @return string The trimmed string.
+     */
+    public static function ltrim(string $value, ?string $charlist = null): string
+    {
+        return static::_unicodeTrim($value, $charlist, 'left');
+    }
+
+    /**
+     * Remove all whitespace (including special Unicode spaces) from the end of a string.
+     *
+     * @param string      $value    The string to trim.
+     * @param string|null $charlist Optional additional characters to trim.
+     *
+     * @return string The trimmed string.
+     */
+    public static function rtrim(string $value, ?string $charlist = null): string
+    {
+        return static::_unicodeTrim($value, $charlist, 'right');
+    }
+
+    /**
      * Remove all "extra" blank space from the given string.
      *
      * @param  string  $value
@@ -1308,13 +1537,21 @@ class Str
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param  string  $haystack
-     * @param  string|string[]  $needles
+     * @param string                 $haystack
+     * @param string|iterable<string> $needles
      * @return bool
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array) $needles as $needle) {
+        if (!is_iterable($needles)) {
+            $needles = [$needles];
+        }
+
+        if ($haystack === null) {
+            return false;
+        }
+
+        foreach ($needles as $needle) {
             if ((string) $needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0) {
                 return true;
             }
@@ -1344,6 +1581,17 @@ class Str
         }, $words);
 
         return static::$studlyCache[$key] = implode($studlyWords);
+    }
+
+    /**
+     * Convert a value to Pascal case.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function pascal($value)
+    {
+        return static::studly($value);
     }
 
     /**
@@ -1410,6 +1658,45 @@ class Str
     }
 
     /**
+     * Take the first or last {$limit} characters of a string.
+     *
+     * @param  string  $string
+     * @param  int  $limit
+     * @return string
+     */
+    public static function take($string, int $limit): string
+    {
+        if ($limit < 0) {
+            return static::substr($string, $limit);
+        }
+
+        return static::substr($string, 0, $limit);
+    }
+
+    /**
+     * Convert the given string to Base64 encoding.
+     *
+     * @param  string  $string
+     * @return string
+     */
+    public static function toBase64($string)
+    {
+        return base64_encode($string);
+    }
+
+    /**
+     * Decode the given Base64 encoded string.
+     *
+     * @param  string  $string
+     * @param  bool  $strict
+     * @return string|false
+     */
+    public static function fromBase64($string, $strict = false)
+    {
+        return base64_decode($string, $strict);
+    }
+
+    /**
      * Make a string's first character lowercase.
      *
      * @param  string  $string
@@ -1447,14 +1734,16 @@ class Str
     }
 
     /**
-     * Get the number of words a string contains.
+     * Count the number of words in a UTF-8 string.
      *
-     * @param  string  $string
+     * @param string $string
      * @return int
      */
-    public static function wordCount($string)
+    public static function wordCount(string $string)
     {
-        return str_word_count($string);
+        $words = preg_split('/[^\p{L}\p{N}]+/u', $string, -1, PREG_SPLIT_NO_EMPTY);
+
+        return count($words);
     }
 
     /**

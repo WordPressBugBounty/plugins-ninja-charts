@@ -17,13 +17,13 @@ abstract class Controller
 
     /**
      * Request Instane
-     * @var \NinjaCharts\Framework\Request\Request
+     * @var \NinjaCharts\Framework\Http\Request\Request
      */
     protected $request = null;
 
     /**
      * Response Instane
-     * @var \NinjaCharts\Framework\Response\Response
+     * @var \NinjaCharts\Framework\Http\Response\Response
      */
     protected $response = null;
 
@@ -53,6 +53,7 @@ abstract class Controller
     public function validate($data, $rules, $messages = [])
     {
         try {
+            // @phpstan-ignore-next-line
             $validator = $this->app->validator->make($data, $rules, $messages);
 
             if ($validator->validate()->fails()) {
@@ -119,9 +120,9 @@ abstract class Controller
     }
 
     /**
-     * Send a success json response
+     * Send a success json response.
+     * 
      * @param  array  $data
-     * @param  integer $code
      * @return \WP_REST_Response
      */
     public function sendSuccess($data = [])

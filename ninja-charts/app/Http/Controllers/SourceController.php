@@ -34,7 +34,7 @@ class SourceController extends Controller
             $plugin = $plugins[$data_source];
 
             return $this->sendError([
-                'message'=> __("$plugin is not available!", 'ninja-charts')
+                'message'=> "$plugin is not available!"
             ], 400);
         }
     }

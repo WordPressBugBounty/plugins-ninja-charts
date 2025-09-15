@@ -26,6 +26,13 @@ class Request
     protected $app = null;
 
     /**
+     * Validator instance.
+     * 
+     * @var \NinjaCharts\Framework\Validator\Validator
+     */
+    protected $validator = null;
+
+    /**
      * PHP header variables
      * @var array
      */
@@ -42,6 +49,12 @@ class Request
      * @var array
      */
     protected $cookie = [];
+
+    /**
+     * The content of the request
+     * @var mixed
+     */
+    protected $content = null;
 
     /**
      * The JSON payload of the request
@@ -63,12 +76,6 @@ class Request
     protected $post = [];
 
     /**
-     * PHP $_FILES Superglobal
-     * @var array
-     */
-    protected $files = [];
-
-    /**
      * PHP $_GET and $_POST Superglobals
      * @var array
      */
@@ -76,7 +83,7 @@ class Request
 
     /**
      * WP_REST_Request instance
-     * @var WP_REST_Request
+     * @var \WP_REST_Request
      */
     protected $wpRestRequest = false;
 
@@ -98,17 +105,15 @@ class Request
     /**
      * Construct the request instance
      * @param \NinjaCharts\Framework\Foundation\Application $app
-     * @param array/$_GET $get
-     * @param array/$_POST $post
-     * @param array/$_FILES $files
+     * @param $_GET $get
+     * @param $_POST $post
      */
-    public function __construct(Application $app, $get, $post, $files)
+    public function __construct(Application $app, $get, $post)
     {
         $this->app = $app;
         $this->server = $_SERVER;
         $this->cookie = $_COOKIE;
-        $this->files = $this->prepareFiles($files);
-
+        
         $this->request = array_merge(
             $this->get = $this->clean($get),
             $this->post = $this->clean($post)
@@ -132,14 +137,14 @@ class Request
      */
     public function has($key)
     {
-        return $this->exists($key) && !empty(
-            Arr::get($this->inputs(), $key)
-        );
+        $inputs = $this->inputs();
+        
+        return isset($inputs[$key]) && !empty($inputs[$key]);
     }
 
     /**
      * Any variable exists and has truthy value
-     * @param  string $key
+     * @param  array|string $keys
      * @return bool
      */
     public function hasAny($keys)
@@ -201,7 +206,8 @@ class Request
     /**
      * Set an item into the request inputs
      * @param string $key
-     * @param mixed
+     * @param mixed $value
+     * @return self
      */
     public function set($key, $value)
     {
@@ -247,6 +253,19 @@ class Request
                 } elseif ($this->isRest()) {
                     $isJson = true;
                 }
+            }
+        }
+
+        if (
+            !$isJson &&
+            isset($_SERVER['CONTENT_TYPE']) &&
+            strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false
+        ) {
+            $requestBody = file_get_contents('php://input');
+
+            if (!empty($requestBody)) {
+                $this->json = json_decode($requestBody, true);
+                $isJson = json_last_error() === JSON_ERROR_NONE;
             }
         }
 
@@ -426,11 +445,13 @@ class Request
     }
 
     /**
-     * Merge array with the request inputs
+     * Merge array with the request inputs if the
+     * key(s) is missing from the request.
+     * 
      * @param  array  $data
      * @return self
      */
-    public function mergeMissing(array $data = [])
+    public function mergeIfMissing(array $data = [])
     {
         $all = $this->inputs();
 
@@ -440,11 +461,25 @@ class Request
     }
 
     /**
+     * Merge new input into the request's input, but only when
+     * that key is present in the request but value is missing.
+     *
+     * @param  array  $input
+     * @return $this
+     */
+    public function mergeMissing(array $input)
+    {
+        return $this->merge(Helper::collect($input)
+            ->filter(function($value, $key) {
+                return $this->missing($key);
+            })->toArray()
+        );
+    }
+
+    /**
      * Returns the request body content.
      *
-     * @param bool $asResource If true, a resource will be returned
-     *
-     * @return string|resource
+     * @return mixed
      */
     public function getContent()
     {
@@ -483,7 +518,7 @@ class Request
     /**
      * Merge the headers from the WP_REST_Request.
      * 
-     * @param  WP_REST_Request $wpRestRequest
+     * @param  \WP_REST_Request $wpRestRequest
      * @return void
      */
     protected function mergerHeaders($wpRestRequest)
@@ -534,22 +569,18 @@ class Request
     /**
      * Get all inputs
      * 
-     * @return array $this->request
+     * @return array
      */
     protected function inputs()
     {
         if (!$this->wpRestRequest) {
             if ($this->app->bound('wprestrequest')) {
+                // @phpstan-ignore-next-line
                 $this->mergeInputsFromRestRequest($this->app->wprestrequest);
             }
         }
 
-        if ($this->safe === true) {
-            $this->safe = false;
-            return $this->validated;
-        }
-
-        return $this->request;
+        return $this->safe === true ? $this->validated : $this->request;
     }
 
     /**
@@ -559,9 +590,11 @@ class Request
      */
     public function safe()
     {
-        $this->safe = true;
+        $clone = clone $this;
 
-        return $this;
+        $clone->safe = true;
+
+        return $clone;
     }
 
     /**
@@ -614,24 +647,36 @@ class Request
     /**
      * Validate the request.
      *
-     * @param  string $key
+     * @param  array $rules
+     * @param  array $messages
      * @return mixed
+     * @throws \NinjaCharts\Framework\Validator\ValidationException
      */
     public function validate(array $rules, array $messages = [])
     {
-        $instance = $this->app->make('validator');
+        $this->validator = $this->app->make('validator')->make(
+            $data = $this->all(), $rules, $messages
+        );
 
-        $validator = $instance->make($data = $this->all(), $rules, $messages);
-
-        if ($validator->validate()->fails()) {
+        if ($this->validator->validate()->fails()) {
             throw new ValidationException(
-                'Unprocessable Entity!', 422, null, $validator->errors()
+                'Unprocessable Entity!', 422, null, $this->validator->errors()
             );
         }
 
-        $this->validated = $validator->validated();
+        $this->validated = $this->validator->validated();
 
         return $data;
+    }
+
+    /**
+     * Get the validator instance.
+     * 
+     * @return \NinjaCharts\Framework\Validator\Validator
+     */
+    public function getValidator()
+    {
+        return $this->validator;
     }
 
     /**
@@ -657,13 +702,7 @@ class Request
      */
     public function abort($status = 403, $message = null)
     {
-        if (is_object($status)) {
-            if (method_exists($status, 'errors')) {
-                throw new ValidationException(
-                    'Unprocessable Entity!', 422, null, $status->errors()
-                );
-            }
-        }
+        $this->maybeThrowValidationException($status);
 
         if (!$message && !is_numeric($status) && is_string($status)) {
             $message = $status;
@@ -678,6 +717,47 @@ class Request
     }
 
     /**
+     * Terminate the request.
+     * 
+     * @param  integer $status
+     * @param  string  $message
+     * @return \WP_REST_Response
+     */
+    public function terminate($status = 200, $message = null)
+    {
+        $this->maybeThrowValidationException($status);
+
+        if (!$message && !is_numeric($status) && is_string($status)) {
+            $message = $status;
+            $status = 403;
+        }
+
+        $message = $message
+            ?: "Request has benn terminated with status {$status}.";
+
+        return wp_send_json(
+            is_array($message) ? $message : ['message' => (string) $message], $status
+        );
+    }
+
+    /**
+     * Throw a validation exception if status is validation exception.
+     * @param  mixed $status
+     * @return void
+     * @throws \NinjaCharts\Framework\Validator\ValidationException
+     */
+    protected function maybeThrowValidationException($status)
+    {
+        if (is_object($status)) {
+            if (method_exists($status, 'errors')) {
+                throw new ValidationException(
+                    'Unprocessable Entity!', 422, null, $status->errors()
+                );
+            }
+        }
+    }
+
+    /**
      * Get an input element from the request.
      *
      * @param  string $key
@@ -685,7 +765,11 @@ class Request
      */
     public function __get($key)
     {
-        return $this->get($key);
+        if ($value = $this->get($key)) {
+            return $value;
+        }
+
+        return $this->file($key);
     }
 
     /**
@@ -695,9 +779,7 @@ class Request
      */
     public function user()
     {
-        return new WPUserProxy(
-            new \WP_User(get_current_user_id())
-        );
+        return $this->app->user();
     }
 
     /**
@@ -714,12 +796,15 @@ class Request
 
         if ($method == 'route') {
             if ($params) {
+                // @phpstan-ignore-next-line
                 return $this->app->route->{$params[0]};
             }
+            // @phpstan-ignore-next-line
             return $this->app->route;
         }
         
         if ($this->app->bound('wprestrequest')) {
+            // @phpstan-ignore-next-line
             if (!method_exists($this->app->wprestrequest, $method)) {
                 $method = strtolower(
                     preg_replace([
@@ -729,6 +814,7 @@ class Request
             }
 
             return call_user_func_array([
+                // @phpstan-ignore-next-line
                 $this->app->wprestrequest, $method], $params
             );
         }

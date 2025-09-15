@@ -47,12 +47,12 @@ class TinyMce
         ?>
         <script type="text/javascript">
             window.ninja_charts_tiny_mce = {
-                label: '<?php _e('Select a chart to insert', 'ninja-charts') ?>',
-                title: '<?php _e('Insert Ninja Charts Shortcode', 'ninja-charts') ?>',
-                select_error: '<?php _e('Please select a chart'); ?>',
-                insert_text: '<?php _e('Insert Shortcode', 'ninja-charts'); ?>',
-                charts: <?php echo json_encode($charts);?>,
-                logo: <?php echo json_encode($assets . 'images/icon_small.png');?>
+                label: '<?php echo esc_js( __( 'Select a chart to insert', 'ninja-charts' ) ); ?>',
+                title: '<?php echo esc_js( __( 'Insert Ninja Charts Shortcode', 'ninja-charts' ) ); ?>',
+                select_error: '<?php echo esc_js( __( 'Please select a chart', 'ninja-charts' ) ); ?>',
+                insert_text: '<?php echo esc_js( __( 'Insert Shortcode', 'ninja-charts' ) ); ?>',
+                charts: <?php echo wp_json_encode( $charts ); ?>,
+                logo: <?php echo wp_json_encode( $assets . 'images/icon_small.png' ); ?>
             }
         </script>
         <?php
@@ -66,7 +66,7 @@ class TinyMce
 
         $title = __('Select a Chart', 'ninja-charts');
         if (!$ninja_charts) {
-            $title = __('No Charts found. Please add a chart first');
+            $title = __('No Charts found. Please add a chart first', 'ninja-charts');
         }
 
         $formatted[] = array(
@@ -92,13 +92,16 @@ class TinyMce
             wp_enqueue_script(
                 'ninja-charts-gutenberg-block',
                 $assets . 'admin/js/ninja-charts-gutenblock-build.js',
-                array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor')
+                array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor'),
+                NINJA_CHARTS_VERSION,
+                true
             );
 
             wp_enqueue_style(
                 'ninja-charts-gutenberg-block',
                 $assets . 'admin/css/gutenblock.css',
-                array('wp-edit-blocks')
+                array('wp-edit-blocks'),
+                NINJA_CHARTS_VERSION
             );
         });
     }

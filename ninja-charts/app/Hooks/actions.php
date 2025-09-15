@@ -24,7 +24,7 @@ add_action('admin_init', function () {
         'ninja-charts'
     ];
 
-    if (isset($_GET['page']) && in_array(sanitize_text_field($_GET['page']), $disablePages)) {
+    if (isset($_GET['page']) && in_array(sanitize_text_field($_GET['page']), $disablePages)) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         remove_all_actions('admin_notices');
     }
 });

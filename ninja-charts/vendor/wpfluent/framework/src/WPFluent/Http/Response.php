@@ -8,7 +8,7 @@ namespace NinjaCharts\Framework\Http;
  * Handles HTTP responses for HTTP Client class,
  * providing methods to access response data.
  */
-class Response
+class Response implements \JsonSerializable
 {
     /**
      * The HTTP response data.
@@ -35,6 +35,17 @@ class Response
     public function toArray()
     {
         return $this->response;
+    }
+
+    /**
+     * Convert the response object to an array.
+     *
+     * @return array
+     */
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
@@ -78,7 +89,7 @@ class Response
     /**
      * Throw an exception based on the response status code.
      *
-     * @throws \WpOrg\Requests\Exception\Http\Status
+     * @throws \WpOrg\Requests\Exception
      */
     public function throw()
     {

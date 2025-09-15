@@ -6,7 +6,6 @@ use NinjaCharts\Framework\Events\DispatcherInterface;
 use NinjaCharts\Framework\Events\NullDispatcher;
 use NinjaCharts\Framework\Support\Arr;
 use InvalidArgumentException;
-use ReflectionClass;
 
 trait HasEvents
 {

@@ -59,7 +59,7 @@ class Util
 	 * Get the user locale.
 	 * 
 	 * @param  int|null $userId
-	 * @return \NinjaCharts\Framework\Support\UserLocale
+	 * @return \NinjaCharts\Framework\Support\Locale
 	 */
 	public static function getLocale($userId = null)
 	{

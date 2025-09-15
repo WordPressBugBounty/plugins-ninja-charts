@@ -51,12 +51,21 @@ Class Sanitizer
     /**
      * Sanitize meta data.
      *
-     * @param string $arg
-     * @return string
+     * @param string $metaKey       Meta key.
+     * @param mixed  $metaValue     Meta value to sanitize.
+     * @param string $objectType    Type of object the meta is registered to (e.g., 'post', 'term', 'user').
+     * @param string $objectSubtype Optional. Subtype of the object type (e.g., custom post type). Default ''.
+     *
+     * @return mixed Sanitized meta value.
      */
-    public static function sanitizeMeta($arg)
+    public static function sanitizeMeta(
+        $metaKey,
+        $metaValue,
+        $objectType = 'post',
+        $objectSubtype = ''
+    )
     {
-        return sanitize_meta($arg);
+        return sanitize_meta($metaKey, $metaValue, $objectType, $objectSubtype);
     }
 
     /**
@@ -71,14 +80,15 @@ Class Sanitizer
     }
 
     /**
-     * Sanitize an option.
+     * Sanitize an option value.
      *
-     * @param string $arg
-     * @return string
+     * @param string $option The option name.
+     * @param mixed  $value  The option value to sanitize.
+     * @return mixed
      */
-    public static function sanitizeOption($arg)
+    public static function sanitizeOption(string $option, $value)
     {
-        return sanitize_option($arg);
+        return sanitize_option($option, $value);
     }
 
     /**
@@ -247,14 +257,21 @@ Class Sanitizer
     }
 
     /**
-     * Kses (sanitization function).
+     * Sanitize content with KSES.
      *
-     * @param string $arg
-     * @return string
+     * @param string       $string      Content to sanitize.
+     * @param array|string $allowedHtml Allowed HTML tags. Can be an array of tags/attributes,
+     *                                   or a context string accepted by wp_kses_allowed_html().
+     *                                   Defaults to 'post'.
+     * @return string Sanitized content with only allowed HTML.
      */
-    public static function kses($arg)
+    public static function kses($string, $allowedHtml = 'post')
     {
-        return wp_kses($arg);
+        if (is_string($allowedHtml)) {
+            $allowedHtml = wp_kses_allowed_html($allowedHtml);
+        }
+
+        return wp_kses($string, $allowedHtml);
     }
 
     /**
@@ -324,25 +341,29 @@ Class Sanitizer
     }
 
     /**
-     * Escape HTML with context.
+     * Escape HTML with translation context.
      *
-     * @param string $arg
+     * @param string $text     Text to escape and translate.
+     * @param string $context  Context information for translators.
+     * @param string $domain   Optional. Text domain. Default 'default'.
      * @return string
      */
-    public static function escHtmlX($arg)
+    public static function escHtmlX($text, $context, $domain = 'default')
     {
-        return esc_html_x($arg);
+        return esc_html_x($text, $context, $domain);
     }
 
     /**
-     * Escape attribute with context.
+     * Escape attribute with translation context.
      *
-     * @param string $arg
+     * @param string $text     Text to escape and translate.
+     * @param string $context  Context information for translators.
+     * @param string $domain   Optional. Text domain. Default 'default'.
      * @return string
      */
-    public static function escAttrX($arg)
+    public static function escAttrX($text, $context, $domain = 'default')
     {
-        return esc_attr_x($arg);
+        return esc_attr_x($text, $context, $domain);
     }
 
     /**

@@ -218,7 +218,7 @@ class Module
 
     public function getAllRowFromNinjaTableItem($table_id)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $rows = Arr::get($request, 'extra_data.rows') ? Arr::get($request, 'extra_data.rows') : Arr::get($request, 'options.row');
         $order = Arr::get($rows, 'order', 'ASC');
         $sort = $this->sortBy($table_id);

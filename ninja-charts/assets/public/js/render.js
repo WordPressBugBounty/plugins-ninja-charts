@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
                         },
                         tooltip: {
                             intersect: true,
-                            enabled: options.tooltip.enabled,
+                            enabled: options.tooltip.enabled === 'true',
                             mode: options.tooltip.mode === 'true' ? 'index' : 'nearest',
                             backgroundColor: options.tooltip.backgroundColor,
                             titleFontSize: 12,
@@ -58,26 +58,26 @@ jQuery(document).ready(function () {
                                 label: function (context) {
                                     // Handle polar charts which have object data with 'r' property
                                     if (context.parsed && typeof context.parsed === 'object' && context.parsed.r !== undefined) {
-                                        return context.label + ': ' + context.parsed.r;
+                                        return context.dataset.label + ': ' + context.parsed.r;
                                     }
                                     
                                     // Handle bar/line charts which have object data with 'y' property
                                     if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== undefined) {
-                                        return context.label + ': ' + context.parsed.y;
+                                        return context.dataset.label + ': ' + context.parsed.y;
                                     }
                                     
                                     // Handle simple parsed values
                                     if (context.parsed !== undefined && context.parsed !== null && typeof context.parsed !== 'object') {
-                                        return context.label + ': ' + context.parsed;
+                                        return context.dataset.label + ': ' + context.parsed;
                                     }
                                     
                                     // Handle raw data (for bar charts and other charts)
                                     if (context.raw !== null) {
-                                        return context.label + ': ' + context.raw;
+                                        return context.dataset.label + ': ' + context.raw;
                                     }
                                     
                                     // Fallback
-                                    return context.label + ': 0';
+                                    return context.dataset.label + ': 0';
                                 }
                             }
                         },

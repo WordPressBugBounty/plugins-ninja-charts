@@ -152,7 +152,7 @@ trait InputHelperMethodsTrait
 	 * Returns an sanitized integer
 	 * @param  string $key
 	 * @param  string $dafault
-	 * @return [type]  using intval function
+	 * @return int
 	 */
 	public function getInt($key, $dafault = null)
 	{
@@ -223,12 +223,12 @@ trait InputHelperMethodsTrait
 	}
 
     /**
-     * Returns a NinjaCharts\Framework\Framework\Support\Date object.
+     * Returns a DateTime object.
      * 
      * @param  string $key 
      * @param  string $format
      * @param  string $tz
-     * @return NinjaCharts\Framework\Framework\Support\Date
+     * @return \NinjaCharts\Framework\Support\DateTime
      */
     public function getDate($key, $format = null, $tz = null)
     {

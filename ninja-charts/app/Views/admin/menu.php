@@ -1,9 +1,13 @@
-<div id="<?php echo $slug; ?>-app" class="warp fconnector_app">
+<div id="<?php echo esc_attr($slug); ?>-app" class="warp fconnector_app">
     <div class="fframe_app">
         <div class="fframe_main-menu-items">
 
             <div class="plugin_name">
-                <img src="<?php echo $logo; ?>" alt="image" style="height: 35px;">
+                <?php echo wp_get_attachment_image( $logo, 'full', false, [
+                    'style' => 'height: 35px;',
+                    'alt'   => 'image',
+                ] ); ?>
+
             </div>
 
             <div class="fframe_handheld">
@@ -16,7 +20,7 @@
                     <li data-key="<?php echo esc_attr($item['key']); ?>"
                         class="fframe_menu_item <?php echo ($hasSubMenu) ? 'fframe_has_sub_items' : ''; ?> fframe_item_<?php echo esc_attr($item['key']); ?>">
                         <a class="fframe_menu_primary" href="<?php echo esc_url($item['permalink']); ?>">
-                            <?php echo sanitize_text_field($item['label']); ?>
+                            <?php echo esc_attr($item['label']); ?>
                             <?php if ($hasSubMenu) { ?>
                                 <span class="dashicons dashicons-arrow-down-alt2"></span>
                             <?php } ?></a>

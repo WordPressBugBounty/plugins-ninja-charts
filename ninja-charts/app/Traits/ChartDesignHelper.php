@@ -10,7 +10,7 @@ trait ChartDesignHelper
     {
         $c = null;
         for ($i = 0; $i < 6; $i++) {
-            $c .= dechex(rand(0, 15));
+            $c .= dechex(wp_rand(0, 15));
         }
         return "#$c";
     }
@@ -58,7 +58,7 @@ trait ChartDesignHelper
 
     public function dynamicBorderColor($ninja_chart = null, $chart_type = null)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $border_color = '';
         $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
@@ -206,7 +206,7 @@ trait ChartDesignHelper
         $chart_types = ['pie', 'polarArea', 'doughnut', 'funnel'];
         $bg_color = [];
         if (in_array($chart_type, $chart_types)) {
-            $request = ninjaChartsSanitizeArray($_REQUEST);
+            $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $series = Arr::get($request, 'extra_data.series');
             if (isset($series) && $series !== null) {
                 foreach ($series as $value) {
@@ -257,7 +257,7 @@ trait ChartDesignHelper
 
     public function lineTension($ninja_chart, $chart_type, $i)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $line_tension = '0.4';
         $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
@@ -273,7 +273,7 @@ trait ChartDesignHelper
 
     public function lineWidth($ninja_chart, $chart_type, $i)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $line_width = 1;
         $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
@@ -289,7 +289,7 @@ trait ChartDesignHelper
 
     public function pointRadius($ninja_chart, $chart_type, $i)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $pointRadius = '';
         $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
@@ -346,7 +346,7 @@ trait ChartDesignHelper
 
     public function areaChartFill($ninja_chart, $chart_type)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
         $fill = Arr::get($request, 'extra_data.fill');
 

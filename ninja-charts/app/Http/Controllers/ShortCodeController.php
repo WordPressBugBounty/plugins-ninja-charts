@@ -29,7 +29,7 @@ class ShortCodeController extends Controller
             $chart_data = Provider::get($ninjaCharts->data_source)->renderChart($ninjaCharts);
             return $this->renderView($ninjaCharts, $chart_data);
         } else {
-            return __("Invalid ShortCode...!", 'ninja_charts');
+            return __("Invalid ShortCode...!", 'ninja-charts');
         }
     }
 
@@ -44,7 +44,7 @@ class ShortCodeController extends Controller
         $ninjaCharts = $this->undefinedChartOptionsAppend($ninjaCharts);
         $ninjaCharts['chart_data'] = $chart_data;
         $options = json_decode(Arr::get($ninjaCharts, 'options'), true);
-        $uniqid =  '_' . rand() . '_' . Arr::get($ninjaCharts, 'id');
+        $uniqid =  '_' . wp_rand() . '_' . Arr::get($ninjaCharts, 'id');
         $chart_keys = [
             "uniqid"        => $uniqid,
             "id"            => Arr::get($ninjaCharts, 'id')
@@ -67,10 +67,11 @@ class ShortCodeController extends Controller
             $name = $chart_instance_name . '_' . Arr::get($data, 'id');
             ?>
             <script type="text/javascript">
-                window['<?php echo $name; ?>'] = <?php echo $data; ?>
+                window['<?php echo esc_js( $name ); ?>'] = <?php echo wp_json_encode( $data ); ?>;
             </script>
             <?php
         });
+
     }
 
     private static function chartJsAssets()

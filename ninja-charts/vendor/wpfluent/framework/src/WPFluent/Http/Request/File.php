@@ -2,12 +2,15 @@
 
 namespace NinjaCharts\Framework\Http\Request;
 
+use ArrayAccess;
+use SplFileInfo;
+use JsonSerializable;
 use RuntimeException;
 use NinjaCharts\Framework\Support\Util;
 use NinjaCharts\Framework\Foundation\App;
 use NinjaCharts\Framework\Validator\Contracts\File as Contract;
 
-class File extends \SplFileInfo implements Contract
+class File extends SplFileInfo implements Contract, JsonSerializable, ArrayAccess
 {
     /**
      * Original file name.
@@ -63,7 +66,7 @@ class File extends \SplFileInfo implements Contract
      * 
      * @param  string $path
      * @param  int|null $size
-     * @param  string|nill $error
+     * @param  string|null $error
      * @return void
      */
     protected function init($path, $size, $error)
@@ -85,12 +88,14 @@ class File extends \SplFileInfo implements Contract
     public function getName($name)
     {
         $originalName = str_replace('\\', '/', $name);
+        
         $pos = strrpos($originalName, '/');
+        
         $originalName = false === $pos ? $originalName : substr(
             $originalName, $pos + 1
         );
 
-        return $originalName;
+        return sanitize_file_name($originalName);
     }
 
     public function getFileMimeType($mimeType)
@@ -99,11 +104,22 @@ class File extends \SplFileInfo implements Contract
 
         if (!$mimeType) {
             $path = $this->getPathname() ?: $this->getRealPath();
+
+            if (!file_exists($path)) {
+                throw new RuntimeException(
+                    "File does not exist at path: $path"
+                );
+            }
+
             if ($handle = @fopen($path, 'rb')) {
                 $data = fread($handle, 8192);
                 $finfo = new \finfo(FILEINFO_MIME_TYPE);
                 $mimeType = $finfo->buffer($data);
                 fclose($handle);
+            } else {
+                throw new RuntimeException(
+                    "Failed to open file at path: $path"
+                );
             }
         }
 
@@ -128,6 +144,11 @@ class File extends \SplFileInfo implements Contract
     public function isValid()
     {
         $isOk = UPLOAD_ERR_OK === $this->getError();
+
+        // Allow fake uploads in tests
+        if (str_contains(App::make()->env(), 'test')) {
+            return $isOk;
+        }
 
         return $isOk && is_uploaded_file($this->getPathname());
     }
@@ -195,19 +216,27 @@ class File extends \SplFileInfo implements Contract
     }
 
     /**
-     * Get original HTTP file array
-     *
-     * @return array
+     * Get the file name.
+     * 
+     * @return string
      */
-    public function toArray()
+    public function getSavedFileName()
     {
-        return [
-            'name'     => $this->originalName,
-            'type'     => $this->mimeType,
-            'tmp_name' => $this->getPathname(),
-            'error'    => $this->error,
-            'size'     => $this->size
-        ];
+        if ($name = $this->originalName) {
+            return $name;
+        }
+
+        return basename($this->getPathname());
+    }
+
+    /**
+     * Get the url from path.
+     * 
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url($this->getPathname());
     }
 
     /**
@@ -263,7 +292,7 @@ class File extends \SplFileInfo implements Contract
 
         @chmod($target, 0666 & ~umask());
 
-        return $target;
+        return new static($target, basename($target));
     }
 
     /**
@@ -341,19 +370,21 @@ class File extends \SplFileInfo implements Contract
             }
         );
         
-        $path = rtrim(
+        $path = trim(
             ($default . DIRECTORY_SEPARATOR . $path), DIRECTORY_SEPARATOR
         );
+
+        $baseDir = trim(wp_upload_dir()['basedir'], DIRECTORY_SEPARATOR);
+
+        if (strpos($path, $baseDir) !== 0) {
+            $path = $baseDir . DIRECTORY_SEPARATOR . $path;
+        }
 
         if (is_file($path)) {
             throw new RuntimeException("Invalid file upload path: {$path}");
         }
 
-        if (!is_dir($path = dirname($this->getTargetFile($path)))) {
-            throw new RuntimeException("Invalid file upload path: {$path}");
-        }
-        
-        return $path;
+        return DIRECTORY_SEPARATOR.$path;
     }
 
     /**
@@ -397,7 +428,7 @@ class File extends \SplFileInfo implements Contract
      *
      * @param string $directory Target Path
      * @param string $name Target file name (optional)
-     * @return self
+     * @return string
      * @throws RuntimeException
      */
     protected function getTargetFile($directory, $name = null)
@@ -414,10 +445,138 @@ class File extends \SplFileInfo implements Contract
             );
         }
 
-        $target = rtrim($directory, "/\\") . DIRECTORY_SEPARATOR . (
-            null === $name ? $this->originalName : $this->getName($name)
-        );
+        return $this->makeTargetPath($directory, $name);
+    }
 
-        return new self($target, false);
+    /**
+     * Resolves the absolute path for saving.
+     * 
+     * @param  string $dir
+     * @param  string $name
+     * @return string
+     */
+    protected function makeTargetPath($dir, $name)
+    {
+        return $dir . DIRECTORY_SEPARATOR . $this->resolveFileName($name);
+    }
+
+    /**
+     * Resolves the file name for saving.
+     * 
+     * @param  string|null $name
+     * @return string
+     */
+    protected function resolveFileName($name = null)
+    {
+        if ($name) {
+            $name = $this->getName($name);
+            if (!$this->hasExtension($name)) {
+                $name .= '.' . $this->guessExtension();
+            }
+        } else {
+            $name = $this->originalName;
+        }
+
+        return $name;
+    }
+
+    /**
+     * Retrieve the extension of the uploaded file.
+     * 
+     * @return string
+     */
+    public function extension()
+    {
+        return $this->guessExtension();
+    }
+
+    /**
+     * Get the temporary file path.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        return $this->getPathname();
+    }
+
+    /**
+     * Check if the given filename has an extension.
+     * 
+     * @param  string $filename
+     * @return boolean
+     */
+    protected function hasExtension($filename)
+    {
+        $info = pathinfo($filename);
+        return isset($info['extension']) && $info['extension'] !== '';
+    }
+
+    /**
+     * Get original HTTP file array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'type'          => $this->mimeType,
+            'size_in_bytes' => $this->size,
+            'size'          => size_format($this->size),
+            'name'          => $this->getSavedFileName(),
+            'path'          => $this->getPathname(),
+            'url'           => $this->getUrl(),
+            'tmp_name'      => $this->getPathname(),
+            'error'         => $this->getError(),
+        ];
+    }
+
+    /**
+     * JsonSerialize implementation
+     * @return array
+     */
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /* ArrayAccess methods */
+    
+    /**
+     * Check if the property exists.
+     * @param string $offset
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->toArray());
+    }
+
+    /**
+     * Get the property.
+     * 
+     * @param  string $offset
+     * @return string        
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
+    {
+        $array = $this->toArray();
+        
+        return $array[$offset] ?? null;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)
+    {
+        //...
+    }
+
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
+    {
+        //...
     }
 }

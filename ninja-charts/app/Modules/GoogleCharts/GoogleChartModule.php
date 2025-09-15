@@ -68,7 +68,7 @@ class GoogleChartModule {
                 $ke = $v['key'];
                 $data = isset($value[$ke]) ? $value[$ke] : NULL;
 
-                $request = ninjaChartsSanitizeArray($_REQUEST);
+                $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 $chart_types = ['PieChart', 'DonutChart'];
                 $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
 
@@ -117,7 +117,7 @@ class GoogleChartModule {
                 if ($k === 0) {
                     $val[] = (string) $value;
                 } else {
-                    $request = ninjaChartsSanitizeArray($_REQUEST);
+                    $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                     $chart_types = ['PieChart', 'DonutChart'];
                     $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
 
@@ -131,7 +131,7 @@ class GoogleChartModule {
             $chart_data[] = $val;
         }
 
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
         $chart_types = ['PieChart', 'DonutChart'];
         $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
@@ -139,7 +139,7 @@ class GoogleChartModule {
             return $this->calculativeLegendFormat($ninja_chart, $chart_data);
         } else {
             $first_row = [];
-            $series = Arr::get($_REQUEST, 'extra_data.series');
+            $series = Arr::get($_REQUEST, 'extra_data.series'); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
             if (isset($series)) {
                 array_unshift($series, '');
@@ -181,7 +181,7 @@ class GoogleChartModule {
                 if ($k === 0) {
                     $val[] = (string) $value;
                 } else {
-                    $request = ninjaChartsSanitizeArray($_REQUEST);
+                    $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                     $chart_types = ['PieChart', 'DonutChart'];
                     $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
 
@@ -210,7 +210,7 @@ class GoogleChartModule {
     public function calculativeLegendFormat($ninja_chart, $chart_data)
     {
         $chart_types = ['PieChart', 'DonutChart'];
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
 
         if (in_array($chart_type, $chart_types)) {
@@ -238,14 +238,14 @@ class GoogleChartModule {
     public function otherLegendFormat($keys, $ninja_chart, $chart_data)
     {
         $chart_types = ['PieChart', 'DonutChart'];
-        $request = ninjaChartsSanitizeArray($_REQUEST);
+        $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $chart_type = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
         if (in_array($chart_type, $chart_types)) {
             return $this->calculativeLegendFormat($ninja_chart, $chart_data);
         } else {
             $label_key = $this->labelKey($keys);
             $first_row = [];
-            $series = Arr::get($_REQUEST, 'extra_data.series');
+            $series = Arr::get($_REQUEST, 'extra_data.series'); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
             if (isset($series)) {
                 array_unshift($series, '');

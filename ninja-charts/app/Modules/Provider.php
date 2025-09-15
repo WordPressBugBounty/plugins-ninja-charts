@@ -18,9 +18,9 @@ class Provider
         }
 
         echo '<h2 style="text-align: center; margin-top: 20px;">'
-                 . __("Couldn't find ", 'ninja-charts')
-                 . esc_html( $source ).
-                 __(" data provider.", 'ninja-charts')
+             . esc_html__( "Couldn't find ", 'ninja-charts' )
+             . esc_html( $source )
+             . esc_html__( " data provider.", 'ninja-charts' )
              . '</h2>';
         exit();
     }

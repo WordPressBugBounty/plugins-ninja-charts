@@ -9,7 +9,7 @@ class MorphMany extends MorphOneOrMany
     /**
      * Convert the relationship to a "morph one" relationship.
      *
-     * @return \NinjaCharts\Framework\Database\Orm\Relations\MorphOne<TRelatedModel, TDeclaringModel>
+     * @return \NinjaCharts\Framework\Database\Orm\Relations\MorphOne
      */
     public function one()
     {

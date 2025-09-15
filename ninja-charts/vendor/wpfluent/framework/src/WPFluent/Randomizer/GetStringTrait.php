@@ -2,7 +2,7 @@
 
 namespace NinjaCharts\Framework\Randomizer;
 
-use InvalidArgumentException;
+use NinjaCharts\Framework\Support\InvalidArgumentException;
 
 trait GetStringTrait
 {
