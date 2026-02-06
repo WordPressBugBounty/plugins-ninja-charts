@@ -6,13 +6,48 @@ jQuery(document).ready(function () {
         let ChartDataLabels = window.ChartDataLabels;
         if (charts.length) {
             const th = this;
-            charts.each(function () {
+            charts.each(async function () {
                 let chartId = jQuery(this).data('id');
                 let uniqid = jQuery(this).data('uniqid');
-                let chartInstance = 'ninja_charts_instance_' + chartId;
                 let canvasDom = 'ninja_charts_instance' + uniqid;
-                let renderData = window[chartInstance];
-                let options = JSON.parse(renderData.options);
+                let chartElement = jQuery(this);
+                let renderData = null;
+
+                window.NinjaChartsLoader.show(chartElement);
+
+                try {
+                    renderData = await jQuery.ajax({
+                        url: window.chartJSPublic.ajax_url,
+                        type: 'GET',
+                        data: {
+                            action: 'ninja_charts_get_data',
+                            chart_id: chartId,
+                            nonce: window.chartJSPublic.nonce,
+                        }
+                    });
+
+                    if (!renderData || !renderData.success || !renderData.chart_data || !renderData.chart_data.datasets) {
+                        console.error('Invalid chart data received:', renderData);
+                        window.NinjaChartsLoader.hide(chartElement);
+                        chartElement.html('<p style="color: red; padding: 20px;">' + (renderData?.message || 'Failed to load chart data.') + '</p>');
+                        return;
+                    }
+                } catch (error) {
+                    let errorMessage = 'Failed to load chart data.';
+
+                    if (error.responseJSON && error.responseJSON.message) {
+                        errorMessage = error.responseJSON.message;
+                    }
+
+                    console.error('Failed to load chart data:', errorMessage);
+                    window.NinjaChartsLoader.hide(chartElement);
+                    chartElement.html('<p style="color: red; padding: 20px;">' + errorMessage + '</p>');
+                    return;
+                }
+
+                window.NinjaChartsLoader.hide(chartElement);
+                
+                let options = renderData.options;
                 let canvas = document.getElementById(canvasDom);
                 let ctx = canvas.getContext('2d');
                 let chartOptions = {

@@ -6,7 +6,7 @@
 if (!function_exists('ninjacharts_eql')) {
     function ninjacharts_eql()
     {
-        defined('SAVEQUERIES') || define('SAVEQUERIES', true);
+        defined('SAVEQUERIES') || define('SAVEQUERIES', true); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
     }
 }
 

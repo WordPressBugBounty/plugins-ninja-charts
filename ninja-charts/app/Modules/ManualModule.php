@@ -163,7 +163,6 @@ class ManualModule
                 "borderWidth" => 1,
                 "pointBorderColor" => 'black',
                 "pointHoverRadius" => 4,
-                "pointRadius" => $pointRadius,
                 "borderColor" => $border_color ? $border_color : $this->randomColor(),
                 //  Data to be represented on y-axis
                 "data" => $this->dataFormat($manual_inputs, $k = '', $chart_type)

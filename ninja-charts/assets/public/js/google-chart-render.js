@@ -5,14 +5,49 @@ jQuery(document).ready(function () {
         var charts = jQuery('.ninja-charts-google-container');
         if (charts.length) {
             const th = this;
-            charts.each(function () {
-                var chartId = jQuery(this).data('id');
-                var uniqid = jQuery(this).data('uniqid');
-                var chartInstance = 'ninja_charts_instance_' + chartId;
-                var canvasDom = 'ninja_charts_instance' + uniqid;
-                var renderData = window[chartInstance];
-                var options = JSON.parse(renderData.options);
-                var canvas = document.getElementById(canvasDom);
+            charts.each(async function () {
+                let chartId = jQuery(this).data('id');
+                let uniqid = jQuery(this).data('uniqid');
+                let canvasDom = 'ninja_charts_instance' + uniqid;
+                let chartElement = jQuery(this);
+                let renderData = null;
+
+                window.NinjaChartsLoader.show(chartElement);
+
+                try {
+                    renderData = await jQuery.ajax({
+                        url: window.googleChartPublic.ajax_url,
+                        type: 'GET',
+                        data: {
+                            action: 'ninja_charts_get_data',
+                            chart_id: chartId,
+                            nonce: window.googleChartPublic.nonce,
+                        }
+                    });
+
+                    if (!renderData || !renderData.success) {
+                        console.error('Invalid chart data received:', renderData);
+                        window.NinjaChartsLoader.hide(chartElement);
+                        chartElement.html('<p style="color: red; padding: 20px;">' + (renderData?.message || 'Failed to load chart data.') + '</p>');
+                        return;
+                    }
+                } catch (error) {
+                    let errorMessage = 'Failed to load chart data.';
+
+                    if (error.responseJSON && error.responseJSON.message) {
+                        errorMessage = error.responseJSON.message;
+                    }
+
+                    console.error('Failed to load chart data:', errorMessage);
+                    window.NinjaChartsLoader.hide(chartElement);
+                    chartElement.html('<p style="color: red; padding: 20px;">' + errorMessage + '</p>');
+                    return;
+                }
+
+                window.NinjaChartsLoader.hide(chartElement);
+
+                let options = renderData.options;
+                let canvas = document.getElementById(canvasDom);
 
                 google.charts.load('current', {'packages': ['corechart']});
                 google.charts.setOnLoadCallback(drawChart);

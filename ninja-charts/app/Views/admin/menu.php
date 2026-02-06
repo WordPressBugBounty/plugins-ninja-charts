@@ -15,19 +15,19 @@
             </div>
 
             <ul class="fframe_menu">
-                <?php foreach ($menuItems as $item): ?>
-                    <?php $hasSubMenu = !empty($item['sub_items']); ?>
-                    <li data-key="<?php echo esc_attr($item['key']); ?>"
-                        class="fframe_menu_item <?php echo ($hasSubMenu) ? 'fframe_has_sub_items' : ''; ?> fframe_item_<?php echo esc_attr($item['key']); ?>">
-                        <a class="fframe_menu_primary" href="<?php echo esc_url($item['permalink']); ?>">
-                            <?php echo esc_attr($item['label']); ?>
-                            <?php if ($hasSubMenu) { ?>
+                <?php foreach ($menuItems as $ninja_charts_item): ?>
+                    <?php $ninja_charts_hasSubMenu = !empty($ninja_charts_item['sub_items']); ?>
+                    <li data-key="<?php echo esc_attr($ninja_charts_item['key']); ?>"
+                        class="fframe_menu_item <?php echo ($ninja_charts_hasSubMenu) ? 'fframe_has_sub_items' : ''; ?> fframe_item_<?php echo esc_attr($ninja_charts_item['key']); ?>">
+                        <a class="fframe_menu_primary" href="<?php echo esc_url($ninja_charts_item['permalink']); ?>">
+                            <?php echo esc_attr($ninja_charts_item['label']); ?>
+                            <?php if ($ninja_charts_hasSubMenu) { ?>
                                 <span class="dashicons dashicons-arrow-down-alt2"></span>
                             <?php } ?></a>
-                        <?php if ($hasSubMenu): ?>
+                        <?php if ($ninja_charts_hasSubMenu): ?>
                             <div class="fframe_submenu_items">
-                                <?php foreach ($item['sub_items'] as $sub_item): ?>
-                                    <a href="<?php echo esc_url($sub_item['permalink']); ?>"><?php echo esc_attr($sub_item['label']); ?></a>
+                                <?php foreach ($ninja_charts_item['sub_items'] as $ninja_charts_sub_item): ?>
+                                    <a href="<?php echo esc_url($ninja_charts_sub_item['permalink']); ?>"><?php echo esc_attr($ninja_charts_sub_item['label']); ?></a>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>

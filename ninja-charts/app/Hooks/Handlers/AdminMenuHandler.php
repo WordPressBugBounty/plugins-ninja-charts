@@ -59,7 +59,7 @@ class AdminMenuHandler
 
         $slug = $config->get('app.slug');
 
-        $baseUrl = apply_filters('fluent_connector_base_url', admin_url('admin.php?page=' . $slug . '#/'));
+        $baseUrl = apply_filters('ninja_charts/fluent_connector_base_url', admin_url('admin.php?page=' . $slug . '#/'));
 
         $menuItems = [
             [
@@ -117,7 +117,7 @@ class AdminMenuHandler
             NINJA_CHARTS_VERSION
         );
 
-        do_action($slug . '_loading_app');
+        do_action($slug . '_loading_app'); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
         wp_enqueue_script(
             $slug . '_admin_app_start',

@@ -9,9 +9,9 @@
 is_readable(__DIR__ . '/globals_dev.php') && include 'globals_dev.php';
 
 if ($app->config->get('app.env') == 'dev') {
-    $globalsDevFile = __DIR__ . '/globals_dev.php';
+    $ninjaChartsGlobalsDevFile = __DIR__ . '/globals_dev.php';
 
-    is_readable($globalsDevFile) && include $globalsDevFile;
+    is_readable($ninjaChartsGlobalsDevFile) && include $ninjaChartsGlobalsDevFile;
 }
 
 
@@ -79,5 +79,5 @@ function ninjaChartsAdminRole()
         return ninja_table_admin_role();
     }
 
-    return 'manage_options';
+    return current_user_can('manage_options');
 }

@@ -118,7 +118,6 @@ trait ChartGenerator
                 "borderWidth"          => 1,
                 "pointBorderColor"     => 'black',
                 "pointHoverRadius"     => 4,
-                "pointRadius"          => $pointRadius,
                 "borderColor"          => isset($bd_color[0]) ? $bd_color[0] : $this->randomColor(),
                 // Data to be represented on y-axis
                 "data"                 => $data
