@@ -9,22 +9,22 @@ class CalculativeModule extends Module
 {
     public function chartData($data)
     {
-        extract($data);
+        $chart_type = Arr::get($data, 'chart_type');
         if ($chart_type !== 'bubble' && $chart_type !== 'scatter') {
-           return $this->chartyByDataType($data);
+            return $this->chartyByDataType($data);
         }
     }
 
     public function chartyByDataType($data)
     {
-        $entries = Arr::get($data, 'labels.labels');
-        $rows = Arr::get($data, 'tableRows');
-        $data_type = $data['keys'][0]['data_type'];
-        $submissions = (float) count($rows);
+        $entries       = Arr::get($data, 'labels.labels');
+        $rows          = Arr::get($data, 'tableRows');
+        $data_type     = Arr::get($data, 'keys.0.data_type');
+        $submissions   = (float)count($rows);
         $processedData = $this->calculate($entries, $submissions, $data_type);
 
-        $data = [ 
-            'labels' => Arr::get($processedData, 'labels'),
+        $data = [
+            'labels'     => Arr::get($processedData, 'labels'),
             'chart_data' => [
                 'chart_data' => Arr::get($processedData, 'values')
             ]
@@ -70,12 +70,12 @@ class CalculativeModule extends Module
             }
         }
 
-        $labels = [];
-        $values = [];
+        $labels    = [];
+        $values    = [];
         $submitted = 0;
         foreach ($calculated as $key => $val) {
-            $labels[] = $key;
-            $values[] = $val;
+            $labels[]  = $key;
+            $values[]  = $val;
             $submitted = $submitted + $val;
         }
 

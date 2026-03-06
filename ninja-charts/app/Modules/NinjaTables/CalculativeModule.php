@@ -8,7 +8,8 @@ class CalculativeModule extends Module
 {
     public function chartData($data)
     {
-        extract($data);
+        $chart_type = Arr::get($data, 'chart_type');
+
         if ($chart_type !== 'bubble' && $chart_type !== 'scatter') {
            return $this->chartyByDataType($data);
         }
@@ -18,7 +19,7 @@ class CalculativeModule extends Module
     {
         $entries = Arr::get($data, 'labels.labels');
         $rows = Arr::get($data, 'tableRows');
-        $data_type = $data['keys'][0]['data_type'];
+        $data_type    = Arr::get($data, 'keys.0.data_type');
         $submissions = (float) count($rows);
         $processedData = $this->calculate($entries, $submissions, $data_type);
 

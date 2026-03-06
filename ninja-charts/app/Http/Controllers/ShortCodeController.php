@@ -2,13 +2,14 @@
 
 namespace NinjaCharts\App\Http\Controllers;
 
-use NinjaCharts\Framework\Support\Arr;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use NinjaCharts\App\App;
 use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Traits\ChartOption;
 use NinjaCharts\App\Modules\Provider;
+use NinjaCharts\Framework\Support\Arr;
 
 class ShortCodeController extends Controller
 {
@@ -35,7 +36,14 @@ class ShortCodeController extends Controller
 
         try {
             $ninjaChart = NinjaCharts::findOrFail($chartId);
-            $chart_data  = Provider::get($ninjaChart->data_source)->renderChart($ninjaChart);
+            $provider = Provider::get($ninjaChart->data_source);
+            if (is_wp_error($provider)) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => $provider->get_error_message()
+                ], 400);
+            }
+            $chart_data = $provider->renderChart($ninjaChart);
             $ninjaCharts = $ninjaChart->toArray();
 
             wp_send_json([
@@ -84,7 +92,11 @@ class ShortCodeController extends Controller
         $id = Arr::get($wporg_atts, 'id');
         $ninjaCharts = NinjaCharts::find($id);
         if ($ninjaCharts) {
-            $chart_data = Provider::get($ninjaCharts->data_source)->renderChart($ninjaCharts);
+            $provider = Provider::get($ninjaCharts->data_source);
+            if (is_wp_error($provider)) {
+                return esc_html($provider->get_error_message());
+            }
+            $chart_data = $provider->renderChart($ninjaCharts);
             return $this->renderView($ninjaCharts, $chart_data);
         } else {
             return __("Invalid ShortCode...!", 'ninja-charts');

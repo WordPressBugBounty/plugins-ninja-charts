@@ -14,29 +14,18 @@ class SourceController extends Controller
     {
         $data_source = sanitize_text_field($this->request->data_source);
 
-        if ($this->pluginActivationCheck($data_source)) {
-            $provider = Provider::get($data_source);
-            $tableList = $provider->getTableList();
-
-            if (is_wp_error($provider)) {
-                return $this->sendError($provider);
-            } else {
-                return $this->sendSuccess([
-                    'table_list' => $tableList
-                ]);
-            }
-        } else {
-            $plugins = [
-                'ninja_table' => 'Ninja Tables',
-                'fluent_form' => 'Fluent Forms'
-            ];
-
-            $plugin = $plugins[$data_source];
-
+        $provider = Provider::get($data_source);
+        if (is_wp_error($provider)) {
             return $this->sendError([
-                'message'=> "$plugin is not available!"
+                'message' => $provider->get_error_message()
             ], 400);
         }
+
+        $tableList = $provider->getTableList();
+
+        return $this->sendSuccess([
+            'table_list' => $tableList
+        ]);
     }
 
     public function pluginActivationCheck($data_source)
@@ -60,7 +49,15 @@ class SourceController extends Controller
     {
         $sourceId = intval($sourceId);
         $data_source = sanitize_text_field($this->request->data_source);
-        $type_keys = Provider::get($data_source)->getKeysByTable($sourceId);
+
+        $provider = Provider::get($data_source);
+        if (is_wp_error($provider)) {
+            return $this->sendError([
+                'message' => $provider->get_error_message()
+            ], 400);
+        }
+
+        $type_keys = $provider->getKeysByTable($sourceId);
 
         return $this->sendSuccess([
             'type_keys' => $type_keys

@@ -17,13 +17,4 @@ class UserPolicy extends Policy
         return current_user_can(ninjaChartsAdminRole());
     }
 
-//    /**
-//     * Check user permission for any method
-//     * @param  NinjaCharts\Framework\Request\Request $request
-//     * @return Boolean
-//     */
-//    public function create(Request $request)
-//    {
-//        return current_user_can('manage_options');
-//    }
 }

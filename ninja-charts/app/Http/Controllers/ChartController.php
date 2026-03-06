@@ -24,6 +24,12 @@ class ChartController extends Controller
 
     public function store()
     {
+        $this->validate($this->request->data, [
+            'render_engine' => 'required',
+            'chart_type' => 'required',
+            'data_source' => 'required',
+        ]);
+
         $data = ninjaChartsSanitizeArray($this->request->data);
         $ninjaCharts = NinjaCharts::store($data);
 
@@ -63,7 +69,13 @@ class ChartController extends Controller
         $data_source = sanitize_text_field($this->request->data_source);
 
         if (isset($extra_data['manual_inputs']) || $keys) {
-            $chart_data =  Provider::get($data_source)->getAllDataByTable($table_id, $keys, $chart_type, $extra_data, $id);
+            $provider = Provider::get($data_source);
+            if (is_wp_error($provider)) {
+                return $this->sendError([
+                    'message' => $provider->get_error_message()
+                ], 400);
+            }
+            $chart_data = $provider->getAllDataByTable($table_id, $keys, $chart_type, $extra_data, $id);
         } else {
             $chart_data = '';
         }
@@ -76,7 +88,7 @@ class ChartController extends Controller
     public function destroy()
     {
         $ids = ninjaChartsSanitizeArray($this->request->ids);
-        $ninjaCharts = NinjaCharts::remove($ids);
+        NinjaCharts::remove($ids);
 
         return $this->send([
             'deleted' => 204

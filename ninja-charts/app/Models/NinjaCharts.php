@@ -35,13 +35,16 @@ class NinjaCharts extends Model
 
     public static function getChartData($keyword = '', $perPage = 10)
     {
+        global $wpdb;
         $ninja_charts = NinjaCharts::query()
             ->orderBy('id', 'desc')
-            ->where(function ($query) use ($keyword) {
+            ->where(function ($query) use ($wpdb, $keyword) {
+                $keyword = $wpdb->esc_like($keyword);
                 $query->where('chart_name', 'LIKE', "%{$keyword}%")
                     ->orWhere('render_engine', 'LIKE', "%{$keyword}%")
                     ->orWhere('chart_type', 'LIKE', "%{$keyword}%");
-            })->paginate($perPage);
+            })
+            ->paginate($perPage);
         return $ninja_charts;
     }
 

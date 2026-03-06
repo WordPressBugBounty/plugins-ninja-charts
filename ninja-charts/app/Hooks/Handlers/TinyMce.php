@@ -2,6 +2,8 @@
 
 namespace NinjaCharts\App\Hooks\Handlers;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 use NinjaCharts\App\App;
 use NinjaCharts\App\Models\NinjaCharts;
 

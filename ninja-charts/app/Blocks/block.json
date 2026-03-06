@@ -1,0 +1,35 @@
+{
+	"apiVersion": 3,
+	"name": "ninja-charts/chart-block",
+	"version": "1.0.0",
+	"title": "Ninja Charts",
+	"category": "widgets",
+	"icon": "chart-bar",
+	"description": "Create a chart.",
+	"keywords": ["chart", "chart.js", "ninja chart"],
+	"textdomain": "ninja-charts",
+	"attributes": {
+		"chartLibrary": {
+			"type": "string",
+			"default": "chart_js"
+		},
+		"chartType": {
+			"type": "string",
+			"default": "bar"
+		},
+		"labels": {
+			"type": "array",
+			"default": []
+		},
+		"datasets": {
+			"type": "array",
+			"default": []
+		},
+		"options": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"editorScript": "ninja-charts-block-editor",
+	"editorStyle": "ninja-charts-block-editor-style"
+}

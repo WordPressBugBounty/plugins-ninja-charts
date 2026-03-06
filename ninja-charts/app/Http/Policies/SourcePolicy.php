@@ -14,27 +14,4 @@ class SourcePolicy extends Policy
             return false;
         }
     }
-//    public function index()
-//    {
-//        return $this->userAccessControl();
-//    }
-//
-//    public function find($sourceId)
-//    {
-//        return $this->userAccessControl();
-//    }
-//
-//    public function sourceName()
-//    {
-//        return $this->userAccessControl();
-//    }
-//
-//    public function userAccessControl()
-//    {
-//        if (is_user_logged_in()) {
-//            return current_user_can('manage_options');
-//        } else {
-//            return false;
-//        }
-//    }
 }

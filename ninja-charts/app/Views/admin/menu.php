@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
+
+
 <div id="<?php echo esc_attr($slug); ?>-app" class="warp fconnector_app">
     <div class="fframe_app">
         <div class="fframe_main-menu-items">

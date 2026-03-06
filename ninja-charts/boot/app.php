@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 use NinjaCharts\Framework\Foundation\Application;
 use NinjaCharts\App\Hooks\Handlers\ActivationHandler;
 use NinjaCharts\App\Hooks\Handlers\DeactivationHandler;
@@ -19,4 +21,6 @@ return function($file) {
     add_action('plugins_loaded', function() use ($app) {
         do_action('ninjacharts_loaded', $app);
     });
+
+    add_action('init', [\NinjaCharts\App\Blocks\NinjaChartBlock::class, 'register'], 20);
 };

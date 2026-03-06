@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * All registered action's handlers should be in app\Hooks\Handlers,
  * addAction is similar to add_action and addCustomAction is just a

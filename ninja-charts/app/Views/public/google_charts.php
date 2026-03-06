@@ -1,3 +1,7 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
+
 <?php use NinjaCharts\Framework\Support\Arr; ?>
 
 <div class="ninja-charts-google-container"

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  ***** DO NOT CALL ANY FUNCTIONS DIRECTLY FROM THIS FILE ******
  *
@@ -78,6 +80,5 @@ function ninjaChartsAdminRole()
     if (function_exists('ninja_table_admin_role')) {
         return ninja_table_admin_role();
     }
-
-    return current_user_can('manage_options');
+    return 'manage_options';
 }

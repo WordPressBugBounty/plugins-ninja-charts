@@ -28,7 +28,7 @@ jQuery(document).ready(function () {
                     if (!renderData || !renderData.success) {
                         console.error('Invalid chart data received:', renderData);
                         window.NinjaChartsLoader.hide(chartElement);
-                        chartElement.html('<p style="color: red; padding: 20px;">' + (renderData?.message || 'Failed to load chart data.') + '</p>');
+                        chartElement.empty().append(jQuery('<p>', { css: { color: 'red', padding: '20px' }, text: renderData?.message || 'Failed to load chart data.' }));
                         return;
                     }
                 } catch (error) {
@@ -40,7 +40,7 @@ jQuery(document).ready(function () {
 
                     console.error('Failed to load chart data:', errorMessage);
                     window.NinjaChartsLoader.hide(chartElement);
-                    chartElement.html('<p style="color: red; padding: 20px;">' + errorMessage + '</p>');
+                    chartElement.empty().append(jQuery('<p>', { css: { color: 'red', padding: '20px' }, text: errorMessage }));
                     return;
                 }
 

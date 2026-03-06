@@ -1,4 +1,6 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * @var $router \NinjaCharts\Framework\Http\Router
  */

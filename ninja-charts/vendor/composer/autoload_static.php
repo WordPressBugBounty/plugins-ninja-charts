@@ -7,11 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
 {
     public static $prefixLengthsPsr4 = array (
-        'W' => 
+        'W' =>
         array (
             'WPFluent\\' => 9,
         ),
-        'N' => 
+        'N' =>
         array (
             'NinjaCharts\\Framework\\' => 22,
             'NinjaCharts\\App\\' => 16,
@@ -19,15 +19,15 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPFluent\\' => 
+        'WPFluent\\' =>
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
         ),
-        'NinjaCharts\\Framework\\' => 
+        'NinjaCharts\\Framework\\' =>
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
         ),
-        'NinjaCharts\\App\\' => 
+        'NinjaCharts\\App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
@@ -36,7 +36,13 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'NinjaCharts\\App\\App' => __DIR__ . '/../..' . '/app/App.php',
+        'NinjaCharts\\App\\Blocks\\Engines\\ChartEngineInterface' => __DIR__ . '/../..' . '/app/Blocks/Engines/ChartEngineInterface.php',
+        'NinjaCharts\\App\\Blocks\\Engines\\ChartJsEngine' => __DIR__ . '/../..' . '/app/Blocks/Engines/ChartJsEngine.php',
+        'NinjaCharts\\App\\Blocks\\Engines\\EngineRegistry' => __DIR__ . '/../..' . '/app/Blocks/Engines/EngineRegistry.php',
+        'NinjaCharts\\App\\Blocks\\Engines\\GoogleChartsEngine' => __DIR__ . '/../..' . '/app/Blocks/Engines/GoogleChartsEngine.php',
+        'NinjaCharts\\App\\Blocks\\NinjaChartBlock' => __DIR__ . '/../..' . '/app/Blocks/NinjaChartBlock.php',
         'NinjaCharts\\App\\ComposerScript' => __DIR__ . '/../..' . '/app/ComposerScript.php',
+        'NinjaCharts\\App\\Helpers\\Helper' => __DIR__ . '/../..' . '/app/Helpers/Helper.php',
         'NinjaCharts\\App\\Hooks\\Handlers\\ActivationHandler' => __DIR__ . '/../..' . '/app/Hooks/Handlers/ActivationHandler.php',
         'NinjaCharts\\App\\Hooks\\Handlers\\AdminMenuHandler' => __DIR__ . '/../..' . '/app/Hooks/Handlers/AdminMenuHandler.php',
         'NinjaCharts\\App\\Hooks\\Handlers\\CPTHandler' => __DIR__ . '/../..' . '/app/Hooks/Handlers/CPTHandler.php',
@@ -49,11 +55,8 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\App\\Http\\Controllers\\ShortCodeController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShortCodeController.php',
         'NinjaCharts\\App\\Http\\Controllers\\SourceController' => __DIR__ . '/../..' . '/app/Http/Controllers/SourceController.php',
         'NinjaCharts\\App\\Http\\Controllers\\WelcomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/WelcomeController.php',
-        'NinjaCharts\\App\\Http\\Policies\\ChartPolicy' => __DIR__ . '/../..' . '/app/Http/Policies/ChartPolicy.php',
         'NinjaCharts\\App\\Http\\Policies\\SourcePolicy' => __DIR__ . '/../..' . '/app/Http/Policies/SourcePolicy.php',
         'NinjaCharts\\App\\Http\\Policies\\UserPolicy' => __DIR__ . '/../..' . '/app/Http/Policies/UserPolicy.php',
-        'NinjaCharts\\App\\Http\\Requests\\Request' => __DIR__ . '/../..' . '/app/Http/Requests/Request.php',
-        'NinjaCharts\\App\\Http\\Requests\\UserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserRequest.php',
         'NinjaCharts\\App\\Models\\FluentForm' => __DIR__ . '/../..' . '/app/Models/FluentForm.php',
         'NinjaCharts\\App\\Models\\FluentFormSubmission' => __DIR__ . '/../..' . '/app/Models/FluentFormSubmission.php',
         'NinjaCharts\\App\\Models\\Model' => __DIR__ . '/../..' . '/app/Models/Model.php',

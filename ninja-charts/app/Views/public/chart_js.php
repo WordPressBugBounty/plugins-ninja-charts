@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <?php use NinjaCharts\Framework\Support\Arr; ?>
 
 <div class="ninja-charts-customize<?php echo esc_attr(Arr::get($chart_keys, 'uniqid')); ?>" >

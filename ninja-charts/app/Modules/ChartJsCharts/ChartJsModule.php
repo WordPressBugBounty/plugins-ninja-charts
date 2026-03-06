@@ -19,7 +19,8 @@ class ChartJsModule
 
     public function chartDataFormat($data, $extra_data = [])
     {
-        extract($data);
+        $data_source = Arr::get($data, 'data_source');
+
         if ($data_source === 'ninja_table') {
             return $this->ninjaTableDataFormat($data, $extra_data);
         } else {
@@ -35,43 +36,49 @@ class ChartJsModule
 
     public function ninjaTableDataFormat($data, $extra_data)
     {
-        extract($data);
         $c_labels = [];
-        if ($keys[0]['data_type'] === 'selection') {
+        $dataType = Arr::get($data, 'keys.0.data_type');
+        if ($dataType === 'selection') {
             $chart_datas = (new NinjaTableCalculative())->chartData($data);
-            $chart_data = $chart_datas['chart_data'];
-            $c_labels = $chart_datas['labels'];
-            $data_type = $keys[0]['data_type'];
+            $chart_data  = $chart_datas['chart_data'];
+            $c_labels    = $chart_datas['labels'];
+            $data_type   = $dataType;
         } else {
             $chart_data = $extra_data;
-            $data_type = '';
+            $data_type  = '';
         }
 
         $chart_data = $this->commonChartRender($data, $extra_data, $c_labels, $chart_data, $data_type, $data_type);
+
         return apply_filters('ninja_charts_ntm_all_data_by_table', $chart_data);
     }
 
     public function fluentFormDataFormat($data, $extra_data)
     {
-        extract($data);
+        $dataType = Arr::get($data, 'keys.0.data_type');
         $c_labels = [];
-        if ((new Module)->calculativeFields($keys[0]['data_type'])) {
+        if ((new Module)->calculativeFields($dataType)) {
             $chart_datas = (new FluentFormCalculative())->chartData($data);
-            $chart_data = $chart_datas['chart_data'];
-            $c_labels = $chart_datas['labels'];
-            $data_type = $keys[0]['data_type'];
+            $chart_data  = $chart_datas['chart_data'];
+            $c_labels    = $chart_datas['labels'];
+            $data_type   = $dataType;
         } else {
             $chart_data = $extra_data;
-            $data_type = '';
+            $data_type  = '';
         }
 
         $chart_data = $this->commonChartRender($data, $extra_data, $c_labels, $chart_data, $data_type);
+
         return apply_filters('ninja_charts_ffm_data_by_table', $chart_data);
     }
 
     public function manualDataFormat($data, $extra_data)
     {
-        extract($data);
+        $chart_type    = Arr::get($data, 'chart_type');
+        $manual_inputs = Arr::get($data, 'manual_inputs');
+        $ninja_chart   = Arr::get($data, 'ninja_chart');
+        $labels        = Arr::get($data, 'labels');
+
         $data_sets = '';
         if ($manual_inputs === '') {
             return '';
@@ -86,9 +93,9 @@ class ChartJsModule
         if ($chart_type === 'combo') {
             $data_sets[count($data_sets) - 1]['type'] = 'line';
         }
-        $labels = $this->piePolarDoughnutLabelFormat($ninja_chart, $chart_type, $labels, null, $extra_data);
+        $labels     = $this->piePolarDoughnutLabelFormat($ninja_chart, $chart_type, $labels, null, $extra_data);
         $chart_data = [
-            "labels" => $labels,
+            "labels"   => $labels,
             "datasets" => $data_sets,
         ];
 
@@ -97,7 +104,9 @@ class ChartJsModule
 
     public function commonChartRender($data, $extra_data, $c_labels, $chart_data, $data_type)
     {
-        extract($data);
+        $chart_type = Arr::get($data, 'chart_type');
+        $ninja_chart = Arr::get($data, 'ninja_chart');
+
         if ($chart_type === 'bubble' || $chart_type === 'scatter') {
             $data_sets = $this->chartJsBubbleOrScatterChart($data);
         } elseif ($chart_type === 'line' || $chart_type === 'area' || $chart_type === 'combo') {
@@ -108,10 +117,17 @@ class ChartJsModule
         if ($chart_type === 'combo') {
             $data_sets[count($data_sets) - 1]['type'] = 'line';
         }
-        $new_labels = Arr::get($labels, 'labels');
-        $labels = $this->piePolarDoughnutLabelFormat($ninja_chart, $chart_type, $new_labels, $c_labels, $extra_data);
+        $new_labels = Arr::get($data, 'labels.labels');
+
+        $labels     = $this->piePolarDoughnutLabelFormat(
+            $ninja_chart,
+            $chart_type,
+            $new_labels,
+            $c_labels,
+            $extra_data
+        );
         $chart_data = [
-            "labels" => $labels,
+            "labels"   => $labels,
             "datasets" => $data_sets,
         ];
 

@@ -30,18 +30,20 @@ class ManualModule
             $keys = json_decode($keys, true);
         }
 
-        $ninja_chart = $id ? NinjaCharts::findOrFail($id) : null;
-        $manual_inputs = isset($extra_data['manual_inputs']) ? $extra_data['manual_inputs'] : json_decode($ninja_chart->manual_inputs,
-            true);
-        $labels = $this->labelFormat($manual_inputs);
-        $data = [
-            "labels" => $labels,
+        $ninja_chart   = $id ? NinjaCharts::findOrFail($id) : null;
+        $manual_inputs = isset($extra_data['manual_inputs']) ? $extra_data['manual_inputs'] : json_decode(
+            $ninja_chart->manual_inputs,
+            true
+        );
+        $labels        = $this->labelFormat($manual_inputs);
+        $data          = [
+            "labels"        => $labels,
             "manual_inputs" => $manual_inputs,
-            "chart_type" => $chart_type,
-            "keys" => $keys,
-            "ninja_chart" => $ninja_chart,
-            "data_source" => 'manual_inputs',
-            "field" => ''
+            "chart_type"    => $chart_type,
+            "keys"          => $keys,
+            "ninja_chart"   => $ninja_chart,
+            "data_source"   => 'manual_inputs',
+            "field"         => ''
         ];
         if ($extra_data['render_engine'] === 'google_charts') {
             return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
@@ -64,21 +66,24 @@ class ManualModule
 
     public function chartJsOtherChart($data, $extra_data = [])
     {
-        extract($data);
+        $manual_inputs = Arr::get($data, 'manual_inputs');
+        $ninja_chart   = Arr::get($data, 'ninja_chart');
+        $chart_type    = Arr::get($data, 'chart_type');
+
         $chart_data = isset($extra_data['manual_inputs']) ? $extra_data['manual_inputs'] : $extra_data;
-        $data_sets = [];
-        $rows = $manual_inputs;
-        $keys = array_keys(end($manual_inputs));
-        $i = 0;
+        $data_sets  = [];
+        $rows       = $manual_inputs;
+        $keys       = array_keys(end($manual_inputs));
+        $i          = 0;
 
         foreach ($keys as $key) {
             $border_color = $this->borderColor($ninja_chart, $chart_type, $i);
-            $label = $this->label($ninja_chart, $chart_type, $i);
+            $label        = $this->label($ninja_chart, $chart_type, $i);
 
             if ($key !== 'text_input' && $key !== 'text-input') {
                 $BgColor = [];
 
-                if ($chart_type === 'pie' || $chart_type === 'doughnut' || $chart_type === 'polarArea' || $chart_type === 'funnel'){
+                if ($chart_type === 'pie' || $chart_type === 'doughnut' || $chart_type === 'polarArea' || $chart_type === 'funnel') {
                     $BgColor = $this->allBackGroundColorFormat($ninja_chart, $chart_type, $rows, $chart_data);
                 } else {
                     $BgColor = $border_color;
@@ -86,12 +91,12 @@ class ManualModule
 
                 $data_sets[] =
                     [
-                        "label" => $label ? $label : $key,
-                        "backgroundColor" => $BgColor ? $BgColor : $this->randomColor(),
+                        "label"                => $label ? $label : $key,
+                        "backgroundColor"      => $BgColor ? $BgColor : $this->randomColor(),
                         "pointBackgroundColor" => 'white',
-                        "borderWidth" => 1,
+                        "borderWidth"          => 1,
                         //Data to be represented on y-axis
-                        "data" => $this->dataFormat($rows, $key, $chart_type)
+                        "data"                 => $this->dataFormat($rows, $key, $chart_type)
                     ];
 
                 if ($chart_type === 'funnel') {
@@ -103,31 +108,38 @@ class ManualModule
                 $i++;
             }
         }
+
         return apply_filters('ninja_charts_manual_data_sets_except_bubble_scatter_', $data_sets);
     }
 
     public function chartJsLineOrArea($data, $extra_data = [])
     {
-        extract($data);
+        $manual_inputs = Arr::get($data, 'manual_inputs');
+        $ninja_chart   = Arr::get($data, 'ninja_chart');
+        $chart_type    = Arr::get($data, 'chart_type');
+
         $data_sets = [];
-        $rows = $manual_inputs;
-        $keys = array_keys(end($manual_inputs));
-        $i = 0;
+        $rows      = $manual_inputs;
+        $keys      = array_keys(end($manual_inputs));
+        $i         = 0;
 
         foreach ($keys as $key) {
-            $border_color = $this->borderColor($ninja_chart, $chart_type, $i);
-            $label = $this->label($ninja_chart, $chart_type, $i);
-            $line_tension = $this->lineTension($ninja_chart, $chart_type, $i);
-            $pointRadius = $this->pointRadius($ninja_chart, $chart_type, $i);
+            $border_color     = $this->borderColor($ninja_chart, $chart_type, $i);
+            $label            = $this->label($ninja_chart, $chart_type, $i);
+            $line_tension     = $this->lineTension($ninja_chart, $chart_type, $i);
+            $pointRadius      = $this->pointRadius($ninja_chart, $chart_type, $i);
             $background_color = $this->backgroundColor($ninja_chart, $chart_type, $i);
-            $lineWidth = $this->lineWidth($ninja_chart, $chart_type, $i);
+            $lineWidth        = $this->lineWidth($ninja_chart, $chart_type, $i);
 
             if ($key !== 'text_input' && $key !== 'text-input') {
                 $data_sets[] =
                     [
                         "fill"                 => $this->areaChartFill($ninja_chart, $chart_type),
                         "label"                => $label ? $label : $key,
-                        "backgroundColor"      => $background_color ? $background_color : $this->chartBackgroundColor($chart_type, $rows),
+                        "backgroundColor"      => $background_color ? $background_color : $this->chartBackgroundColor(
+                            $chart_type,
+                            $rows
+                        ),
                         "pointBackgroundColor" => 'white',
                         "borderWidth"          => $lineWidth,
                         "pointBorderWidth"     => 1,
@@ -142,30 +154,36 @@ class ManualModule
                 $i++;
             }
         }
+
         return apply_filters('ninja_charts_manual_data_sets_except_bubble_scatter_', $data_sets);
     }
 
     public function chartJsBubbleOrScatterChart($data)
     {
-        extract($data);
-        $data_sets = [];
-        $i = 0;
-        $border_color = $this->borderColor($ninja_chart, $chart_type, $i);
-        $label = $this->label($ninja_chart, $chart_type, $i);
+        $manual_inputs = Arr::get($data, 'manual_inputs');
+        $ninja_chart   = Arr::get($data, 'ninja_chart');
+        $chart_type    = Arr::get($data, 'chart_type');
+
+        $data_sets        = [];
+        $i                = 0;
+        $border_color     = $this->borderColor($ninja_chart, $chart_type, $i);
+        $label            = $this->label($ninja_chart, $chart_type, $i);
         $background_color = $this->backgroundColor($ninja_chart, $chart_type, $i);
 
         $data_sets[] =
             [
-                "label" => $label ? $label : ucwords($chart_type),
-                "backgroundColor" => $background_color ? $background_color : $this->chartBackgroundColor($chart_type,
-                    $manual_inputs),
+                "label"                => $label ? $label : ucwords($chart_type),
+                "backgroundColor"      => $background_color ? $background_color : $this->chartBackgroundColor(
+                    $chart_type,
+                    $manual_inputs
+                ),
                 "pointBackgroundColor" => 'white',
-                "borderWidth" => 1,
-                "pointBorderColor" => 'black',
-                "pointHoverRadius" => 4,
-                "borderColor" => $border_color ? $border_color : $this->randomColor(),
+                "borderWidth"          => 1,
+                "pointBorderColor"     => 'black',
+                "pointHoverRadius"     => 4,
+                "borderColor"          => $border_color ? $border_color : $this->randomColor(),
                 //  Data to be represented on y-axis
-                "data" => $this->dataFormat($manual_inputs, $k = '', $chart_type)
+                "data"                 => $this->dataFormat($manual_inputs, $k = '', $chart_type)
             ];
 
         return apply_filters('ninja_charts_manual_data_sets_bubble_scatter_', $data_sets);
@@ -184,21 +202,29 @@ class ManualModule
             }
         } else {
             foreach ($rows as $key => $value) {
-                if (isset($value[$k]) && $value[$k] != NULL) {
+                if (isset($value[$k]) && $value[$k] != null) {
                     $data[] = is_numeric($value[$k]) ? (float)$value[$k] : $value[$k];
                 } else {
                     $data[] = null;
                 }
             }
         }
+
         return $data;
     }
 
     public function renderChart($data)
     {
         $extra_data['render_engine'] = $data->render_engine;
-        $keys = json_decode($data->final_keys, true);
-        $chart_data = $this->getAllDataByTable($data->table_id, $keys, $data->chart_type, $extra_data, $data->id);
+        $keys                        = json_decode($data->final_keys, true);
+        $chart_data                  = $this->getAllDataByTable(
+            $data->table_id,
+            $keys,
+            $data->chart_type,
+            $extra_data,
+            $data->id
+        );
+
         return $chart_data;
     }
 }

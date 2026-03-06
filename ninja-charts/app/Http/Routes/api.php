@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * @var $router NinjaCharts\App\Http\Router
  */
@@ -23,4 +25,6 @@ $router->withPolicy('SourcePolicy')->prefix('sources')->group(function ($app) {
     $app->get('csv-data/{tableId}', 'SourceController@processGoogleCSVData')->int('tableId');
 });
 
-$router->get('ninjatable-data-provider/{tableId}', 'SourceController@sourceName')->int('tableId');
+$router->withPolicy('SourcePolicy')->group(function ($app) {
+    $app->get('ninjatable-data-provider/{tableId}', 'SourceController@sourceName')->int('tableId');
+});
