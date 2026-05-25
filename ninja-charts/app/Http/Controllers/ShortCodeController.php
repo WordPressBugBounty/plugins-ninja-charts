@@ -23,7 +23,12 @@ class ShortCodeController extends Controller
 
     public function getChartData()
     {
-        $this->validateAjaxRequest();
+        if (sanitize_text_field(Arr::get($_SERVER, 'REQUEST_METHOD')) !== 'GET') {
+            wp_send_json([
+                'success' => false,
+                'message' => __('Invalid request method', 'ninja-charts')
+            ], 405);
+        }
 
         $chartId = isset($_GET['chart_id']) ? intval($_GET['chart_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -31,6 +36,16 @@ class ShortCodeController extends Controller
             wp_send_json([
                 'success' => false,
                 'message' => __('Chart ID is required', 'ninja-charts')
+            ], 400);
+        }
+
+        // Nonce is bound to the specific chart ID so that a nonce from one chart page
+        // cannot be used to enumerate other chart IDs.
+        $nonce = sanitize_text_field(Arr::get($_GET, 'nonce')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (empty($nonce) || ! wp_verify_nonce($nonce, 'ninja_chart_data_' . $chartId)) {
+            wp_send_json([
+                'success' => false,
+                'message' => __('Security check failed', 'ninja-charts')
             ], 400);
         }
 
@@ -44,6 +59,12 @@ class ShortCodeController extends Controller
                 ], 400);
             }
             $chart_data = $provider->renderChart($ninjaChart);
+            if ($chart_data === null) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => __('No chart data could be generated for the given configuration', 'ninja-charts')
+                ], 422);
+            }
             $ninjaCharts = $ninjaChart->toArray();
 
             wp_send_json([
@@ -61,24 +82,6 @@ class ShortCodeController extends Controller
         }
     }
 
-    private function validateAjaxRequest()
-    {
-        if (sanitize_text_field(Arr::get($_SERVER, 'REQUEST_METHOD')) !== 'GET') {
-            wp_send_json([
-                'success' => false,
-                'message' => __('Invalid request method', 'ninja-charts')
-            ], 405);
-        }
-
-        $nonce = sanitize_text_field(Arr::get($_GET, 'nonce')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
-        if (empty($nonce) || ! wp_verify_nonce($nonce, 'ninja_chart_render_data')) {
-            wp_send_json([
-                'success' => false,
-                'message' => __('Security check failed', 'ninja-charts')
-            ], 400);
-        }
-    }
 
     public function makeShortCode($atts = [], $content = null, $tag = '')
     {
@@ -92,12 +95,7 @@ class ShortCodeController extends Controller
         $id = Arr::get($wporg_atts, 'id');
         $ninjaCharts = NinjaCharts::find($id);
         if ($ninjaCharts) {
-            $provider = Provider::get($ninjaCharts->data_source);
-            if (is_wp_error($provider)) {
-                return esc_html($provider->get_error_message());
-            }
-            $chart_data = $provider->renderChart($ninjaCharts);
-            return $this->renderView($ninjaCharts, $chart_data);
+            return $this->renderView($ninjaCharts);
         } else {
             return __("Invalid ShortCode...!", 'ninja-charts');
         }
@@ -108,11 +106,10 @@ class ShortCodeController extends Controller
         add_shortcode('ninja_charts', [$this, 'makeShortCode']);
     }
 
-    public function renderView($ninjaCharts, $chart_data)
+    public function renderView($ninjaCharts)
     {
         $app = App::getInstance();
         $ninjaCharts = $this->undefinedChartOptionsAppend($ninjaCharts);
-        $ninjaCharts['chart_data'] = $chart_data;
         $options = json_decode(Arr::get($ninjaCharts, 'options'), true);
         $uniqid =  '_' . wp_rand() . '_' . Arr::get($ninjaCharts, 'id');
         $chart_keys = [
@@ -125,11 +122,11 @@ class ShortCodeController extends Controller
         if ($ninjaCharts->render_engine === 'chart_js') {
             self::chartJsAssets();
             do_action('ninja_charts_shortcode_assets_loaded');
-            return $app->view->make('public.chart_js', compact('options', 'chart_keys', 'chart_data'));
+            return $app->view->make('public.chart_js', compact('options', 'chart_keys'));
         } else if ($ninjaCharts->render_engine === 'google_charts'){
             self::googleChartsAssets();
             do_action('ninja_charts_shortcode_assets_loaded');
-            return $app->view->make('public.google_charts', compact('options', 'chart_keys', 'chart_data'));
+            return $app->view->make('public.google_charts', compact('options', 'chart_keys'));
         }
     }
 
@@ -180,13 +177,12 @@ class ShortCodeController extends Controller
             'chart_js_chart_render_js',
             $assets . 'public/js/render.js',
             array('chartjs', 'ninja_charts_loader'),
-            '1.0.0',
+            NINJA_CHARTS_VERSION,
             true
         );
 
         wp_localize_script('chart_js_chart_render_js', 'chartJSPublic', [
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ninja_chart_render_data'),
         ]);
     }
 
@@ -207,13 +203,12 @@ class ShortCodeController extends Controller
             'google_chart_render_js',
             $assets . 'public/js/google-chart-render.js',
             array('googlechart', 'ninja_charts_loader'),
-            '1.0.0',
+            NINJA_CHARTS_VERSION,
             true
         );
 
         wp_localize_script('google_chart_render_js', 'googleChartPublic', [
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ninja_chart_render_data'),
         ]);
     }
 }

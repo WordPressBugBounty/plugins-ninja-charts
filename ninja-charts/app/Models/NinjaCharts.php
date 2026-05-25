@@ -9,7 +9,7 @@ class NinjaCharts extends Model
 {
     protected $table = 'ninja_charts';
 
-    public static function store($data)
+    public static function store($data, $id = null)
     {
         do_action('ninja_charts_before_chart_save_or_update', $data);
         $options = Arr::get($data, 'options');
@@ -25,7 +25,6 @@ class NinjaCharts extends Model
         }
 
         $options['row'] = Arr::get($data, 'row');
-        $id = Arr::get($data, 'id');
         $ninja_charts = $id ? NinjaCharts::findOrFail($id) : new NinjaCharts();
         $ninja_charts = self::allRow($ninja_charts, $data, $options, $clone = false);
 

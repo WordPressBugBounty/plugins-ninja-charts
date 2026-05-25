@@ -3,8 +3,8 @@ Contributors: wpmanageninja, adreastrian, csesumonpro, naeemhaque, hasanuzzamans
 Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive Charts
 Requires at least: 6.0
 Requires PHP: 7.4
-Tested up to: 6.9
-Stable tag: 3.4.0
+Tested up to: 7.0
+Stable tag: 3.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,6 +156,11 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.4.1 (Date: May 25, 2026) =
+* Fix: Reject unrecognised chart types on save
+* Improvement: Better error responses for invalid operations
+* Improvement: Prevent unauthorized access to other users' charts
 
 = 3.4.0 (Date: March 06, 2026) =
 * Added: Native Gutenberg block for Ninja Charts (independent block, no shortcode required)

@@ -4,7 +4,7 @@ defined('ABSPATH') or die;
 /**
  * Plugin Name: Ninja Charts - Interactive Charts and Graphs
  * Description: Ninja Charts - Best WP Charts Plugin for WordPress
- * Version: 3.4.0
+ * Version: 3.4.1
  * Author: WPManageNinja LLC
  * Author URI: https://wpmanageninja.com/
  * Plugin URI: https://wpmanageninja.com/ninja-charts

@@ -7,10 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
 {
     public static $prefixLengthsPsr4 = array (
-        'W' =>
-        array (
-            'WPFluent\\' => 9,
-        ),
         'N' =>
         array (
             'NinjaCharts\\Framework\\' => 22,
@@ -19,10 +15,6 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPFluent\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
-        ),
         'NinjaCharts\\Framework\\' =>
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',

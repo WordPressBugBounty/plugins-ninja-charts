@@ -6,7 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'WPFluent\\' => array($vendorDir . '/wpfluent/framework/src/WPFluent'),
     'NinjaCharts\\Framework\\' => array($vendorDir . '/wpfluent/framework/src/WPFluent'),
     'NinjaCharts\\App\\' => array($baseDir . '/app'),
 );

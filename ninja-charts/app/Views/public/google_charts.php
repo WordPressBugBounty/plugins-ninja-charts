@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="ninja-charts-google-container"
      data-id="<?php echo esc_attr(Arr::get($chart_keys, 'id')); ?>"
      data-uniqid="<?php echo esc_attr(Arr::get($chart_keys, 'uniqid')); ?>"
+     data-nonce="<?php echo esc_attr(wp_create_nonce('ninja_chart_data_' . intval(Arr::get($chart_keys, 'id')))); ?>"
 >
     <div id= "<?php echo esc_attr("ninja_charts_instance" .Arr::get($chart_keys, 'uniqid')); ?>"
          class="<?php echo esc_attr("ninja_charts_instance" .Arr::get($chart_keys, 'uniqid')); ?>"

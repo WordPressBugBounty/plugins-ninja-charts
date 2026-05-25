@@ -28,22 +28,6 @@ class SourceController extends Controller
         ]);
     }
 
-    public function pluginActivationCheck($data_source)
-    {
-        if ($data_source === 'ninja_table') {
-            if (function_exists('ninja_tables_boot')) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if ($data_source === 'fluent_form') {
-            if (function_exists('wpFluentForm')) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
 
     public function find($sourceId)
     {
@@ -67,6 +51,13 @@ class SourceController extends Controller
     public function sourceName($tableId)
     {
         $tableId = intval($tableId);
+
+        if (!function_exists('ninja_table_get_data_provider')) {
+            return $this->sendError([
+                'message' => __('Ninja Tables plugin is not active.', 'ninja-charts')
+            ], 400);
+        }
+
         $provider_name = ninja_table_get_data_provider($tableId);
 
         return $this->sendSuccess([
@@ -76,9 +67,16 @@ class SourceController extends Controller
 
     public function processGoogleCSVData($tableId)
     {
+        if (!function_exists('ninjaTablesGetTablesDataByID')) {
+            return $this->sendError([
+                'message' => __('Ninja Tables plugin is not active.', 'ninja-charts')
+            ], 400);
+        }
+
         $extra_data = ninjaChartsSanitizeArray($this->request->get('extra_data', []));
         $table_id = intval($tableId);
-        $tableRows = ninjaTablesGetTablesDataByID($table_id, $tableColumns = [], $defaultSorting = false, $disableCache = false, 0, $skip = false, $ownOnly = false);
+        $row_limit = intval(apply_filters('ninja_charts_google_csv_row_limit', 2000));
+        $tableRows = ninjaTablesGetTablesDataByID($table_id, $tableColumns = [], $defaultSorting = false, $disableCache = false, $row_limit, $skip = false, $ownOnly = false);
 
         $uniqueKey = apply_filters('ninja_charts_ntm_google_csv_unique_key', '');
 

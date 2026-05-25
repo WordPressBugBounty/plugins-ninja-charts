@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 border-radius: <?php echo esc_attr(Arr::get($options, 'chart.borderRadius')); ?>px;'
          data-id="<?php echo esc_attr(Arr::get($chart_keys, 'id')); ?>"
          data-uniqid="<?php echo esc_attr(Arr::get($chart_keys, 'uniqid')); ?>"
+         data-nonce="<?php echo esc_attr(wp_create_nonce('ninja_chart_data_' . intval(Arr::get($chart_keys, 'id')))); ?>"
              >
     <canvas
         id= "<?php echo "ninja_charts_instance" .esc_attr( Arr::get($chart_keys, 'uniqid')); ?>"

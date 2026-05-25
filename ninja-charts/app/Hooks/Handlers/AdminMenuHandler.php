@@ -123,7 +123,7 @@ class AdminMenuHandler
             $slug . '_admin_app_start',
             $assets . '/admin/js/start.js',
             array(),
-            '1.0',
+            NINJA_CHARTS_VERSION,
             true
         );
 
@@ -131,7 +131,7 @@ class AdminMenuHandler
             $slug . '_global_admin',
             $assets . 'admin/js/global_admin.js',
             array('jquery'),
-            '1.0',
+            NINJA_CHARTS_VERSION,
             true
         );
 
@@ -158,19 +158,20 @@ class AdminMenuHandler
                 'ninja_charts_extend_menu',
                 $assets . '/admin/js/menu-active.js',
                 array($slug . '_global_admin'),
-                '1.0',
+                NINJA_CHARTS_VERSION,
                 true
             );
         }
 
         $currentUser = get_user_by('ID', get_current_user_id());
 
-        wp_localize_script($slug . '_admin_app_start', 'fluentFrameworkAdmin', [
+        wp_localize_script($slug . '_admin_app_start', 'ninjaChartsAdmin', [
             'slug'       => $slug = $app->config->get('app.slug'),
             'nonce'      => wp_create_nonce($slug),
             'rest'       => $this->getRestInfo($app),
             'brand_logo' => $this->getMenuIcon(),
             'asset_url'  => $assets,
+            'site_url'   => site_url('/'),
             'me'         => [
                 'id'        => $currentUser->ID,
                 'full_name' => trim($currentUser->first_name . ' ' . $currentUser->last_name),

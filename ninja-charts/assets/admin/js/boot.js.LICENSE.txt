@@ -1,4 +1,22 @@
-/*! Element Plus Icons Vue v2.1.0 */
+/*! Element Plus Icons Vue v2.3.2 */
+
+/**
+* @vue/runtime-core v3.5.27
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/
+
+/**
+* @vue/runtime-dom v3.5.27
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/
+
+/**
+* @vue/shared v3.5.27
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/
 
 //! moment.js
 

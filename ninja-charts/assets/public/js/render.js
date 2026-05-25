@@ -9,6 +9,7 @@ jQuery(document).ready(function () {
             charts.each(async function () {
                 let chartId = jQuery(this).data('id');
                 let uniqid = jQuery(this).data('uniqid');
+                let chartNonce = jQuery(this).data('nonce');
                 let canvasDom = 'ninja_charts_instance' + uniqid;
                 let chartElement = jQuery(this);
                 let renderData = null;
@@ -22,7 +23,7 @@ jQuery(document).ready(function () {
                         data: {
                             action: 'ninja_charts_get_data',
                             chart_id: chartId,
-                            nonce: window.chartJSPublic.nonce,
+                            nonce: chartNonce,
                         }
                     });
 
@@ -167,6 +168,7 @@ jQuery(document).ready(function () {
                                     style: options.chart.fontStyle
                                 },
                                 beginAtZero: true,
+                                precision: 2,
                             },
                             min: parseInt(options.axes.verticle_min_tick) ? parseInt(options.axes.verticle_min_tick) : null,
                             max: parseInt(options.axes.verticle_max_tick) ? parseInt(options.axes.verticle_max_tick) : null

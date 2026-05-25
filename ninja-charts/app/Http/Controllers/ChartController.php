@@ -31,7 +31,28 @@ class ChartController extends Controller
         ]);
 
         $data = ninjaChartsSanitizeArray($this->request->data);
+        unset($data['id']); // Body-injected id must never trigger an update on the create endpoint
         $ninjaCharts = NinjaCharts::store($data);
+
+        return $this->sendSuccess([
+            'ninja_charts' => $ninjaCharts
+        ]);
+    }
+
+    public function update($id = null)
+    {
+        $id = intval($id);
+        if ($id < 1) {
+            return $this->sendError(['message' => __('Invalid chart ID', 'ninja-charts')], 400);
+        }
+        $this->validate($this->request->data, [
+            'render_engine' => 'required',
+            'chart_type' => 'required',
+            'data_source' => 'required',
+        ]);
+
+        $data = ninjaChartsSanitizeArray($this->request->data);
+        $ninjaCharts = NinjaCharts::store($data, $id); // $id comes from the URL, not the body
 
         return $this->sendSuccess([
             'ninja_charts' => $ninjaCharts
@@ -64,6 +85,19 @@ class ChartController extends Controller
         $table_id = intval($this->request->table_id);
         $keys = (gettype($this->request->keys) === 'array') ? ninjaChartsSanitizeArray($this->request->keys) : sanitize_text_field($this->request->keys);
         $chart_type = sanitize_text_field($this->request->chart_type);
+
+        $allowed_chart_types = [
+            // Chart.js types
+            'bar', 'horizontalBar', 'line', 'area', 'pie', 'doughnut',
+            'polarArea', 'radar', 'bubble', 'scatter', 'combo', 'funnel',
+            // Google Charts types
+            'ColumnChart', 'BarChart', 'LineChart', 'AreaChart', 'PieChart',
+            'DonutChart', 'ScatterChart', 'BubbleChart', 'ComboChart', 'Histogram',
+        ];
+        if (!in_array($chart_type, $allowed_chart_types, true)) {
+            return $this->sendError(['message' => __('Invalid chart type', 'ninja-charts')], 400);
+        }
+
         $extra_data = ninjaChartsSanitizeArray($this->request->get('extra_data', []));
         $id = intval($this->request->get('id', ''));
         $data_source = sanitize_text_field($this->request->data_source);
@@ -76,6 +110,9 @@ class ChartController extends Controller
                 ], 400);
             }
             $chart_data = $provider->getAllDataByTable($table_id, $keys, $chart_type, $extra_data, $id);
+            if ($chart_data === null) {
+                return $this->sendError(['message' => __('No chart data could be generated for the given configuration', 'ninja-charts')], 422);
+            }
         } else {
             $chart_data = '';
         }

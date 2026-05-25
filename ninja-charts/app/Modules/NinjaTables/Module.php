@@ -173,8 +173,8 @@ class Module
         }
 
         if ($hasRange && $hasRange === 'false' && $hasRangeDate && $hasRangeDate === 'false') {
-            $count = $this->getAllRowFromNinjaTableItem($table_id);
-            if ($count->count() === 0) {
+            $hasLocalRows = NinjaTableItem::whereTableId($table_id)->exists();
+            if (!$hasLocalRows) {
                 //  when no data found from DB table
                 $limit      = $number === '0' ? false : $number;
                 $remote_csv = true;
@@ -281,11 +281,6 @@ class Module
                                    ->get();
 
         return apply_filters('ninja_charts_ntm_selected_table_rows', $tableRows);
-    }
-
-    public function getAllRow($table_id = null)
-    {
-        return $this->getAllRowFromNinjaTableItem($table_id);
     }
 
     public function sortBy($table_id)

@@ -8,6 +8,7 @@ jQuery(document).ready(function () {
             charts.each(async function () {
                 let chartId = jQuery(this).data('id');
                 let uniqid = jQuery(this).data('uniqid');
+                let chartNonce = jQuery(this).data('nonce');
                 let canvasDom = 'ninja_charts_instance' + uniqid;
                 let chartElement = jQuery(this);
                 let renderData = null;
@@ -21,7 +22,7 @@ jQuery(document).ready(function () {
                         data: {
                             action: 'ninja_charts_get_data',
                             chart_id: chartId,
-                            nonce: window.googleChartPublic.nonce,
+                            nonce: chartNonce,
                         }
                     });
 
@@ -54,6 +55,12 @@ jQuery(document).ready(function () {
 
                 function drawChart() {
                     let chartType = renderData.chart_type;
+                    var rows = renderData.chart_data || [];
+                    var hasDecimal = rows?.slice(1)?.some(function (row) {
+                        return row?.slice(1)?.some(function (v) {
+                            return typeof v === 'number' && v % 1 !== 0;
+                        });
+                    });
                     var data = google.visualization.arrayToDataTable(renderData.chart_data);
                     const chartOption = {
                         title: renderData.chart_name,
@@ -100,7 +107,8 @@ jQuery(document).ready(function () {
                             textStyle: {
                                 color: options.chart.fontColor,
                                 fontSize: options.chart.fontSize
-                            }
+                            },
+                            format: hasDecimal ? '#,##0.00' : undefined
                         },
                         isStacked: options.axes.stacked,
                         pieHole: renderData.chart_type === 'DonutChart' ? 0.4 : 1,
