@@ -8,29 +8,32 @@ use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
 use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Modules\DataSourceInterface;
+use NinjaCharts\App\Constants\ChartConstants;
 
-class ManualModule
+class ManualModule implements DataSourceInterface
 {
     protected $request;
     use ChartDesignHelper;
 
     public function getTableList()
     {
-        return 0;
+        return [];
     }
 
     public function getKeysByTable($table_id = null)
     {
-        return '';
+        return [];
     }
 
     public function getAllDataByTable($table_id = null, $keys = null, $chart_type = null, $extra_data = [], $id = null)
     {
-        if (gettype($keys) === 'string') {
+        if (is_string($keys)) {
             $keys = json_decode($keys, true);
         }
 
-        $ninja_chart   = $id ? NinjaCharts::findOrFail($id) : null;
+        $ninja_chart              = $id ? NinjaCharts::findOrFail($id) : null;
+        $extra_data['chart_type'] = $chart_type;
         $manual_inputs = isset($extra_data['manual_inputs']) ? $extra_data['manual_inputs'] : json_decode(
             $ninja_chart->manual_inputs,
             true
@@ -42,16 +45,16 @@ class ManualModule
             "chart_type"    => $chart_type,
             "keys"          => $keys,
             "ninja_chart"   => $ninja_chart,
-            "data_source"   => 'manual_inputs',
+            "data_source"   => ChartConstants::SOURCE_MANUAL_DATA,
             "field"         => ''
         ];
-        if ($extra_data['render_engine'] === 'google_charts') {
+        if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
             return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-        } else {
-            if ($extra_data['render_engine'] === 'chart_js') {
-                return (new ChartJsModule())->chartDataFormat($data, $extra_data);
-            }
+        } elseif (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
+            return (new ChartJsModule())->chartDataFormat($data, $extra_data);
         }
+
+        return [];
     }
 
     public function labelFormat($rows)
@@ -216,6 +219,7 @@ class ManualModule
     public function renderChart($data)
     {
         $extra_data['render_engine'] = $data->render_engine;
+        $extra_data['chart_type']    = $data->chart_type;
         $keys                        = json_decode($data->final_keys, true);
         $chart_data                  = $this->getAllDataByTable(
             $data->table_id,

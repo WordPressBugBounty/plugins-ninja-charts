@@ -49,6 +49,7 @@ jQuery(document).ready(function () {
 
                 let options = renderData.options;
                 let canvas = document.getElementById(canvasDom);
+                var exportMode = new URLSearchParams(window.location.search).get('ninja_chart_export');
 
                 google.charts.load('current', {'packages': ['corechart']});
                 google.charts.setOnLoadCallback(drawChart);
@@ -102,8 +103,8 @@ jQuery(document).ready(function () {
                         },
                         vAxis: {
                             title: options.axes.y_axis_label,
-                            minValue: options.axes.verticle_min_tick,
-                            maxValue: options.axes.verticle_max_tick,
+                            minValue: options.axes.vertical_min_tick || options.axes.verticle_min_tick,
+                            maxValue: options.axes.vertical_max_tick || options.axes.verticle_max_tick,
                             textStyle: {
                                 color: options.chart.fontColor,
                                 fontSize: options.chart.fontSize
@@ -120,9 +121,9 @@ jQuery(document).ready(function () {
                         //     }
                         // },
                         animation: {
-                            duration: 1000,
+                            duration: exportMode === 'png' ? 0 : 1000,
                             easing: 'out',
-                            startup: true
+                            startup: exportMode !== 'png'
                         },
                         backgroundColor: {
                             fill: options.chart.backgroundColor,
@@ -161,6 +162,18 @@ jQuery(document).ready(function () {
                     }
                     chartType = renderData.chart_type === 'DonutChart' ? 'PieChart' : renderData.chart_type;
                     var chart = new google.visualization[chartType](canvas)
+                    if (exportMode === 'png') {
+                        google.visualization.events.addOneTimeListener(chart, 'ready', function () {
+                            var imgUri = chart.getImageURI();
+                            var a = document.createElement('a');
+                            a.href = imgUri;
+                            a.download = (renderData.chart_name || 'chart') + '.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            setTimeout(function () { window.close(); }, 1000);
+                        });
+                    }
                     chart.draw(data, chartOption);
                 }
             })

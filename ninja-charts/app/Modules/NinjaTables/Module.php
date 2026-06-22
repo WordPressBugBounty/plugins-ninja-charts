@@ -13,9 +13,11 @@ use NinjaCharts\App\Models\NinjaTableItem;
 use NinjaCharts\App\Models\NinjaTableMeta;
 use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
 use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Modules\DataSourceInterface;
 use NinjaCharts\App\Helpers\Helper;
+use NinjaCharts\App\Constants\ChartConstants;
 
-class Module
+class Module implements DataSourceInterface
 {
     use ChartDesignHelper;
     use ChartGenerator;
@@ -69,13 +71,14 @@ class Module
 
     public function getAllDataByTable($table_id = null, $keys = null, $chart_type = null, $extra_data = [], $id = null)
     {
-        if (gettype($keys) === 'string') {
+        if (is_string($keys)) {
             $keys = json_decode($keys, true);
         }
-        $ninja_chart     = $id ? NinjaCharts::findOrFail($id) : null;
-        $tableRows       = $this->getTableRows($extra_data, $table_id, $ninja_chart);
-        $labels          = $this->labelFormat($keys, $tableRows, $chart_type, $extra_data);
-        $ntbDataProvider = ninja_table_get_data_provider($table_id);
+        $ninja_chart              = $id ? NinjaCharts::findOrFail($id) : null;
+        $extra_data['chart_type'] = $chart_type;
+        $tableRows                = $this->getTableRows($extra_data, $table_id, $ninja_chart);
+        $labels                   = $this->labelFormat($keys, $tableRows, $chart_type, $extra_data);
+        $ntbDataProvider          = ninja_table_get_data_provider($table_id);
 
         $data = [
             "labels"      => $labels,
@@ -83,13 +86,13 @@ class Module
             "chart_type"  => $chart_type,
             "keys"        => $keys,
             "ninja_chart" => $ninja_chart,
-            "data_source" => 'ninja_table',
+            "data_source" => ChartConstants::SOURCE_NINJA_TABLE,
             "field"       => 'value'
         ];
         if ($ntbDataProvider === 'google-csv') {
             return ($this->checkRenderEngine($data, $extra_data));
         } elseif (isset($extra_data['only_all_row'])) {
-            return ($this->getAllRowFromNinjaTableItem($table_id));
+            return ($this->getAllRowFromNinjaTableItem($table_id, $extra_data, $ninja_chart));
         } else {
             return ($this->checkRenderEngine($data, $extra_data));
         }
@@ -97,16 +100,19 @@ class Module
 
     public function checkRenderEngine($data, $extra_data)
     {
-        if ($extra_data['render_engine'] === 'google_charts') {
+        if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
             return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-        } elseif ($extra_data['render_engine'] === 'chart_js') {
+        } elseif (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
             return (new ChartJsModule())->chartDataFormat($data, $extra_data);
         }
+
+        return [];
     }
 
     public function renderChart($data)
     {
         $extra_data['render_engine'] = $data->render_engine;
+        $extra_data['chart_type']    = $data->chart_type;
         $keys                        = json_decode($data->final_keys, true);
         $chart_data                  = $this->getAllDataByTable(
             $data->table_id,
@@ -130,90 +136,23 @@ class Module
 
     public function getTableRows($extra_data, $table_id, $ninja_chart)
     {
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
-        $rows    = Arr::get($extra_data, 'rows') ? Arr::get($extra_data, 'rows') : Arr::get($options, 'row');
-        $number  = Arr::get($rows, 'number');
-
+        $options      = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
+        $rows         = Arr::get($extra_data, 'rows') ? Arr::get($extra_data, 'rows') : Arr::get($options, 'row');
         $hasRange     = Arr::get($rows, 'pick_range');
         $hasRangeDate = Arr::get($rows, 'pick_date');
         $remote_csv   = false;
-        $order        = Arr::get($rows, 'order', 'ASC');
         $sort         = $this->sortBy($table_id);
 
-        $ntbDataProvider = ninja_table_get_data_provider($table_id);
-
-        if ($ntbDataProvider === 'google-csv') {
-            if ($hasRange && $hasRange === 'true' || $hasRangeDate && $hasRangeDate === 'true') {
-                $tableRows = ninjaTablesGetTablesDataByID(
-                    $table_id,
-                    $tableColumns = [],
-                    $defaultSorting = false,
-                    $disableCache = false,
-                    0,
-                    $skip = false,
-                    $ownOnly = false
-                );
-
-                if (isset($rows['selected_row'])) {
-                    $uniqueKey   = apply_filters('ninja_charts_ntm_google_csv_unique_key', '');
-                    $selectedIds = array_column($rows['selected_row'], 'id');
-                    if ($uniqueKey) {
-                        $tableRows = array_filter($tableRows, function ($item) use ($selectedIds, $uniqueKey) {
-                            return in_array($item[$uniqueKey], $selectedIds);
-                        });
-                        $tableRows = array_values($tableRows);
-                    } else {
-                        $selectedIds = array_flip($selectedIds);
-                        $tableRows   = array_values(array_intersect_key($tableRows, $selectedIds));
-                    }
-                }
-
-                return apply_filters('ninja_charts_ntm_all_table_rows', $tableRows);
+        if (ninja_table_get_data_provider($table_id) === 'google-csv') {
+            $googleRows = $this->fetchGoogleCsvRows($table_id, $rows, $hasRange, $hasRangeDate);
+            if ($googleRows !== null) {
+                return apply_filters('ninja_charts_ntm_all_table_rows', $googleRows);
             }
         }
 
-        if ($hasRange && $hasRange === 'false' && $hasRangeDate && $hasRangeDate === 'false') {
-            $hasLocalRows = NinjaTableItem::whereTableId($table_id)->exists();
-            if (!$hasLocalRows) {
-                //  when no data found from DB table
-                $limit      = $number === '0' ? false : $number;
-                $remote_csv = true;
-                $tableRows  = ninjaTablesGetTablesDataByID(
-                    $table_id,
-                    $tableColumns = [],
-                    $defaultSorting = false,
-                    $disableCache = false,
-                    $limit,
-                    $skip = false,
-                    $ownOnly = false
-                );
-            } else {
-                if ($number === '0') {
-                    $tableRows = $this->getAllRowFromNinjaTableItem($table_id);
-                } else {
-                    $order = Helper::getOrderBy(Arr::get($rows, 'order', 'ASC'));
-
-                    $tableRows = NinjaTableItem::whereTableId($table_id)
-                                               ->select('value', 'id')
-                                               ->orderBy($sort, $order)
-                                               ->paginate($number);
-                }
-            }
-        } elseif ($hasRange && $hasRange === 'true' && $hasRangeDate && $hasRangeDate === 'false') {
-            if (isset($rows['selected_row']) && count($rows['selected_row']) > 0) {
-                $tableRows = $this->selectSpecificRowFromNinjaTableItem($table_id, $rows);
-            } else {
-                $tableRows = $this->getAllRowFromNinjaTableItem($table_id);
-            }
-        } elseif ($hasRange && $hasRange === 'false' && $hasRangeDate && $hasRangeDate === 'true') {
-            if (isset($rows['date_range']) && $rows['date_range'] !== null) {
-                $tableRows = $this->getAllRowByDateTime($table_id, $rows);
-            } else {
-                $tableRows = $this->getAllRowFromNinjaTableItem($table_id);
-            }
-        } else {
-            $tableRows = $this->getAllRowFromNinjaTableItem($table_id);
-        }
+        $tableRows = $this->fetchFilteredRows(
+            $table_id, $rows, $hasRange, $hasRangeDate, $sort, $extra_data, $ninja_chart, $remote_csv
+        );
 
         if (!$remote_csv) {
             $field     = 'value';
@@ -228,14 +167,105 @@ class Module
         return apply_filters('ninja_charts_ntm_all_table_rows', $tableRows);
     }
 
+    private function fetchGoogleCsvRows($table_id, $rows, $hasRange, $hasRangeDate)
+    {
+        if (!($hasRange && $hasRange === 'true' || $hasRangeDate && $hasRangeDate === 'true')) {
+            return null;
+        }
+
+        $tableRows = ninjaTablesGetTablesDataByID(
+            $table_id,
+            $tableColumns    = [],
+            $defaultSorting  = false,
+            $disableCache    = false,
+            0,
+            $skip            = false,
+            $ownOnly         = false
+        );
+
+        if (!isset($rows['selected_row'])) {
+            return $tableRows;
+        }
+
+        $uniqueKey   = apply_filters('ninja_charts_ntm_google_csv_unique_key', '');
+        $selectedIds = array_column($rows['selected_row'], 'id');
+
+        if ($uniqueKey) {
+            $tableRows = array_filter($tableRows, function ($item) use ($selectedIds, $uniqueKey) {
+                return in_array($item[$uniqueKey], $selectedIds);
+            });
+            return array_values($tableRows);
+        }
+
+        return array_values(array_intersect_key($tableRows, array_flip($selectedIds)));
+    }
+
+    private function fetchFilteredRows($table_id, $rows, $hasRange, $hasRangeDate, $sort, $extra_data, $ninja_chart, &$remote_csv)
+    {
+        $number = Arr::get($rows, 'number');
+
+        if ($hasRange && $hasRange === 'false' && $hasRangeDate && $hasRangeDate === 'false') {
+            return $this->fetchNumberLimitedRows($table_id, $rows, $number, $sort, $extra_data, $ninja_chart, $remote_csv);
+        }
+
+        if ($hasRange && $hasRange === 'true' && $hasRangeDate && $hasRangeDate === 'false') {
+            if (isset($rows['selected_row']) && count($rows['selected_row']) > 0) {
+                return $this->selectSpecificRowFromNinjaTableItem($table_id, $rows);
+            }
+            return $this->getAllRowFromNinjaTableItem($table_id, $extra_data, $ninja_chart);
+        }
+
+        if ($hasRange && $hasRange === 'false' && $hasRangeDate && $hasRangeDate === 'true') {
+            if (isset($rows['date_range']) && $rows['date_range'] !== null) {
+                return $this->getAllRowByDateTime($table_id, $rows);
+            }
+            return $this->getAllRowFromNinjaTableItem($table_id, $extra_data, $ninja_chart);
+        }
+
+        return $this->getAllRowFromNinjaTableItem($table_id, $extra_data, $ninja_chart);
+    }
+
+    private function fetchNumberLimitedRows($table_id, $rows, $number, $sort, $extra_data, $ninja_chart, &$remote_csv)
+    {
+        if (!NinjaTableItem::whereTableId($table_id)->exists()) {
+            $limit      = $number === '0' ? false : $number;
+            $remote_csv = true;
+            return ninjaTablesGetTablesDataByID(
+                $table_id,
+                $tableColumns    = [],
+                $defaultSorting  = false,
+                $disableCache    = false,
+                $limit,
+                $skip            = false,
+                $ownOnly         = false
+            );
+        }
+
+        if ($number === '0') {
+            return $this->getAllRowFromNinjaTableItem($table_id, $extra_data, $ninja_chart);
+        }
+
+        $order = Helper::getOrderBy(Arr::get($rows, 'order', 'ASC'));
+        return NinjaTableItem::whereTableId($table_id)
+                             ->select('value', 'id')
+                             ->orderBy($sort, $order)
+                             ->paginate($number);
+    }
+
     public function getAllRowByDateTime($table_id, $rows = [])
     {
-        $dates     = Arr::get($rows, 'date_range');
-        $date_from = isset($dates[0]) ? $dates[0] : '';
-        $date_to   = isset($dates[1]) ? $dates[1] : '';
+        $dates         = Arr::get($rows, 'date_range');
+        $date_from     = isset($dates[0]) ? $dates[0] : '';
+        $date_to       = isset($dates[1]) ? $dates[1] : '';
+        $date_from_str = $date_from ? substr($date_from, 4, 11) : '';
+        $date_to_str   = $date_to   ? substr($date_to,   4, 11) : '';
 
-        $dt_from = new DateTime(substr($date_from, 4, 11));
-        $dt_to   = new DateTime(substr($date_to, 4, 11));
+        if (!$date_from_str || !$date_to_str || strtotime($date_from_str) === false || strtotime($date_to_str) === false) {
+            return NinjaTableItem::whereTableId($table_id)->whereRaw('0 = 1')->select('value', 'id')->get();
+        }
+
+        $dt_from = new DateTime($date_from_str);
+        $dt_to   = new DateTime($date_to_str);
         $from    = $dt_from->format('Y-m-d 00:00:00');
         $to      = $dt_to->format('Y-m-d 23:59:59');
 
@@ -247,13 +277,10 @@ class Module
         return $tableRows;
     }
 
-    public function getAllRowFromNinjaTableItem($table_id)
+    public function getAllRowFromNinjaTableItem($table_id, $extra_data = [], $ninja_chart = null)
     {
-        $request = ninjaChartsSanitizeArray($_REQUEST); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $rows    = Arr::get($request, 'extra_data.rows') ? Arr::get($request, 'extra_data.rows') : Arr::get(
-            $request,
-            'options.row'
-        );
+        $options = $ninja_chart && isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : [];
+        $rows    = Arr::get($extra_data, 'rows') ?: Arr::get($options, 'row');
         $order   = Helper::getOrderBy(Arr::get($rows, 'order', 'ASC'));
         $sort    = $this->sortBy($table_id);
 
@@ -285,8 +312,11 @@ class Module
 
     public function sortBy($table_id)
     {
-        $first = NinjaTableItem::whereTableId($table_id)->select('position')->first();
-
-        return isset($first['position']) ? 'position' : 'created_at';
+        static $cache = [];
+        if (!array_key_exists($table_id, $cache)) {
+            $first = NinjaTableItem::whereTableId($table_id)->select('position')->first();
+            $cache[$table_id] = isset($first['position']) ? 'position' : 'created_at';
+        }
+        return $cache[$table_id];
     }
 }

@@ -13,6 +13,7 @@ $router->withPolicy('UserPolicy')->group(function ($app) {
     $app->post('charts/{id}', 'ChartController@update')->int('id');
     $app->get('charts/{id}', 'ChartController@find')->int('id');
     $app->post('charts/{id}/duplicate', 'ChartController@duplicate')->int('id');
+    $app->get('charts/{id}/export-csv', 'ExportController@exportCsv')->int('id');
     $app->post('process', 'ChartController@processData');
     $app->post('remove', 'ChartController@destroy');
 });

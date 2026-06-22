@@ -9,6 +9,7 @@ use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Modules\NinjaTables\CalculativeModule as NinjaTableCalculative;
 use NinjaCharts\App\Modules\FluentForms\CalculativeModule as FluentFormCalculative;
 use NinjaCharts\App\Modules\FluentForms\Module;
+use NinjaCharts\App\Constants\ChartConstants;
 
 class GoogleChartModule
 {
@@ -19,11 +20,11 @@ class GoogleChartModule
     {
         $data_source = Arr::get($data, 'data_source');
 
-        if ($data_source === 'ninja_table') {
+        if ($data_source === ChartConstants::SOURCE_NINJA_TABLE) {
             return $this->chartRenderByNinjaTable($data, $extra_data);
-        } elseif ($data_source === 'fluent_form') {
+        } elseif ($data_source === ChartConstants::SOURCE_FLUENT_FORM) {
             return $this->chartRenderByFluentForm($data, $extra_data);
-        } elseif ($data_source === 'manual_inputs') {
+        } elseif ($data_source === ChartConstants::SOURCE_MANUAL_DATA) {
             return $this->chartRenderByManualInput($data, $extra_data);
         }
     }
@@ -37,11 +38,11 @@ class GoogleChartModule
 
         if ($dataType === 'selection') {
             $chart_datas = (new NinjaTableCalculative())->chartData($data);
-            $chart_data  = $this->calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart);
+            $chart_data  = $this->calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart, $extra_data);
         } else {
-            $chart_data = $this->normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart);
+            $chart_data = $this->normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart, $extra_data);
         }
-        $chart_data = $this->legendFormat($chart_data, $keys, $ninja_chart);
+        $chart_data = $this->legendFormat($chart_data, $keys, $ninja_chart, $extra_data);
 
         return apply_filters('ninja_charts_ntm_all_data_by_table', $chart_data);
     }
@@ -55,22 +56,21 @@ class GoogleChartModule
 
         if ((new Module)->calculativeFields($dataType)) {
             $chart_datas = (new FluentFormCalculative())->chartData($data);
-            $chart_data  = $this->calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart);
+            $chart_data  = $this->calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart, $extra_data);
         } else {
-            $chart_data = $this->normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart);
+            $chart_data = $this->normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart, $extra_data);
         }
-        $chart_data = $this->legendFormat($chart_data, $keys, $ninja_chart);
+        $chart_data = $this->legendFormat($chart_data, $keys, $ninja_chart, $extra_data);
 
         return apply_filters('ninja_charts_ffm_data_by_table', $chart_data);
     }
 
-    public function normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart)
+    public function normalDataFormatForNinjaTableAndFluentForm($tableRows, $keys, $ninja_chart, $extra_data = [])
     {
         $chart_data  = [];
         $label_key   = $this->labelKey($keys);
-        $request     = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $chart_types = ['PieChart', 'DonutChart'];
-        $chart_type  = Arr::get($request, 'chart_type') ?: $ninja_chart['chart_type'];
+        $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
 
         foreach ($keys as $key => $value) {
             if ($label_key === $value['key']) {
@@ -84,7 +84,7 @@ class GoogleChartModule
                 $ke   = $v['key'];
                 $data = isset($value[$ke]) ? $value[$ke] : null;
 
-                if ((gettype($data) === 'string') && ($data !== null)) {
+                if ((is_string($data)) && ($data !== null)) {
                     if ($k === 0) {
                         $val[] = (string)$data;
                     } else {
@@ -96,7 +96,7 @@ class GoogleChartModule
                     }
                 } else {
                     foreach ($value as $kk => $vv) {
-                        if (gettype($value[$kk]) === 'array') {
+                        if (is_array($value[$kk])) {
                             if (isset($vv[$ke]) && $vv[$ke] !== null) {
                                 if ($k === 0) {
                                     $val[] = (string)$vv[$ke];
@@ -122,9 +122,8 @@ class GoogleChartModule
     {
         $manual_inputs = Arr::get($data, 'manual_inputs');
         $ninja_chart   = Arr::get($data, 'ninja_chart');
-        $request       = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $chart_types   = ['PieChart', 'DonutChart'];
-        $chart_type    = Arr::get($request, 'chart_type') ?: Arr::get($ninja_chart, 'chart_type');
+        $chart_type    = Arr::get($extra_data, 'chart_type') ?: Arr::get($ninja_chart, 'chart_type');
 
         $chart_data = [];
         $keys       = array_keys(end($manual_inputs));
@@ -147,13 +146,10 @@ class GoogleChartModule
         }
 
         if (in_array($chart_type, $chart_types)) {
-            return $this->calculativeLegendFormat($ninja_chart, $chart_data);
+            return $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data);
         } else {
             $first_row = [];
-            $series    = Arr::get(
-                $request,
-                'extra_data.series'
-            ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $series    = Arr::get($extra_data, 'series');
             $options   = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
             if (isset($series)) {
                 array_unshift($series, '');
@@ -177,13 +173,12 @@ class GoogleChartModule
         }
     }
 
-    public function calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart)
+    public function calculativeDataFormatForNinjaTableAndFluentForm($chart_datas, $ninja_chart, $extra_data = [])
     {
         $chartdata   = $chart_datas['chart_data']['chart_data'];
         $c_labels    = $chart_datas['labels'];
-        $request     = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $chart_types = ['PieChart', 'DonutChart'];
-        $chart_type  = Arr::get($request, 'chart_type') ?: $ninja_chart['chart_type'];
+        $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
         $values      = [];
         $chart_data  = [];
         foreach ($chartdata as $key => $value) {
@@ -213,25 +208,24 @@ class GoogleChartModule
         return $chart_data;
     }
 
-    public function legendFormat($chart_data, $keys, $ninja_chart)
+    public function legendFormat($chart_data, $keys, $ninja_chart, $extra_data = [])
     {
         if (count($keys) === 1) {
-            $chart_data = $this->calculativeLegendFormat($ninja_chart, $chart_data);
+            $chart_data = $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data);
         } else {
-            $chart_data = $this->otherLegendFormat($keys, $ninja_chart, $chart_data);
+            $chart_data = $this->otherLegendFormat($keys, $ninja_chart, $chart_data, $extra_data);
         }
 
         return $chart_data;
     }
 
-    public function calculativeLegendFormat($ninja_chart, $chart_data)
+    public function calculativeLegendFormat($ninja_chart, $chart_data, $extra_data = [])
     {
         $chart_types = ['PieChart', 'DonutChart'];
-        $request     = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $chart_type  = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
+        $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
 
         if (in_array($chart_type, $chart_types)) {
-            $series  = Arr::get($request, 'extra_data.series');
+            $series  = Arr::get($extra_data, 'series');
             $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
 
             if ($series != null) {
@@ -253,20 +247,16 @@ class GoogleChartModule
         return $chart_data;
     }
 
-    public function otherLegendFormat($keys, $ninja_chart, $chart_data)
+    public function otherLegendFormat($keys, $ninja_chart, $chart_data, $extra_data = [])
     {
         $chart_types = ['PieChart', 'DonutChart'];
-        $request     = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $chart_type  = Arr::get($request, 'chart_type') ? Arr::get($request, 'chart_type') : $ninja_chart['chart_type'];
+        $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
         if (in_array($chart_type, $chart_types)) {
-            return $this->calculativeLegendFormat($ninja_chart, $chart_data);
+            return $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data);
         } else {
             $label_key = $this->labelKey($keys);
             $first_row = [];
-            $series    = Arr::get(
-                $request,
-                'extra_data.series'
-            ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $series    = Arr::get($extra_data, 'series');
             $options   = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
             if (isset($series)) {
                 array_unshift($series, '');

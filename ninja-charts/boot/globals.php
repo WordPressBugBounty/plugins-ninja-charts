@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * This file will be loaded even before the framework is loaded
  * so the $app is not available here, only declare functions here.
  */
-is_readable(__DIR__ . '/globals_dev.php') && include 'globals_dev.php';
+defined('WP_DEBUG') && WP_DEBUG && is_readable(__DIR__ . '/globals_dev.php') && include 'globals_dev.php';
 
 if ($app->config->get('app.env') == 'dev') {
     $ninjaChartsGlobalsDevFile = __DIR__ . '/globals_dev.php';

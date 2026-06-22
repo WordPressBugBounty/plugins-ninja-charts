@@ -98,5 +98,7 @@ class SourceController extends Controller
                 ]);
             }
         }
+
+        return $this->sendSuccess(['chart_data' => []]);
     }
 }

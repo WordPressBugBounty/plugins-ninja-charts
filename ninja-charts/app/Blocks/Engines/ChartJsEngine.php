@@ -5,6 +5,7 @@ namespace NinjaCharts\App\Blocks\Engines;
 defined('ABSPATH') || exit;
 
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 
 /**
@@ -16,7 +17,7 @@ class ChartJsEngine implements ChartEngineInterface {
 	 * {@inheritDoc}
 	 */
 	public static function id(): string {
-		return 'chart_js';
+		return ChartConstants::ENGINE_CHART_JS;
 	}
 
 	/**

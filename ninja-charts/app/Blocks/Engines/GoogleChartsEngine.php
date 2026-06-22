@@ -5,6 +5,7 @@ namespace NinjaCharts\App\Blocks\Engines;
 defined('ABSPATH') || exit;
 
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 
 /**
@@ -30,7 +31,7 @@ class GoogleChartsEngine implements ChartEngineInterface {
 	 * {@inheritDoc}
 	 */
 	public static function id(): string {
-		return 'google_charts';
+		return ChartConstants::ENGINE_GOOGLE_CHARTS;
 	}
 
 	/**

@@ -10,6 +10,7 @@ use NinjaCharts\App\Modules\NinjaTables\CalculativeModule as NinjaTableCalculati
 use NinjaCharts\App\Modules\FluentForms\CalculativeModule as FluentFormCalculative;
 use NinjaCharts\App\Modules\FluentForms\Module;
 use NinjaCharts\App\Modules\ManualModule;
+use NinjaCharts\App\Constants\ChartConstants;
 
 class ChartJsModule
 {
@@ -21,13 +22,13 @@ class ChartJsModule
     {
         $data_source = Arr::get($data, 'data_source');
 
-        if ($data_source === 'ninja_table') {
+        if ($data_source === ChartConstants::SOURCE_NINJA_TABLE) {
             return $this->ninjaTableDataFormat($data, $extra_data);
         } else {
-            if ($data_source === 'fluent_form') {
+            if ($data_source === ChartConstants::SOURCE_FLUENT_FORM) {
                 return $this->fluentFormDataFormat($data, $extra_data);
             } else {
-                if ($data_source === 'manual_inputs') {
+                if ($data_source === ChartConstants::SOURCE_MANUAL_DATA) {
                     return $this->manualDataFormat($data, $extra_data);
                 }
             }

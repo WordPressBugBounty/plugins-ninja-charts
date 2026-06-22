@@ -170,8 +170,8 @@ jQuery(document).ready(function () {
                                 beginAtZero: true,
                                 precision: 2,
                             },
-                            min: parseInt(options.axes.verticle_min_tick) ? parseInt(options.axes.verticle_min_tick) : null,
-                            max: parseInt(options.axes.verticle_max_tick) ? parseInt(options.axes.verticle_max_tick) : null
+                            min: parseInt(options.axes.vertical_min_tick || options.axes.verticle_min_tick) || null,
+                            max: parseInt(options.axes.vertical_max_tick || options.axes.verticle_max_tick) || null
                         },
                     },
                     layout: {
@@ -183,19 +183,6 @@ jQuery(document).ready(function () {
                         }
                     }
                 };
-
-                if (chartOptions.scales.y) {
-                    if (!options.axes.verticle_min_tick || isNaN(options.axes.verticle_min_tick)) {
-                        delete chartOptions.scales.y.ticks.min;
-                    } else {
-                        chartOptions.scales.y.ticks.min = parseInt(options.axes.verticle_min_tick);
-                    }
-                    if (!options.axes.verticle_max_tick || isNaN(options.axes.verticle_max_tick)) {
-                        delete chartOptions.scales.y.ticks.max;
-                    } else {
-                        chartOptions.scales.y.ticks.max = parseInt(options.axes.verticle_max_tick);
-                    }
-                }
 
                 if (options.chart.responsive === 'false') {
                     let marginStyle = {
@@ -226,6 +213,13 @@ jQuery(document).ready(function () {
                     chartOptions.plugins.legend.display = false;
                 }
 
+                const exportMode  = new URLSearchParams(window.location.search).get('ninja_chart_export');
+                const isExportMode = exportMode === 'png' || exportMode === 'pdf';
+
+                if (isExportMode) {
+                    chartOptions.animation = false;
+                }
+
                 let config = {
                     type: chartType,
                     data: renderData.chart_data,
@@ -236,7 +230,7 @@ jQuery(document).ready(function () {
                 if (renderData.options && renderData.chart_data.datasets) {
                     let options = renderData.options;
                     options = (typeof options) === 'string' ? JSON.parse(options) : options;
-                    
+
                     if (options.series && renderData.chart_data.datasets) {
                         options.series.forEach((series, index) => {
                             if (renderData.chart_data.datasets[index]) {
@@ -275,7 +269,52 @@ jQuery(document).ready(function () {
                 }
 
                 new Chart(ctx, config);
-                // window[chartInstance] = new Chart(ctx, config);
+
+                if (isExportMode) {
+                    const exportCanvas = document.createElement('canvas');
+                    exportCanvas.width  = canvas.width;
+                    exportCanvas.height = canvas.height;
+                    const exportCtx = exportCanvas.getContext('2d');
+                    exportCtx.fillStyle = '#ffffff';
+                    exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+                    exportCtx.drawImage(canvas, 0, 0);
+
+                    const chartName = renderData.chart_name || 'chart';
+
+                    if (exportMode === 'png') {
+                        exportCanvas.toBlob(function (blob) {
+                            const url = URL.createObjectURL(blob);
+                            const a   = document.createElement('a');
+                            a.href     = url;
+                            a.download = chartName + '.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            setTimeout(function () { window.close(); }, 1000);
+                        }, 'image/png');
+                    } else if (exportMode === 'pdf') {
+                        const imgData     = exportCanvas.toDataURL('image/png', 1.0);
+                        const w           = exportCanvas.width  * 0.75; // px → pt (96dpi: 1px = 0.75pt)
+                        const h           = exportCanvas.height * 0.75;
+                        const orientation = w >= h ? 'landscape' : 'portrait';
+                        function generatePdf() {
+                            const { jsPDF } = window.jspdf;
+                            const doc       = new jsPDF({ orientation: orientation, unit: 'pt', format: [w, h] });
+                            doc.addImage(imgData, 'PNG', 0, 0, w, h);
+                            doc.save(chartName + '.pdf');
+                            setTimeout(function () { window.close(); }, 1000);
+                        }
+                        if (window.jspdf) {
+                            generatePdf();
+                        } else {
+                            var jspdfScript   = document.createElement('script');
+                            jspdfScript.src   = window.chartJSPublic.jspdf_url;
+                            jspdfScript.onload = generatePdf;
+                            document.head.appendChild(jspdfScript);
+                        }
+                    }
+                }
             })
         }
     })();

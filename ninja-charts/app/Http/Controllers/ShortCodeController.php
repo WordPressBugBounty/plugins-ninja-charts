@@ -10,6 +10,7 @@ use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Traits\ChartOption;
 use NinjaCharts\App\Modules\Provider;
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 class ShortCodeController extends Controller
 {
@@ -29,6 +30,18 @@ class ShortCodeController extends Controller
                 'message' => __('Invalid request method', 'ninja-charts')
             ], 405);
         }
+
+        // Rate limit: max 60 requests per minute per IP.
+        $ip   = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+        $rk   = 'ninja_charts_rate_' . md5($ip);
+        $hits = (int) get_transient($rk);
+        if ($hits >= 60) {
+            wp_send_json([
+                'success' => false,
+                'message' => __('Too many requests', 'ninja-charts')
+            ], 429);
+        }
+        set_transient($rk, $hits + 1, 60);
 
         $chartId = isset($_GET['chart_id']) ? intval($_GET['chart_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -92,7 +105,7 @@ class ShortCodeController extends Controller
             'id' => null,
         ], $atts, $tag);
 
-        $id = Arr::get($wporg_atts, 'id');
+        $id = intval(Arr::get($wporg_atts, 'id'));
         $ninjaCharts = NinjaCharts::find($id);
         if ($ninjaCharts) {
             return $this->renderView($ninjaCharts);
@@ -119,11 +132,11 @@ class ShortCodeController extends Controller
 
         self::enqueueLoaderScript();
 
-        if ($ninjaCharts->render_engine === 'chart_js') {
+        if ($ninjaCharts->render_engine === ChartConstants::ENGINE_CHART_JS) {
             self::chartJsAssets();
             do_action('ninja_charts_shortcode_assets_loaded');
             return $app->view->make('public.chart_js', compact('options', 'chart_keys'));
-        } else if ($ninjaCharts->render_engine === 'google_charts'){
+        } else if ($ninjaCharts->render_engine === ChartConstants::ENGINE_GOOGLE_CHARTS){
             self::googleChartsAssets();
             do_action('ninja_charts_shortcode_assets_loaded');
             return $app->view->make('public.google_charts', compact('options', 'chart_keys'));
@@ -173,6 +186,15 @@ class ShortCodeController extends Controller
             true
         );
 
+        // Registered only — loaded on demand by render.js when a PDF export is triggered.
+        wp_register_script(
+            'ninja_charts_jspdf',
+            $assets . 'public/js/library/jspdf.umd.min.js',
+            array(),
+            '2.5.1',
+            true
+        );
+
         wp_enqueue_script(
             'chart_js_chart_render_js',
             $assets . 'public/js/render.js',
@@ -182,7 +204,8 @@ class ShortCodeController extends Controller
         );
 
         wp_localize_script('chart_js_chart_render_js', 'chartJSPublic', [
-            'ajax_url' => admin_url('admin-ajax.php'),
+            'ajax_url'  => admin_url('admin-ajax.php'),
+            'jspdf_url' => $assets . 'public/js/library/jspdf.umd.min.js',
         ]);
     }
 

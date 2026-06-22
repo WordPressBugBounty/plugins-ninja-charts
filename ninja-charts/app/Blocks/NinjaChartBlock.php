@@ -8,6 +8,7 @@ use NinjaCharts\App\Blocks\Engines\EngineRegistry;
 use NinjaCharts\App\Blocks\Engines\ChartJsEngine;
 use NinjaCharts\App\Blocks\Engines\GoogleChartsEngine;
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 
 /**
@@ -111,7 +112,7 @@ class NinjaChartBlock {
 	 */
 	public static function render($attributes) {
 		$attributes = wp_parse_args($attributes, [
-			'chartLibrary' => 'chart_js',
+			'chartLibrary' => ChartConstants::ENGINE_CHART_JS,
 			'chartType'    => 'bar',
 			'labels'       => [ 'Jan', 'Feb', 'Mar' ],
 			'datasets'     => [],
@@ -158,7 +159,7 @@ class NinjaChartBlock {
 		$height     = (int) Arr::get($chart, 'height', 400);
 		$width      = (int) Arr::get($chart, 'width', 600);
 		$responsive = self::bool(Arr::get($chart, 'responsive', true));
-		$bg_color   = Arr::get($chart, 'backgroundColor', '#ffffff');
+		$bg_color   = self::sanitizeCssColor(Arr::get($chart, 'backgroundColor', '#ffffff'), '#ffffff');
 		$position   = Arr::get($chart, 'position', 'center');
 		$radius_raw = Arr::get($chart, 'borderRadius', '0px');
 
@@ -206,9 +207,9 @@ class NinjaChartBlock {
 				$parts[] = sprintf(
 					'border-%s: %s %s %s',
 					$side,
-					Arr::get($s, 'width', '0px'),
-					Arr::get($s, 'style', 'solid'),
-					Arr::get($s, 'color', 'transparent')
+					self::sanitizeCssDimension(Arr::get($s, 'width', '0px'), '0px'),
+					self::sanitizeBorderStyle(Arr::get($s, 'style', 'solid')),
+					self::sanitizeCssColor(Arr::get($s, 'color', 'transparent'), 'transparent')
 				);
 			}
 			return $parts;
@@ -218,9 +219,9 @@ class NinjaChartBlock {
 		return [
 			sprintf(
 				'border: %s %s %s',
-				Arr::get($border, 'width', '0px'),
-				Arr::get($border, 'style', 'solid'),
-				Arr::get($border, 'color', 'transparent')
+				self::sanitizeCssDimension(Arr::get($border, 'width', '0px'), '0px'),
+				self::sanitizeBorderStyle(Arr::get($border, 'style', 'solid')),
+				self::sanitizeCssColor(Arr::get($border, 'color', 'transparent'), 'transparent')
 			),
 		];
 	}
@@ -233,14 +234,14 @@ class NinjaChartBlock {
 		if (is_array($radius)) {
 			return sprintf(
 				'%s %s %s %s',
-				Arr::get($radius, 'topLeft', '0px'),
-				Arr::get($radius, 'topRight', '0px'),
-				Arr::get($radius, 'bottomRight', '0px'),
-				Arr::get($radius, 'bottomLeft', '0px')
+				self::sanitizeCssDimension(Arr::get($radius, 'topLeft', '0px'), '0px'),
+				self::sanitizeCssDimension(Arr::get($radius, 'topRight', '0px'), '0px'),
+				self::sanitizeCssDimension(Arr::get($radius, 'bottomRight', '0px'), '0px'),
+				self::sanitizeCssDimension(Arr::get($radius, 'bottomLeft', '0px'), '0px')
 			);
 		}
 
-		return $radius ?: '0px';
+		return self::sanitizeCssDimension($radius ?: '0px', '0px');
 	}
 
 	/*
@@ -254,5 +255,36 @@ class NinjaChartBlock {
 	 */
 	private static function bool($val) {
 		return $val === true || $val === 'true';
+	}
+
+	/**
+	 * Sanitize a CSS color value. Allows hex colors and the keywords
+	 * 'transparent' and 'inherit'. Anything else falls back to $default.
+	 */
+	private static function sanitizeCssColor($color, $default = '#ffffff') {
+		if ($color === 'transparent' || $color === 'inherit') {
+			return $color;
+		}
+		$sanitized = sanitize_hex_color((string) $color);
+		return $sanitized ?: $default;
+	}
+
+	/**
+	 * Sanitize a CSS dimension value (e.g. "10px", "1.5em", "50%").
+	 * Rejects anything that could inject additional CSS properties.
+	 */
+	private static function sanitizeCssDimension($value, $default = '0px') {
+		if (preg_match('/^\d+(\.\d+)?(px|em|rem|%|vh|vw)$/', trim((string) $value))) {
+			return trim((string) $value);
+		}
+		return $default;
+	}
+
+	/**
+	 * Sanitize a CSS border-style keyword against an explicit allowlist.
+	 */
+	private static function sanitizeBorderStyle($style) {
+		$allowed = ['solid', 'dashed', 'dotted', 'double', 'none', 'hidden'];
+		return in_array($style, $allowed, true) ? $style : 'solid';
 	}
 }

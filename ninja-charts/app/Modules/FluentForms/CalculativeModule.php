@@ -2,36 +2,12 @@
 
 namespace NinjaCharts\App\Modules\FluentForms;
 
-use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Services\CountryName;
+use NinjaCharts\App\Traits\CalculativeChartTrait;
 
 class CalculativeModule extends Module
 {
-    public function chartData($data)
-    {
-        $chart_type = Arr::get($data, 'chart_type');
-        if ($chart_type !== 'bubble' && $chart_type !== 'scatter') {
-            return $this->chartyByDataType($data);
-        }
-    }
-
-    public function chartyByDataType($data)
-    {
-        $entries       = Arr::get($data, 'labels.labels');
-        $rows          = Arr::get($data, 'tableRows');
-        $data_type     = Arr::get($data, 'keys.0.data_type');
-        $submissions   = (float)count($rows);
-        $processedData = $this->calculate($entries, $submissions, $data_type);
-
-        $data = [
-            'labels'     => Arr::get($processedData, 'labels'),
-            'chart_data' => [
-                'chart_data' => Arr::get($processedData, 'values')
-            ]
-        ];
-
-        return $data;
-    }
+    use CalculativeChartTrait;
 
     public function calculate($entries, $submissions, $data_type)
     {

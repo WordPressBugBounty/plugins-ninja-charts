@@ -2,7 +2,7 @@
 
 namespace NinjaCharts\App\Http\Controllers;
 
-use NinjaCharts\Framework\Request\Request;
+use NinjaCharts\Framework\Http\Request\Request;
 
 class WelcomeController extends Controller
 {

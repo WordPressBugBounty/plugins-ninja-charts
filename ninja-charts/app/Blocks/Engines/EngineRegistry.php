@@ -5,6 +5,7 @@ namespace NinjaCharts\App\Blocks\Engines;
 defined('ABSPATH') || exit;
 
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 
 class EngineRegistry {
@@ -26,7 +27,7 @@ class EngineRegistry {
 	 * Get an engine class by ID. Falls back to chart_js.
 	 */
 	public static function get(string $id): string {
-		return Arr::get(self::$engines, $id, Arr::get(self::$engines, 'chart_js', ''));
+		return Arr::get(self::$engines, $id, Arr::get(self::$engines, ChartConstants::ENGINE_CHART_JS, ''));
 	}
 
 	/**

@@ -56,6 +56,7 @@
     "/public/js/google-chart-render.js": "/public/js/google-chart-render.js",
     "/public/js/library/chart.umd.js": "/public/js/library/chart.umd.js",
     "/public/js/library/chartjs-chart-funnel.umd.min.js": "/public/js/library/chartjs-chart-funnel.umd.min.js",
+    "/public/js/library/jspdf.umd.min.js": "/public/js/library/jspdf.umd.min.js",
     "/public/js/ninja-charts-block-render.js": "/public/js/ninja-charts-block-render.js",
     "/public/js/ninja-charts-google-block-render.js": "/public/js/ninja-charts-google-block-render.js",
     "/public/js/render.js": "/public/js/render.js",

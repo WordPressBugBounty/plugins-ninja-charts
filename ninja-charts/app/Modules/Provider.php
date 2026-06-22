@@ -4,12 +4,13 @@ namespace NinjaCharts\App\Modules;
 
 use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
 use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Constants\ChartConstants;
 
 class Provider
 {
     public static function get($source)
     {
-        $allowed = ['ninja_table', 'fluent_form', 'manual'];
+        $allowed = [ChartConstants::SOURCE_NINJA_TABLE, ChartConstants::SOURCE_FLUENT_FORM, ChartConstants::SOURCE_MANUAL];
 
         if ( ! in_array($source, $allowed, true)) {
             return new \WP_Error(
@@ -22,11 +23,11 @@ class Provider
             );
         }
 
-        if ($source === 'ninja_table' && defined('NINJA_TABLES_VERSION')) {
+        if ($source === ChartConstants::SOURCE_NINJA_TABLE && defined('NINJA_TABLES_VERSION')) {
             return new NinjaTables\Module();
-        } else if ($source === 'fluent_form' && defined('FLUENTFORM_VERSION')) {
+        } else if ($source === ChartConstants::SOURCE_FLUENT_FORM && defined('FLUENTFORM_VERSION')) {
             return new FluentForms\Module();
-        } else if ($source === 'manual') {
+        } else if ($source === ChartConstants::SOURCE_MANUAL) {
             return new ManualModule();
         }
 
@@ -42,9 +43,9 @@ class Provider
 
     public static function renderEngine($render_engine)
     {
-        if ($render_engine === 'chart_js') {
+        if ($render_engine === ChartConstants::ENGINE_CHART_JS) {
             return new ChartJsModule();
-        } else if ($render_engine === 'google_chart'){
+        } else if ($render_engine === ChartConstants::ENGINE_GOOGLE_CHARTS){
             return new GoogleChartModule();
         }
     }

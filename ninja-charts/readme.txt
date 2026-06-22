@@ -4,7 +4,7 @@ Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive C
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,6 +156,13 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.4.2 (Date: June 22, 2026) =
+* Added: Export charts as CSV, PNG, and PDF
+* Added: Import a CSV file to create a new chart
+* Improvement: Performance and optimizations across chart rendering
+* Fix: Handle large CSV imports without freezing
+* Fix: Include slice labels when coloring CSV-imported pie charts
 
 = 3.4.1 (Date: May 25, 2026) =
 * Fix: Reject unrecognised chart types on save

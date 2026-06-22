@@ -46,7 +46,10 @@
     "scripts": {
         "post-update-cmd": [
             "NinjaCharts\\App\\ComposerScript::postUpdate"
-        ]
+        ],
+        "test": "dev/vendor/bin/phpunit -c dev/phpunit.xml.dist",
+        "test:verbose": "dev/vendor/bin/phpunit -c dev/phpunit.xml.dist --testdox",
+        "test:coverage": "XDEBUG_MODE=coverage dev/vendor/bin/phpunit -c dev/phpunit.xml.dist --coverage-text"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

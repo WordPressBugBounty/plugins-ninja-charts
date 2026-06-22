@@ -4,13 +4,26 @@ namespace NinjaCharts\App\Models;
 
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\Framework\Database\Orm\Model;
+use NinjaCharts\App\Constants\ChartConstants;
 
 class NinjaCharts extends Model
 {
     protected $table = 'ninja_charts';
 
+    private $optionsCache = [];
+
+    public function decodedOptions($asArray = false)
+    {
+        $key = $asArray ? 'array' : 'object';
+        if (!array_key_exists($key, $this->optionsCache)) {
+            $this->optionsCache[$key] = $this->options ? json_decode($this->options, $asArray) : null;
+        }
+        return $this->optionsCache[$key];
+    }
+
     public static function store($data, $id = null)
     {
+        $id = $id ? intval($id) : null;
         do_action('ninja_charts_before_chart_save_or_update', $data);
         $options = Arr::get($data, 'options');
         $datasets = json_decode(Arr::get($data, 'datasets', false), true);
@@ -60,12 +73,12 @@ class NinjaCharts extends Model
     public static function allRow($ninja_charts, $data, $options, $clone)
     {
         $final_keys = '';
-        if (gettype(Arr::get($data, 'final_keys')) === 'string') {
+        if (is_string(Arr::get($data, 'final_keys'))) {
             $final_keys = json_decode(Arr::get($data, 'final_keys'));
         } else {
             $final_keys = (Arr::get($data, 'final_keys'));
         }
-        $ninja_charts->table_id = Arr::get($data, 'data_source') === 'manual' ? 0 : Arr::get($data, 'table_id');
+        $ninja_charts->table_id = Arr::get($data, 'data_source') === ChartConstants::SOURCE_MANUAL ? 0 : Arr::get($data, 'table_id');
         $ninja_charts->chart_name = Arr::get($data, 'chart_name');
         $ninja_charts->render_engine = Arr::get($data, 'render_engine');
         $ninja_charts->chart_type = Arr::get($data, 'chart_type');

@@ -13,8 +13,10 @@ use NinjaCharts\App\Models\FluentFormSubmission;
 use NinjaCharts\App\Modules\CalculativeFields;
 use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
 use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Modules\DataSourceInterface;
+use NinjaCharts\App\Constants\ChartConstants;
 
-class Module
+class Module implements DataSourceInterface
 {
     public $data;
     use ChartDesignHelper;
@@ -84,11 +86,12 @@ class Module
 
     public function getAllDataByTable($table_id = null, $keys = null, $chart_type = null, $extra_data = [], $id = null)
     {
-        if (gettype($keys) === 'string') {
+        if (is_string($keys)) {
             $keys = json_decode($keys, true);
         }
-        $ninja_chart = $id ? NinjaCharts::findOrFail($id) : null;
-        $tableRows = $this->getTableRows($extra_data, $table_id, $ninja_chart);
+        $ninja_chart              = $id ? NinjaCharts::findOrFail($id) : null;
+        $extra_data['chart_type'] = $chart_type;
+        $tableRows                = $this->getTableRows($extra_data, $table_id, $ninja_chart);
 
         $labels = $this->labelFormat($keys, $tableRows, $field = 'response');
         $data = [
@@ -97,23 +100,26 @@ class Module
             "chart_type" => $chart_type,
             "keys" => $keys,
             "ninja_chart" => $ninja_chart,
-            "data_source" => 'fluent_form',
+            "data_source" => ChartConstants::SOURCE_FLUENT_FORM,
             "field" => 'response'
         ];
         if (isset($extra_data['only_all_row'])) {
             return ($this->getFormSubmissionRows($table_id));
         } else {
-            if ($extra_data['render_engine'] === 'google_charts') {
+            if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
                 return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-            } else if($extra_data['render_engine'] === 'chart_js') {
+            } else if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
                 return (new ChartJsModule())->chartDataFormat($data, $extra_data);
             }
         }
+
+        return [];
     }
 
     public function renderChart($data)
     {
         $extra_data['render_engine'] = $data->render_engine;
+        $extra_data['chart_type']    = $data->chart_type;
         $keys = json_decode($data->final_keys, true);
         $chart_data = $this->getAllDataByTable($data->table_id, $keys, $data->chart_type, $extra_data, $data->id);
         return $chart_data;
@@ -161,14 +167,20 @@ class Module
 
     public function getAllRowByDateTime($table_id, $rows)
     {
-        $dates =  Arr::get($rows, 'date_range');
-        $date_from = isset($dates[0]) ? $dates[0] : '';
-        $date_to = isset($dates[1]) ? $dates[1] : '';
+        $dates         = Arr::get($rows, 'date_range');
+        $date_from     = isset($dates[0]) ? $dates[0] : '';
+        $date_to       = isset($dates[1]) ? $dates[1] : '';
+        $date_from_str = $date_from ? substr($date_from, 4, 11) : '';
+        $date_to_str   = $date_to   ? substr($date_to,   4, 11) : '';
 
-        $dt_from = new DateTime(substr($date_from, 4, 11));
-        $dt_to = new DateTime(substr($date_to, 4, 11));
-        $from = $dt_from->format('Y-m-d 00:00:00');
-        $to = $dt_to->format('Y-m-d 23:59:59');
+        if (!$date_from_str || !$date_to_str || strtotime($date_from_str) === false || strtotime($date_to_str) === false) {
+            return apply_filters('ninja_charts_ffm_filter_by_date_rows', FluentFormSubmission::whereFormId($table_id)->whereRaw('0 = 1')->select('response', 'id')->get());
+        }
+
+        $dt_from   = new DateTime($date_from_str);
+        $dt_to     = new DateTime($date_to_str);
+        $from      = $dt_from->format('Y-m-d 00:00:00');
+        $to        = $dt_to->format('Y-m-d 23:59:59');
         $tableRows = FluentFormSubmission::whereBetween('created_at', [$from, $to])
             ->whereFormId($table_id)
             ->where('status', '!=', 'trashed')

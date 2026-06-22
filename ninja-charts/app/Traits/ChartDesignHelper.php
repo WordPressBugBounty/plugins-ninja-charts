@@ -3,6 +3,7 @@
 namespace NinjaCharts\App\Traits;
 
 use NinjaCharts\Framework\Support\Arr;
+use NinjaCharts\App\Constants\ChartConstants;
 
 trait ChartDesignHelper
 {
@@ -41,7 +42,7 @@ trait ChartDesignHelper
         $bg_color = '';
         $color = [];
         if ($ninja_chart !== null) {
-            $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
+            $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
             if (isset($options->background_color)) {
                 $colors = [];
                 foreach ($options->background_color as $key => $value) {
@@ -53,7 +54,7 @@ trait ChartDesignHelper
                 $bg_color = $color;
             }
         }
-        return $chart_type === 'line' ? $bg_color = 'transparent' : $bg_color;
+        return $chart_type === 'line' ? 'transparent' : $bg_color;
     }
 
     public function dynamicBorderColor($ninja_chart = null, $chart_type = null)
@@ -61,7 +62,7 @@ trait ChartDesignHelper
         $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $border_color = '';
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
         if (isset($series)) {
             $border_color = $series;
         } else {
@@ -83,19 +84,15 @@ trait ChartDesignHelper
         $border_color = '';
         $bd_color = $this->dynamicBorderColor($ninja_chart, $chart_type);
 
-        if (isset($bd_color[$i]) && gettype($bd_color[$i]) === 'object') {
+        if (isset($bd_color[$i]) && is_object($bd_color[$i])) {
             $color_label = (array)$bd_color[$i];
         } else {
             $color_label = isset($bd_color[$i]) ? $bd_color[$i] : '';
         }
         $border_color = isset($color_label['color']) ? $color_label['color'] : '';
 
-        if ($border_color) {
-            $border_color  = $border_color;
-        } else {
-            if (isset($bd_color['bd_color'][$i])) {
-                $border_color = $bd_color['bd_color'][$i];
-            }
+        if (!$border_color && isset($bd_color['bd_color'][$i])) {
+            $border_color = $bd_color['bd_color'][$i];
         }
         return $border_color;
     }
@@ -124,7 +121,7 @@ trait ChartDesignHelper
             } else {
                 $labels = [];
                 foreach ($items as $key => $value) {
-                    if (gettype($value) === 'array') {
+                    if (is_array($value)) {
                         $target = $key . '.' . $label_key;
                         if (Arr::get($items, $target) !== null) {
                             $labels[] = isset($items[$key][$label_key]) ? $items[$key][$label_key] : '';
@@ -145,7 +142,7 @@ trait ChartDesignHelper
     public function piePolarDoughnutLabelFormat($ninja_chart, $chart_type, $new_labels, $c_labels = null, $extra_data = null)
     {
         $chart_types = ['pie', 'polarArea', 'doughnut', 'funnel'];
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions(true) : null;
         if (in_array($chart_type, $chart_types)) {
             $labels = [];
             if (isset($extra_data['series'])) {
@@ -163,7 +160,7 @@ trait ChartDesignHelper
                     }
                 } else {
                     foreach ($new_labels as $value) {
-                        if (gettype($value) === 'array') {
+                        if (is_array($value)) {
                             $labels[] = $value[0];
                         } else {
                             $labels[] = $value;
@@ -171,28 +168,16 @@ trait ChartDesignHelper
                     }
                 }
             }
-            if (in_array($chart_type, $chart_types)) {
-                if (count($labels) > 0) {
-                    if (($c_labels !== null) && count($c_labels) === count($labels)) {
-                        $labels = $labels;
-                    } else {
-                        if ($c_labels) {
-                            $labels = $c_labels;
-                        } elseif ($labels) {
-                            if (($new_labels !== null) && count($new_labels) === count($labels)) {
-                                $labels = $labels;
-                            } else {
-                                $labels = $new_labels;
-                            }
-                        } else {
-                            $labels = $new_labels;
-                        }
-                    }
-                } else {
-                    $labels = $c_labels ? $c_labels : $new_labels;
+            if (count($labels) > 0) {
+                if (($c_labels !== null) && count($c_labels) === count($labels)) {
+                    // $labels already correct — keep it
+                } elseif ($c_labels) {
+                    $labels = $c_labels;
+                } elseif (($new_labels !== null) && count($new_labels) !== count($labels)) {
+                    $labels = $new_labels;
                 }
             } else {
-                $labels = $new_labels;
+                $labels = $c_labels ? $c_labels : $new_labels;
             }
             return $labels;
         } else {
@@ -219,7 +204,7 @@ trait ChartDesignHelper
                     if ($chart_data === 'NULL') {
                         $bg_color = $this->chartBackgroundColor($chart_type, $rows);
                     } else {
-                        if ((isset($ninja_chart->data_source)) && $ninja_chart->data_source === 'manual') {
+                        if ((isset($ninja_chart->data_source)) && $ninja_chart->data_source === ChartConstants::SOURCE_MANUAL) {
                             if (is_array($background_color) && count($chart_data) === count($background_color)) {
                                 $bg_color = $background_color;
                             } else {
@@ -246,7 +231,7 @@ trait ChartDesignHelper
         $label = '';
         $bd_color = $this->dynamicBorderColor($ninja_chart, $chart_type);
 
-        if (isset($bd_color[$i]) && gettype($bd_color[$i]) === 'object') {
+        if (isset($bd_color[$i]) && is_object($bd_color[$i])) {
             $color_label = (array)$bd_color[$i];
         } else {
             $color_label = isset($bd_color[$i]) ? $bd_color[$i] : '';
@@ -260,7 +245,7 @@ trait ChartDesignHelper
         $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $line_tension = '0.4';
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
 
         if (isset($series)) {
             $line_tension = isset($series[$i]['lineTension']) ? $series[$i]['lineTension'] : '0.4';
@@ -276,7 +261,7 @@ trait ChartDesignHelper
         $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $line_width = 1;
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
 
         if (isset($series)) {
             $line_width = isset($series[$i]['lineWidth']) ? $series[$i]['lineWidth'] : 1;
@@ -292,7 +277,7 @@ trait ChartDesignHelper
         $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $series = Arr::get($request, 'extra_data.series');
         $pointRadius = '';
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
         if (isset($series)) {
             $pointRadius = isset($series[$i]['pointRadius']) ? $series[$i]['pointRadius'] : 'false';
         } elseif (isset($options->series)) {
@@ -306,54 +291,37 @@ trait ChartDesignHelper
 
     public function labelKey($keys = [])
     {
+        $priority  = ['text' => 1, 'email' => 2, 'url' => 3, 'date' => 4];
+        $best_rank = PHP_INT_MAX;
         $label_key = '';
+
         foreach ($keys as $key) {
-            if ($label_key === '' && Arr::get($key, 'data_type') === 'text') {
-                $label_key = Arr::get($key, 'key');
+            $k    = Arr::get($key, 'key');
+            $type = Arr::get($key, 'data_type');
+            if (!is_string($k)) {
+                continue;
             }
-        }
-        foreach ($keys as $key) {
-            if ($label_key === '' && Arr::get($key, 'data_type') === 'email') {
-                $label_key = Arr::get($key, 'key');
+            $rank = isset($priority[$type]) ? $priority[$type] : 5;
+            if ($rank < $best_rank) {
+                $best_rank = $rank;
+                $label_key = $k;
+                if ($best_rank === 1) {
+                    break;
+                }
             }
-        }
-        foreach ($keys as $key) {
-            if ($label_key === '' && Arr::get($key, 'data_type') === 'url') {
-                $label_key = Arr::get($key, 'key');
-            }
-        }
-        foreach ($keys as $key) {
-            if ($label_key === '' && Arr::get($key, 'data_type') === 'date') {
-                $label_key = Arr::get($key, 'key');
-            }
-        }
-        $i = 0;
-        foreach ($keys as $key) {
-            if ($label_key === '' && gettype(Arr::get($keys[$i], 'key')) === 'string') {
-                $label_key = Arr::get($key, 'key');
-            }
-            $i++;
         }
 
-        $l_key = Arr::get($keys[0], 'key');
-        if ($label_key) {
-            $label_key = $label_key;
-        } else {
-            $label_key = $l_key;
-        }
-        return $label_key;
+        return $label_key ?: Arr::get($keys[0], 'key');
     }
 
     public function areaChartFill($ninja_chart, $chart_type)
     {
         $request = ninjaChartsSanitizeArray($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $options = isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : '';
+        $options = $ninja_chart ? $ninja_chart->decodedOptions(true) : null;
         $fill = Arr::get($request, 'extra_data.fill');
 
         if ($chart_type === 'area') {
-            if (isset($fill)) {
-                $fill = $fill;
-            } else {
+            if (!isset($fill)) {
                 $fill = isset($options['chart']['fill']) ? $options['chart']['fill'] : 'origin';
             }
         } else {
