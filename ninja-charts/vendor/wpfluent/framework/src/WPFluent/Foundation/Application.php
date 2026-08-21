@@ -1,4 +1,13 @@
 <?php
+/**
+ * @package WPFluent
+ * @author  Sheikh Heera <heera.sheikh77@gmail.com> (https://heera.it)
+ * @author  Sheikh Heera <mail@heera.it>
+ * @author  Sheikh Heera <heera@authlab.io>
+ * @link    https://github.com/wpfluent/framework2x
+ * @license MIT https://opensource.org/licenses/MIT
+ * @license GPL-2.0-or-later https://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 namespace NinjaCharts\Framework\Foundation;
 
@@ -12,10 +21,29 @@ use NinjaCharts\Framework\Foundation\ComponentBinder;
 use NinjaCharts\Framework\Foundation\Concerns\FoundationTrait;
 
 /**
- * @property \NinjaCharts\Framework\Foundation\Config $config
- * @property \NinjaCharts\Framework\Http\Router\Router $router
- * @property \NinjaCharts\Framework\Http\Request\Request $request
- * @property \NinjaCharts\Framework\Http\Response\Response $response
+ * Application — service container with magic property access via __get.
+ *
+ * Properties below are bound in {@see ComponentBinder::bindComponents()} and
+ * {@see Application::init()}/{@see Application::setAppLevelNamespace()}. Each
+ * `@property` declaration teaches PHPStan about a runtime container binding so
+ * `$app->view->render(...)` and similar access can be type-checked.
+ *
+ * @property \NinjaCharts\Framework\Foundation\Config        $config
+ * @property \NinjaCharts\Framework\View\View                $view
+ * @property \NinjaCharts\Framework\Cache\Cache              $cache
+ * @property \NinjaCharts\Framework\Http\Router\Router       $router
+ * @property \NinjaCharts\Framework\Http\Request\Request     $request
+ * @property \NinjaCharts\Framework\Http\Response\Response   $response
+ * @property \NinjaCharts\Framework\Validator\Validator      $validator
+ * @property \NinjaCharts\Framework\Events\Dispatcher        $events
+ * @property \NinjaCharts\Framework\Encryption\Encrypter     $encrypter
+ * @property \NinjaCharts\Framework\Encryption\Encrypter     $crypt
+ * @property \NinjaCharts\Framework\Database\DatabaseManager $db
+ * @property \NinjaCharts\Framework\Http\URL                 $url
+ * @property \NinjaCharts\Framework\Support\Mail             $mail
+ * @property \NinjaCharts\Framework\Support\Pipeline         $pipeline
+ * @property string                             $__pluginfile__
+ * @property string                             $__namespace__
  */
 class Application extends Container
 {
@@ -177,6 +205,7 @@ class Application extends Container
         $this->bindAppInstance();
         $this->bindPathsAndUrls();
         $this->loadConfigIfExists();
+        $this->registerMiddleware();
         $this->registerTextdomain();
         $this->bindCoreComponents();
         $this->requireCommonFiles($this);
@@ -243,15 +272,45 @@ class Application extends Container
      */
     protected function loadConfigIfExists()
     {
-        $data = [];
+        $files = [];
 
         if (is_dir($this['path.config'])) {
             foreach (glob($this['path.config'] . '*.php') as $file) {
-                $data[basename($file, '.php')] = require($file);
+                // middleware.php lives under app/Http/ now; it ships closures
+                // that don't belong in Config storage.
+                if (basename($file) === 'middleware.php') {
+                    continue;
+                }
+                $files[basename($file, '.php')] = $file;
             }
         }
 
-        $this->instance('config', new Config($data));
+        $this->instance('config', new Config([], $files));
+    }
+
+    /**
+     * Register the HTTP middleware stack as a lazy container binding.
+     *
+     * Resolves from `app/Http/middleware.php` (canonical). Falls back to
+     * `config/middleware.php` so un-migrated plugins keep working.
+     *
+     * @return void
+     */
+    protected function registerMiddleware()
+    {
+        $this->singleton('http.middleware', function ($app) {
+            $new = $app['path.http'] . 'middleware.php';
+            if (is_file($new)) {
+                return require $new;
+            }
+
+            $legacy = $app['path.config'] . 'middleware.php';
+            if (is_file($legacy)) {
+                return require $legacy;
+            }
+
+            return [];
+        });
     }
 
     /**
@@ -331,9 +390,9 @@ class Application extends Container
 
         require_once $this->basePath . 'app/Hooks/actions.php';
         require_once $this->basePath . 'app/Hooks/filters.php';
-
-        if (file_exists($includes = $this->basePath . 'app/Hooks/includes.php')) {
-            require_once $includes;
+        
+        if (file_exists($f = $this->basePath . 'app/Hooks/includes.php')) {
+            require_once $f;
         }
     }
 
@@ -523,8 +582,10 @@ class Application extends Container
      */
     protected function callPluginReadyCallbacks()
     {
-        while ($callback = array_pop($this->onReady)) {
-            $callback($this);
-        }
+        $this->addAction('init', function() {
+            while ($callback = array_pop($this->onReady)) {
+                $callback($this);
+            }
+        });
     }
 }

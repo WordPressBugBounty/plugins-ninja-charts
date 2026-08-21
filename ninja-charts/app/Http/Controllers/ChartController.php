@@ -26,14 +26,19 @@ class ChartController extends Controller
 
     public function store()
     {
-        $this->validate($this->request->data, [
+        // A missing/non-array `data` envelope must fail validation (422), not TypeError the validator (500)
+        $requestData = is_array($this->request->data) ? $this->request->data : [];
+
+        $this->validate($requestData, [
             'render_engine' => 'required',
             'chart_type' => 'required',
             'data_source' => 'required',
         ]);
 
-        $data = ninjaChartsSanitizeArray($this->request->data);
-        unset($data['id']); // Body-injected id must never trigger an update on the create endpoint
+        $data = ninjaChartsSanitizeArray($requestData);
+        // A body-injected id cannot steer this create onto an existing row: NinjaCharts::store()
+        // picks the update target from its second argument only (never passed here) and ignores
+        // $data['id']. Pinned by chart_create_ignores_a_body_injected_id_and_never_overwrites_another_chart.
 
         // When no datasets are provided (e.g. CSV import), generate random colors server-side.
         if (empty($data['datasets']) && !empty($data['manualInputData'])) {
@@ -116,13 +121,16 @@ class ChartController extends Controller
         if ($id < 1) {
             return $this->sendError(['message' => __('Invalid chart ID', 'ninja-charts')], 400);
         }
-        $this->validate($this->request->data, [
+        // Same guard as store(): absent envelope → 422, not a validator TypeError
+        $requestData = is_array($this->request->data) ? $this->request->data : [];
+
+        $this->validate($requestData, [
             'render_engine' => 'required',
             'chart_type' => 'required',
             'data_source' => 'required',
         ]);
 
-        $data = ninjaChartsSanitizeArray($this->request->data);
+        $data = ninjaChartsSanitizeArray($requestData);
         $ninjaCharts = NinjaCharts::store($data, $id); // $id comes from the URL, not the body
 
         return $this->sendSuccess([

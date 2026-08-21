@@ -3,8 +3,8 @@ Contributors: wpmanageninja, adreastrian, csesumonpro, naeemhaque, hasanuzzamans
 Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive Charts
 Requires at least: 6.0
 Requires PHP: 7.4
-Tested up to: 7.0
-Stable tag: 3.4.2
+Tested up to: 7.1
+Stable tag: 3.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,6 +156,11 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.4.3 (Date: August 20, 2026) =
+* Improved: WordPress 7.1 Compatibility
+* Fix: Google Charts CSV export to matching Chart.js
+* Fix: Saving a chart with a missing data payload now returns clear message
 
 = 3.4.2 (Date: June 22, 2026) =
 * Added: Export charts as CSV, PNG, and PDF

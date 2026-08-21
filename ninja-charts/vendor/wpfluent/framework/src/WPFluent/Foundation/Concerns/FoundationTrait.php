@@ -73,7 +73,7 @@ trait FoundationTrait
      */
     public function parseRestHandler($handler, $ns = '')
     {
-        if ($handler instanceof \Closure) {
+        if (is_object($handler) && is_callable($handler)) {
             return $handler;
         }
 
@@ -415,7 +415,11 @@ trait FoundationTrait
         if ($handler instanceof \Closure) {
             return false;
         };
-        
+
+        if (is_object($handler)) {
+            return false;
+        }
+
         $parts = array_filter(explode('\\', $handler));
         
         return count($parts) > 1;
@@ -485,21 +489,36 @@ trait FoundationTrait
      */
     public function user()
     {
-        $wpUser = wp_get_current_user();
-        
-        $userClass = $this->__namespace__ . '\App\Models\User';
-
-        if (!did_action('init') || !$wpUser->ID) {
+        if (!did_action('init')) {
             if ($this->isDebugOn()) {
-                error_log("User not available—'init' action hasn't fired or no user is logged in.");
+                error_log("User not available—'init' action hasn't fired.");
             }
-            return null;
+            
+            return new class {
+                public function __call($method, $args) {}
+            };
         }
 
-        if (class_exists($userClass)) {
-            return $userClass::find($wpUser->ID);
+        $wpUser = wp_get_current_user();
+
+        if (!$wpUser->ID) {
+            return new class {
+                public function __call($method, $args) {}
+            };
         }
 
-        return new WPUserProxy($wpUser);
+        $userModel = $this->__namespace__ . '\App\Models\User';
+
+        return class_exists($userModel)
+            ? ($userModel::find($wpUser->ID) ?? new WPUserProxy($wpUser))
+            : new WPUserProxy($wpUser);
+    }
+
+    public function enableApplicationPassword()
+    {
+        add_filter(
+            'wp_is_application_passwords_available',
+            fn() => !str_starts_with($this->env(), 'prod')
+        );
     }
 }

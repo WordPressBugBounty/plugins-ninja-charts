@@ -20,6 +20,8 @@ use NinjaCharts\Framework\Http\SubstituteParameters;
 use NinjaCharts\Framework\Http\Middleware\RateLimiter;
 use NinjaCharts\Framework\Validator\ValidationException;
 use NinjaCharts\Framework\Database\Orm\ModelNotFoundException;
+use NinjaCharts\Framework\Foundation\Exceptions\HttpException;
+use NinjaCharts\Framework\Foundation\Exceptions\ExceptionHandler;
 use NinjaCharts\Framework\Http\Response\Response as WPFluentResponse;
 
 class Route
@@ -43,6 +45,12 @@ class Route
      * @var string
      */
     protected $restNamespace = null;
+
+    /**
+     * Whether this route should override existing routes at the same URI.
+     * @var bool
+     */
+    protected $shouldOverride = false;
 
     /**
      * Full URI
@@ -171,6 +179,13 @@ class Route
     protected $endpointSignature = [];
 
     /**
+     * Response instance
+     * 
+     * @var \WP_REST_Response
+     */
+    protected $response = null;
+
+    /**
      * Construct the route instance
      *
      * @param \NinjaCharts\Framework\Foundation\Application $app
@@ -186,18 +201,18 @@ class Route
         $this->uri = $uri;
         $this->handler = $handler;
         $this->method = $method;
-
-        $this->preparefrontendHandlers($handler);
     }
 
     /**
      * Map the route to be used in front-end.
      *
      * @param mixed $handler
-     * @return null
+     * @return self
      */
-    protected function preparefrontendHandlers($handler)
+    public function preparefrontendHandlers()
     {
+        $handler = $this->handler;
+
         $endpointsUrl = $this->app->config->get('app.slug') . '/__endpoints';
 
         if (get_option('permalink_structure')) {
@@ -210,16 +225,10 @@ class Route
             !str_contains($url ?? '', $endpointsUrl)
             || $handler instanceof Closure
         ) {
-            return;
+            return $this;
         }
 
-        $action = trim($this->app->parseRestHandler($handler), '\\');
-
-        if (!str_contains($action, '@')) {
-            $action .= '@__invoke';
-        }
-
-        [$controller, $cb] = Str::parseCallback($action);
+        [$controller, $cb] = Str::parseCallback($this->parseAction($handler));
 
         $this->endpointSignature = [$controller, "_{$cb}"];
 
@@ -230,11 +239,56 @@ class Route
 
         $endpoints[$controller]["_{$cb}"] = [
             'uri' => $this->uri,
-            'methods' => explode(',', $this->method)
+            'methods' => explode(',', $this->method),
+            'policy' => $this->getPolicyName()
         ];
 
         // @phpstan-ignore-next-line
         $this->app->endpoints = $endpoints;
+
+        return $this;
+    }
+
+    /**
+     * Get a display name for the route's policy handler.
+     *
+     * @return string|null
+     */
+    protected function getPolicyName()
+    {
+        if (!$this->policyHandler) {
+            return null;
+        }
+
+        if ($this->policyHandler instanceof Closure) {
+            return 'Closure';
+        }
+
+        $name = $this->policyHandler;
+
+        if (is_string($name) && !$this->app->hasNamespace($name)) {
+            $name = $this->app->__namespace__ . '\\App\\Http\\Policies\\' . $name;
+        }
+
+        return $name;
+    }
+
+    /**
+     * Parse the action from the handler.
+     * 
+     * @param  mixed $handler
+     * @return string
+     */
+    protected function parseAction($handler)
+    {
+        $action = $this->app->parseRestHandler($handler, $this->namespace);
+        $action = trim($action, '\\');
+
+        if (!str_contains($action, '@')) {
+            $action .= '@__invoke';
+        }
+
+        return $action;
     }
 
     /**
@@ -532,6 +586,10 @@ class Route
      */
     public function injectProp($key, $value)
     {
+        if (!$this->endpointSignature) {
+            return;
+        }
+
         [$controller, $cbKey] = $this->endpointSignature;
 
         $controllerKey = str_replace('\\', '.', $controller);
@@ -600,13 +658,18 @@ class Route
     }
 
     /**
-     * Set the namespace for controller/action
+     * Set the namespace for controller/action.
+     * 
      * @param string $ns
      * @return null
      */
     public function withNamespace($ns)
     {
-        $this->namespace = implode('\\', $ns);
+        if (is_array($ns)) {
+            $this->namespace = implode('\\', $ns);
+        } else {
+            $this->namespace = trim($ns, '\\');
+        }
     }
 
     /**
@@ -688,7 +751,7 @@ class Route
             $this->restNamespace,
             $this->getRouteUri(),
             $this->getOptions(),
-            $this->override()
+            $this->shouldOverride
         );
     }
 
@@ -713,13 +776,15 @@ class Route
     }
 
     /**
-     * Allow route override if we are testing.
-     * 
-     * @return bool
+     * Mark this route to override any existing route at the same URI.
+     *
+     * @return $this
      */
-    protected function override()
+    public function override()
     {
-        return str_starts_with($this->app->env(), 'testing');
+        $this->shouldOverride = true;
+
+        return $this;
     }
 
     /**
@@ -828,14 +893,17 @@ class Route
     /**
      * Route handler
      *
-     * @return mixed
+     * @return \WP_REST_Response
      */
     public function callback()
     {
         try {
-            return $this->handleAfterMiddleware(
+            $this->response = $this->handleAfterMiddleware(
                 $this->dispatchRouteAction()
             );
+
+            return $this->handleResponse($this->response);
+
         } catch (ValidationException $e) {
             return $this->app->response->sendError(
                 $e->errors(), $e->getCode()
@@ -844,18 +912,161 @@ class Route
             return $this->app->response->sendError([
                 'message' => $e->getMessage()
             ], 404);
+        } catch (HttpException $e) {
+            return $this->renderHttpException($e);
         } catch (Throwable $e) {
-            $this->fireExceptionEvent($e);
-            return $this->app->response->sendError([
-                'message' => $e->getMessage()
-            ], $e->getCode() ?: 500);
+            $headers = $this->response ? $this->response->get_headers() : [];
+
+            // Consult the plugin's ExceptionHandler registry BEFORE the
+            // production sanitizer. A registered renderable may return
+            // either an HttpException (rendered with full status + safe
+            // message) or a WP_REST_Response (returned verbatim). Null /
+            // no-match falls through to handleUnknownException — the
+            // sanitization default is preserved for any exception not
+            // explicitly opted in.
+            if ($mapped = $this->mapToHandlerResponse($e)) {
+                return $mapped;
+            }
+
+            return $this->handleUnknownException($e, $headers);
         }
+    }
+
+    /**
+     * Run the bound `ExceptionHandler` over `$e` and convert its result
+     * to a `WP_REST_Response`, or `null` if the handler has nothing for
+     * this exception (in which case the caller falls through to the
+     * sanitizer).
+     *
+     * Returns an `HttpException` result through `renderHttpException()`
+     * so observability + headers + the `{code, message, data}` shape
+     * stay consistent with the dedicated `HttpException` catch arm.
+     * A `WP_REST_Response` is returned verbatim — the renderer claimed
+     * full control over the response shape; we still fire
+     * `fluent_exception` so observability listeners see the original
+     * exception.
+     *
+     * @param  \Throwable $e
+     * @return \WP_REST_Response|null
+     */
+    protected function mapToHandlerResponse(Throwable $e)
+    {
+        if (!$this->app->bound(ExceptionHandler::class)) {
+            return null;
+        }
+
+        $handler = $this->app->make(ExceptionHandler::class);
+
+        if (!$handler instanceof ExceptionHandler) {
+            return null;
+        }
+
+        $result = $handler->render($e, $this->app);
+
+        if ($result instanceof HttpException) {
+            return $this->renderHttpException($result);
+        }
+
+        if ($result instanceof WP_REST_Response) {
+            $this->fireExceptionEvent($e);
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Handle response from route.
+     * 
+     * @param  \WP_REST_Response $response
+     * @return \WP_REST_Response
+     */
+    protected function handleResponse($response)
+    {
+        return $response;
+    }
+
+    /**
+     * Throw an exception based on the status code.
+     * 
+     * @param  string $message
+     * @param  int $status
+     * @return null
+     * @throws \Exception
+     */
+    protected function throwException($message, $status)
+    {
+        $class = sprintf(
+            'WpOrg\Requests\Exception\Http\Status%d', $status
+        );
+        
+        if (!class_exists($class)) {
+            $class = 'WpOrg\Requests\Exception\Http';
+        }
+
+        throw new $class($message, $status);
+    }
+
+    /**
+     * Handle exception and send error response.
+     * 
+     * @param  Throwable $e
+     * @return \WP_REST_Response
+     */
+    protected function handleUnknownException(Throwable $e, $headers = [])
+    {
+        $data = [];
+
+        $this->fireExceptionEvent($e);
+
+        // Production sanitization: client-facing message must not leak
+        // PDO / HTTP-client / file-system internals. The real message
+        // ships to fluent_exception listeners (Night Watcher / bridge)
+        // via fireExceptionEvent above, so observability is preserved.
+        if ($this->app->isDebugOn()) {
+            $data = [
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+            ];
+
+            $message = $e->getMessage();
+        } else {
+            $message = 'An internal error occurred.';
+        }
+
+        return $this->app->response->sendError([
+            'code'    => 'plugin_exception',
+            'data'    => $data,
+            'message' => $message,
+        ], $e->getCode() ?: 500, $headers);
+    }
+
+    /**
+     * Render an HttpException to a sanitization-free response.
+     *
+     * HttpException is the opt-in contract for "I authored this message,
+     * it is safe to ship to the client". Bypasses handleUnknownException's
+     * production sanitization but still fires fluent_exception for
+     * observability so listeners see every thrown HttpException.
+     *
+     * @param  HttpException $e
+     * @return \WP_REST_Response
+     */
+    protected function renderHttpException(HttpException $e)
+    {
+        $this->fireExceptionEvent($e);
+
+        return $this->app->response->sendError([
+            'code'    => $e->getErrorCode(),
+            'message' => $e->getMessage(),
+            'data'    => $e->getData(),
+        ], $e->getStatusCode(), $e->getHeaders());
     }
 
     /**
      * Dispatch the route action.
      *
-     * @return mixed
+     * @return \WP_REST_Response
      */
     protected function dispatchRouteAction()
     {
@@ -925,8 +1136,43 @@ class Route
      */
     protected function fireExceptionEvent($exception)
     {
-        if ($this->app->isDebugOn()) {
-            $this->app->doCustomAction('exception', $exception);
+        // Reentrancy guard: a fluent_exception listener that itself triggers
+        // an exception path must not re-enter this method and recurse. Reset
+        // in finally so subsequent (sequential) calls proceed normally.
+        static $firing = false;
+
+        if ($firing) {
+            return;
+        }
+
+        if ($this->app->isDebugOn() || defined('FLUENT_BRIDGE_SECRET')) {
+            $message = sprintf(
+                "%s in %s:%d\nStack trace:\n%s\n",
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                $exception->getTraceAsString()
+            );
+
+            error_log($message);
+        }
+
+        $firing = true;
+
+        try {
+            $this->app->doAction('fluent_exception', $exception);
+        } catch (Throwable $listenerError) {
+            // Listener-throw isolation: a buggy fluent_exception listener
+            // (DB down, disk full) must not escape and crash the response.
+            // Log under the same gate; never re-fire fluent_exception here
+            // — that would be the cascade we are protecting against.
+            if ($this->app->isDebugOn() || defined('FLUENT_BRIDGE_SECRET')) {
+                error_log(
+                    'fluent_exception listener failed: ' . $listenerError->getMessage()
+                );
+            }
+        } finally {
+            $firing = false;
         }
     }
 
@@ -938,6 +1184,8 @@ class Route
     public function permissionCallback($wpRestRequest)
     {
         try {
+            $this->parameters = null;
+            $this->substitutedParameters = null;
             $this->app->instance('route', $this);
             $this->app->instance('wprestrequest', $wpRestRequest);
             $this->app->request->mergeInputsFromRestRequest($wpRestRequest);
@@ -974,7 +1222,7 @@ class Route
 
             return $response;
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return new WP_Error(
                 'Permission Callback Error',
                 $e->getMessage(), [
@@ -1102,7 +1350,9 @@ class Route
      */
     protected function collectMiddleWare($type = 'before')
     {
-        $middleware = $this->app['config']->get('middleware', []);
+        $middleware = $this->app->bound('http.middleware')
+            ? $this->app['http.middleware']
+            : [];
 
         $callableMiddleware = Arr::get($middleware, "global.{$type}", []);
 
@@ -1133,7 +1383,7 @@ class Route
                 $this->addMiddlewareInTheStack($callableMiddleware, $handler);
             } else {
                 if (isset($key)) {
-                    $mpath = 'config.middleware.route.' . $type;
+                    $mpath = 'app/Http/middleware.php route.' . $type;
                     $msg = "No middleware is assigned for the key: {$key} in {$mpath} array.";
                 } else {
                     $msg = "Could't resolve middleware.";
@@ -1300,8 +1550,8 @@ class Route
      */
     protected function isPolicyHandlerParseable($policyHandler)
     {
-        return (strpos($policyHandler, '@') === true
-            || strpos($policyHandler, '::') === true);
+        return (strpos($policyHandler, '@') !== false
+            || strpos($policyHandler, '::') !== false);
     }
 
     /**

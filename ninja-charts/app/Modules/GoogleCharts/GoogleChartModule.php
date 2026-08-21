@@ -211,7 +211,7 @@ class GoogleChartModule
     public function legendFormat($chart_data, $keys, $ninja_chart, $extra_data = [])
     {
         if (count($keys) === 1) {
-            $chart_data = $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data);
+            $chart_data = $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data, $keys);
         } else {
             $chart_data = $this->otherLegendFormat($keys, $ninja_chart, $chart_data, $extra_data);
         }
@@ -219,7 +219,7 @@ class GoogleChartModule
         return $chart_data;
     }
 
-    public function calculativeLegendFormat($ninja_chart, $chart_data, $extra_data = [])
+    public function calculativeLegendFormat($ninja_chart, $chart_data, $extra_data = [], $keys = [])
     {
         $chart_types = ['PieChart', 'DonutChart'];
         $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
@@ -241,7 +241,18 @@ class GoogleChartModule
                 }
             }
         }
+        // FIX-PLAN #11: name the value column from its source key so the CSV
+        // export has a real header; manual input carries no labels, so '' stays.
         $first_row = ['', ''];
+        if ($keys) {
+            $label_key = $this->labelKey($keys);
+            foreach ($keys as $value) {
+                if (Arr::get($value, 'key') !== $label_key) {
+                    $first_row[1] = isset($value['label']) ? $value['label'] : Arr::get($value, 'key', '');
+                    break;
+                }
+            }
+        }
         array_unshift($chart_data, $first_row);
 
         return $chart_data;
@@ -252,7 +263,7 @@ class GoogleChartModule
         $chart_types = ['PieChart', 'DonutChart'];
         $chart_type  = Arr::get($extra_data, 'chart_type') ?: $ninja_chart['chart_type'];
         if (in_array($chart_type, $chart_types)) {
-            return $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data);
+            return $this->calculativeLegendFormat($ninja_chart, $chart_data, $extra_data, $keys);
         } else {
             $label_key = $this->labelKey($keys);
             $first_row = [];
@@ -269,7 +280,8 @@ class GoogleChartModule
                         $first_row[] = '';
                     } else {
                         $r           = isset($options['series'][$key - 1]) ? $options['series'][$key - 1] : '';
-                        $row         = isset($r['label']) ? $r['label'] : $value['key'];
+                        // FIX-PLAN #11: fall back to the column label (as chart_js does), key only as last resort
+                        $row         = isset($r['label']) ? $r['label'] : (isset($value['label']) ? $value['label'] : $value['key']);
                         $first_row[] = $row;
                     }
                 }

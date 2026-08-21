@@ -485,7 +485,7 @@ class Builder
      */
     public function from($table, $as = null)
     {
-        if (stripos($table, ' as ') !== false) {
+        if (is_string($table) && stripos($table, ' as ') !== false) {
             [$table, $as] = explode(' as ', $table);
             $this->grammar->addAlias($as);
         }
@@ -1276,6 +1276,38 @@ class Builder
         return $this->whereLike(
             $column, '%'.$value, $caseSensitive, $boolean, $not
         );
+    }
+
+    /**
+     * Add a phonetic "sounds like" (SOUNDEX) clause to the query.
+     *
+     * Matches values pronounced similarly, e.g. searching "heera" matches
+     * "hira"/"hera", "bol" matches "ball", "cloud" matches "claude".
+     *
+     * @param  \NinjaCharts\Framework\Database\Query\Expression|string  $column
+     * @param  string  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereSoundsLike($column, $value, $boolean = 'and')
+    {
+        return $this->whereRaw(
+            $this->grammar->compileSoundsLike($column),
+            [$this->grammar->prepareSoundsLikeBinding($value)],
+            $boolean
+        );
+    }
+
+    /**
+     * Add an "or" phonetic "sounds like" clause to the query.
+     *
+     * @param  \NinjaCharts\Framework\Database\Query\Expression|string  $column
+     * @param  string  $value
+     * @return $this
+     */
+    public function orWhereSoundsLike($column, $value)
+    {
+        return $this->whereSoundsLike($column, $value, 'or');
     }
 
     /**
@@ -2352,6 +2384,48 @@ class Builder
     }
 
     /**
+     * Add a full-text relevance score to the select clause.
+     *
+     * Compiles a "MATCH ... AGAINST" expression aliased as the given name so
+     * results can be ordered by how well they match. A flat list of columns
+     * produces a single composite match; an associative array of
+     * column => weight produces a weighted per-column sum, e.g.
+     * ['title' => 3, 'body' => 1].
+     *
+     * @param  string|array  $columns
+     * @param  string  $value
+     * @param  array  $options
+     * @param  string  $as
+     * @return $this
+     */
+    public function selectRelevance($columns, $value, array $options = [], $as = 'relevance')
+    {
+        [$sql, $bindings] = $this->grammar->compileRelevance(
+            (array) $columns, $options, $value
+        );
+
+        if (is_null($this->columns)) {
+            $this->select('*');
+        }
+
+        return $this->selectRaw($sql.' as '.$this->grammar->wrap($as), $bindings);
+    }
+
+    /**
+     * Order the query by a previously selected relevance score.
+     *
+     * @param  string  $direction
+     * @param  string  $as
+     * @return $this
+     */
+    public function orderByRelevance($direction = 'desc', $as = 'relevance')
+    {
+        $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
+
+        return $this->orderByRaw($this->grammar->wrap($as).' '.$direction);
+    }
+
+    /**
      * Add a "where" clause to the query for multiple columns with "and" conditions between them.
      *
      * @param  \NinjaCharts\Framework\Database\Query\Expression[]|string[]  $columns
@@ -2709,13 +2783,24 @@ class Builder
      * Add an "order by" clause to the query.
      *
      * @param  \Closure|\NinjaCharts\Framework\Database\Orm\Builder|\NinjaCharts\Framework\Database\Query\Builder|\NinjaCharts\Framework\Database\Query\Expression|string  $column
-     * @param  string  $direction
+     * @param  string $direction
+     * @param  array  $allowedColumns
      * @return $this
      *
      * @throws \InvalidArgumentException
      */
-    public function orderBy($column, $direction = 'asc')
+    public function orderBy($column, $direction = 'asc', $allowedColumns = [])
     {
+        if (!empty($allowedColumns) && !in_array($column, $allowedColumns, true)) {
+            throw new LogicException(
+                "Ordering by `$column` is not allowed for this query."
+            );
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9_\.]+$/', $column)) {
+            throw new LogicException("Invalid column name `$column`.");
+        }
+
         if ($this->isQueryable($column)) {
             [$query, $bindings] = $this->createSub($column);
 
@@ -2727,7 +2812,9 @@ class Builder
         $direction = strtolower($direction);
 
         if (! in_array($direction, ['asc', 'desc'], true)) {
-            throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
+            throw new InvalidArgumentException(
+                'Order direction must be "asc" or "desc".'
+            );
         }
 
         $this->{$this->unions ? 'unionOrders' : 'orders'}[] = [
@@ -2793,7 +2880,9 @@ class Builder
     {
         $type = 'Raw';
 
-        $this->{$this->unions ? 'unionOrders' : 'orders'}[] = compact('type', 'sql');
+        $this->{$this->unions ? 'unionOrders' : 'orders'}[] = compact(
+            'type', 'sql'
+        );
 
         $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
 

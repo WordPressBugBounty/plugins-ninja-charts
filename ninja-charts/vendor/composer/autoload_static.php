@@ -6,7 +6,15 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
 {
+    public static $files = array (
+        '5acfa953fb947d9c094f156813b35f4f' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/mbstring-loader.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'W' =>
+        array (
+            'WPFluent\\' => 9,
+        ),
         'N' =>
         array (
             'NinjaCharts\\Framework\\' => 22,
@@ -15,6 +23,10 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
     );
 
     public static $prefixDirsPsr4 = array (
+        'WPFluent\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
+        ),
         'NinjaCharts\\Framework\\' =>
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
@@ -104,7 +116,6 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Database\\ConnectionInterface' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/ConnectionInterface.php',
         'NinjaCharts\\Framework\\Database\\ConnectionResolver' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/ConnectionResolver.php',
         'NinjaCharts\\Framework\\Database\\ConnectionResolverInterface' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/ConnectionResolverInterface.php',
-        'NinjaCharts\\Framework\\Database\\DBManager' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/DBManager.php',
         'NinjaCharts\\Framework\\Database\\DatabaseManager' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/DatabaseManager.php',
         'NinjaCharts\\Framework\\Database\\DatabaseTransactionRecord' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/DatabaseTransactionRecord.php',
         'NinjaCharts\\Framework\\Database\\DatabaseTransactionsManager' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/DatabaseTransactionsManager.php',
@@ -117,6 +128,8 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Database\\Events\\TransactionCommitting' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/Events/TransactionCommitting.php',
         'NinjaCharts\\Framework\\Database\\Events\\TransactionRolledBack' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/Events/TransactionRolledBack.php',
         'NinjaCharts\\Framework\\Database\\LazyLoadingViolationException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/LazyLoadingViolationException.php',
+        'NinjaCharts\\Framework\\Database\\Migration\\Blueprint' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/Migration/Blueprint.php',
+        'NinjaCharts\\Framework\\Database\\Migration\\ColumnDefinition' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/Migration/ColumnDefinition.php',
         'NinjaCharts\\Framework\\Database\\MultipleColumnsSelectedException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/MultipleColumnsSelectedException.php',
         'NinjaCharts\\Framework\\Database\\MultipleRecordsFoundException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/MultipleRecordsFoundException.php',
         'NinjaCharts\\Framework\\Database\\Orm\\Builder' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Database/Orm/Builder.php',
@@ -215,6 +228,16 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Foundation\\Concerns\\FoundationTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Concerns/FoundationTrait.php',
         'NinjaCharts\\Framework\\Foundation\\Concerns\\HooksRemovalTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Concerns/HooksRemovalTrait.php',
         'NinjaCharts\\Framework\\Foundation\\Config' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Config.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\BadGatewayHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/BadGatewayHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\BadRequestHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/BadRequestHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\ExceptionHandler' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/ExceptionHandler.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\ForbiddenHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/ForbiddenHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\HttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/HttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\NotFoundHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/NotFoundHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\ServiceUnavailableHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/ServiceUnavailableHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\TooManyRequestsHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/TooManyRequestsHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\UnauthorizedHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/UnauthorizedHttpException.php',
+        'NinjaCharts\\Framework\\Foundation\\Exceptions\\UnprocessableEntityHttpException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Exceptions/UnprocessableEntityHttpException.php',
         'NinjaCharts\\Framework\\Foundation\\ForbiddenException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/ForbiddenException.php',
         'NinjaCharts\\Framework\\Foundation\\Policy' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/Policy.php',
         'NinjaCharts\\Framework\\Foundation\\RequestGuard' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Foundation/RequestGuard.php',
@@ -231,6 +254,7 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Http\\Request\\InteractsWithCleaningTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/InteractsWithCleaningTrait.php',
         'NinjaCharts\\Framework\\Http\\Request\\InteractsWithFilesTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/InteractsWithFilesTrait.php',
         'NinjaCharts\\Framework\\Http\\Request\\InteractsWithHeadersTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/InteractsWithHeadersTrait.php',
+        'NinjaCharts\\Framework\\Http\\Request\\InteractsWithIPTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/InteractsWithIPTrait.php',
         'NinjaCharts\\Framework\\Http\\Request\\Request' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/Request.php',
         'NinjaCharts\\Framework\\Http\\Request\\WPUserProxy' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Request/WPUserProxy.php',
         'NinjaCharts\\Framework\\Http\\Response' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Http/Response.php',
@@ -259,6 +283,7 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Support\\Collection' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Collection.php',
         'NinjaCharts\\Framework\\Support\\Conditionable' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Conditionable.php',
         'NinjaCharts\\Framework\\Support\\DateTime' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/DateTime.php',
+        'NinjaCharts\\Framework\\Support\\DateTimeImmutable' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/DateTimeImmutable.php',
         'NinjaCharts\\Framework\\Support\\Enumerable' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Enumerable.php',
         'NinjaCharts\\Framework\\Support\\EnumeratesValues' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/EnumeratesValues.php',
         'NinjaCharts\\Framework\\Support\\Env' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Env.php',
@@ -279,6 +304,7 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Support\\JsonableInterface' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/JsonableInterface.php',
         'NinjaCharts\\Framework\\Support\\LazyCollection' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/LazyCollection.php',
         'NinjaCharts\\Framework\\Support\\Locale' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Locale.php',
+        'NinjaCharts\\Framework\\Support\\MBString\\Mbstring' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/MBString/Mbstring.php',
         'NinjaCharts\\Framework\\Support\\MacroableTrait' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/MacroableTrait.php',
         'NinjaCharts\\Framework\\Support\\Mail' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Mail.php',
         'NinjaCharts\\Framework\\Support\\MathException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/MathException.php',
@@ -286,7 +312,6 @@ class ComposerStaticInit6c1c1848ce4e932742f618a342e3cc6b
         'NinjaCharts\\Framework\\Support\\MediaUploader' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/MediaUploader.php',
         'NinjaCharts\\Framework\\Support\\MultipleItemsFoundException' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/MultipleItemsFoundException.php',
         'NinjaCharts\\Framework\\Support\\Number' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Number.php',
-        'NinjaCharts\\Framework\\Support\\NumberToWords' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/NumberToWords.php',
         'NinjaCharts\\Framework\\Support\\Once' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Once.php',
         'NinjaCharts\\Framework\\Support\\Path' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Path.php',
         'NinjaCharts\\Framework\\Support\\Pipeline' => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent/Support/Pipeline.php',
