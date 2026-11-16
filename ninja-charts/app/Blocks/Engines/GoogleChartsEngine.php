@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Helpers\HoverOptions;
 
 
 /**
@@ -54,6 +55,7 @@ class GoogleChartsEngine implements ChartEngineInterface {
 			'chartType'    => $google_type,
 			'chartData'    => $chart_data,
 			'chartOptions' => $chart_opts,
+			'hideHover'    => HoverOptions::googleHideHighlight($options),
 		];
 	}
 
@@ -71,7 +73,7 @@ class GoogleChartsEngine implements ChartEngineInterface {
 		wp_enqueue_script(
 			'ninja-charts-google-block-frontend',
 			$assetUrl . 'public/js/ninja-charts-google-block-render.js',
-			[ 'google-charts-loader' ],
+			[ 'google-charts-loader', 'ninja-charts-device' ],
 			$version,
 			true
 		);
@@ -294,6 +296,12 @@ class GoogleChartsEngine implements ChartEngineInterface {
 			if (self::bool(Arr::get($axes, 'stacked', false))) {
 				$opts['isStacked'] = true;
 			}
+		}
+
+		// Hover and tooltips both off: a static chart. Hover off alone hides only the
+		// highlight, through hideHover in the config (ninja-charts-google-block-render.js)
+		if (!HoverOptions::googleInteractive($options)) {
+			$opts['enableInteractivity'] = false;
 		}
 
 		// Doughnut

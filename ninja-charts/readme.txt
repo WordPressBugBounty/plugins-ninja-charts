@@ -1,10 +1,10 @@
 === Ninja Charts - Interactive Charts and Graphs ===
-Contributors: wpmanageninja, adreastrian, csesumonpro, naeemhaque, hasanuzzamanshamim
+Contributors: wpmanageninja, adreastrian
 Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive Charts
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 3.4.3
+Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ For the best data visualization, Ninja Charts is the most powerful and lightweig
 - Funnel charts
 
 ### WordPress Charts Plugin Video Preview
-[youtube https://www.youtube.com/watch?v=vIHR3_vNOFM]
+[youtube https://www.youtube.com/watch?v=iH61BD03aGU]
 
 ### Ninja Tables Integration With Ninja Charts
 
@@ -156,6 +156,13 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.5.0 (Date: November 16, 2026) =
+* Added: Redesigned admin with a live chart builder, light and dark themes
+* Added: Hover settings for Charts
+* Added: Redesigned Gutenberg block
+* Fix: Ninja Tables tables using the DataTables engine now load their rows
+* Fix: Hover showing "None" on bar charts and combo charts drawing incorrectly
 
 = 3.4.3 (Date: August 20, 2026) =
 * Improved: WordPress 7.1 Compatibility

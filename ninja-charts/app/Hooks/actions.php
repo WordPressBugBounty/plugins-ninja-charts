@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 $app->addAction('admin_menu', 'AdminMenuHandler@add');
 $app->addAction('admin_enqueue_scripts', 'AdminMenuHandler@enqueueAssets');
+$app->addAction('admin_head', 'AdminMenuHandler@printThemeClass');
 $app->addAction('init', 'TinyMce@addChartsToEditor');
 $app->addAction('init', 'TinyMce@gutenBlockLoad');
 
@@ -36,3 +37,8 @@ $app->addAction('wp_loaded', function() {
 });
 
 $app->addAction('wp_loaded',  'PreviewHandler@preview');
+
+// The chart list's "Used on" column caches its lookups; any post change makes them stale
+foreach (['save_post', 'deleted_post', 'trashed_post', 'untrashed_post'] as $ninjaChartsUsageHook) {
+    add_action($ninjaChartsUsageHook, [\NinjaCharts\App\Services\ChartUsage::class, 'flushCache'], 10, 2);
+}

@@ -155,6 +155,25 @@ class ShortCodeController extends Controller
             NINJA_CHARTS_VERSION,
             true
         );
+
+        // Per-device settings (tablet, mobile), read by both render scripts. The block registers
+        // the same handle first, so a page with a shortcode and a block loads the file once.
+        wp_register_script(
+            'ninja-charts-device',
+            $assets . 'public/js/ninja-charts-device.js',
+            array(),
+            NINJA_CHARTS_VERSION,
+            true
+        );
+
+        // Hover settings (options.hover), read by both render scripts
+        wp_register_script(
+            'ninja-charts-hover',
+            $assets . 'public/js/ninja-charts-hover.js',
+            array(),
+            NINJA_CHARTS_VERSION,
+            true
+        );
     }
 
     private static function chartJsAssets()
@@ -198,7 +217,7 @@ class ShortCodeController extends Controller
         wp_enqueue_script(
             'chart_js_chart_render_js',
             $assets . 'public/js/render.js',
-            array('chartjs', 'ninja_charts_loader'),
+            array('chartjs', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
             NINJA_CHARTS_VERSION,
             true
         );
@@ -225,7 +244,7 @@ class ShortCodeController extends Controller
         wp_enqueue_script(
             'google_chart_render_js',
             $assets . 'public/js/google-chart-render.js',
-            array('googlechart', 'ninja_charts_loader'),
+            array('googlechart', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
             NINJA_CHARTS_VERSION,
             true
         );

@@ -8,6 +8,9 @@ use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Traits\ChartOption;
 use NinjaCharts\App\Modules\Provider;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Helpers\DeviceOptions;
+use NinjaCharts\App\Helpers\HoverOptions;
+use NinjaCharts\App\Services\ChartUsage;
 
 class ChartController extends Controller
 {
@@ -24,6 +27,18 @@ class ChartController extends Controller
         ]);
     }
 
+    /**
+     * Where each chart's shortcode is used: GET charts/usage?ids=90,86,85.
+     */
+    public function usage()
+    {
+        $ids = ChartUsage::parseIds($this->request->get('ids', ''));
+
+        return $this->sendSuccess([
+            'usage' => (object) ChartUsage::forCharts($ids),
+        ]);
+    }
+
     public function store()
     {
         // A missing/non-array `data` envelope must fail validation (422), not TypeError the validator (500)
@@ -35,7 +50,7 @@ class ChartController extends Controller
             'data_source' => 'required',
         ]);
 
-        $data = ninjaChartsSanitizeArray($requestData);
+        $data = $this->sanitizeChartData($requestData);
         // A body-injected id cannot steer this create onto an existing row: NinjaCharts::store()
         // picks the update target from its second argument only (never passed here) and ignores
         // $data['id']. Pinned by chart_create_ignores_a_body_injected_id_and_never_overwrites_another_chart.
@@ -50,6 +65,21 @@ class ChartController extends Controller
         return $this->sendSuccess([
             'ninja_charts' => $ninjaCharts
         ]);
+    }
+
+    /**
+     * Sanitizes every value, then keeps only the supported per-device and hover settings.
+     */
+    private function sanitizeChartData(array $requestData): array
+    {
+        $data = ninjaChartsSanitizeArray($requestData);
+
+        if (isset($data['options']) && is_array($data['options'])) {
+            $data['options'] = DeviceOptions::sanitizeOptions($data['options']);
+            $data['options'] = HoverOptions::sanitizeOptions($data['options']);
+        }
+
+        return $data;
     }
 
     private function injectRandomColors(array $data): array
@@ -130,7 +160,7 @@ class ChartController extends Controller
             'data_source' => 'required',
         ]);
 
-        $data = ninjaChartsSanitizeArray($requestData);
+        $data = $this->sanitizeChartData($requestData);
         $ninjaCharts = NinjaCharts::store($data, $id); // $id comes from the URL, not the body
 
         return $this->sendSuccess([

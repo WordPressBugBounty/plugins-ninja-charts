@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Helpers\HoverOptions;
 
 
 /**
@@ -52,6 +53,8 @@ class ChartJsEngine implements ChartEngineInterface {
 
 		$datasets = Arr::get($attributes, 'datasets');
 		$processed_datasets = [];
+		// Hover settings (options.hover), sanitized once for every dataset
+		$hover = HoverOptions::sanitize(Arr::get($options, 'hover'));
 
 		foreach ($datasets as $ds) {
 			$dataset = $ds;
@@ -86,6 +89,9 @@ class ChartJsEngine implements ChartEngineInterface {
 					$dataset['pointBorderWidth'] = 2;
 				}
 			}
+
+			// Hover colours (options.hover), after the fill styles so "None" keeps them
+			$dataset = array_merge($dataset, HoverOptions::datasetHoverFromClean($dataset, $hover, $chartType));
 
 			$processed_datasets[] = $dataset;
 		}

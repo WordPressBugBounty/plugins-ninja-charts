@@ -1,0 +1,2330 @@
+# Copyright (C) 2026 WPManageNinja LLC
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ninja Charts - Interactive Charts and Graphs 3.5.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ninja-charts\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-16T11:55:51+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ninja-charts\n"
+
+#. Plugin Name of the plugin
+#: plugin.php
+msgid "Ninja Charts - Interactive Charts and Graphs"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: plugin.php
+msgid "https://wpmanageninja.com/ninja-charts"
+msgstr ""
+
+#. Description of the plugin
+#: plugin.php
+msgid "Ninja Charts - Best WP Charts Plugin for WordPress"
+msgstr ""
+
+#. Author of the plugin
+#: plugin.php
+msgid "WPManageNinja LLC"
+msgstr ""
+
+#. Author URI of the plugin
+#: plugin.php
+msgid "https://wpmanageninja.com/"
+msgstr ""
+
+#: app/Blocks/NinjaChartBlock.php:133
+msgid "Chart engine not available."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenuHandler.php:17
+#: app/Hooks/Handlers/AdminMenuHandler.php:18
+msgid "Ninja Charts"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenuHandler.php:27
+#: app/Hooks/Handlers/AdminMenuHandler.php:28
+#: app/Hooks/Handlers/AdminMenuHandler.php:68
+msgid "Charts"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenuHandler.php:35
+#: app/Hooks/Handlers/AdminMenuHandler.php:36
+msgid "Add Chart"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenuHandler.php:43
+#: app/Hooks/Handlers/AdminMenuHandler.php:44
+msgid "Get help"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenuHandler.php:73
+msgid "Support"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:53
+msgid "Select a chart to insert"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:54
+msgid "Insert Ninja Charts Shortcode"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:55
+msgid "Please select a chart"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:56
+msgid "Insert Shortcode"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:70
+msgid "Select a Chart"
+msgstr ""
+
+#: app/Hooks/Handlers/TinyMce.php:72
+msgid "No Charts found. Please add a chart first"
+msgstr ""
+
+#: app/Http/Controllers/ChartController.php:152
+msgid "Invalid chart ID"
+msgstr ""
+
+#: app/Http/Controllers/ChartController.php:207
+msgid "Invalid chart type"
+msgstr ""
+
+#: app/Http/Controllers/ChartController.php:216
+msgid "Invalid render engine"
+msgstr ""
+
+#: app/Http/Controllers/ChartController.php:228
+#: app/Http/Controllers/ShortCodeController.php:78
+msgid "No chart data could be generated for the given configuration"
+msgstr ""
+
+#: app/Http/Controllers/ExportController.php:19
+#: app/Http/Controllers/ShortCodeController.php:93
+msgid "Chart not found"
+msgstr ""
+
+#: app/Http/Controllers/ExportController.php:29
+msgid "No chart data could be generated"
+msgstr ""
+
+#: app/Http/Controllers/ShortCodeController.php:30
+msgid "Invalid request method"
+msgstr ""
+
+#: app/Http/Controllers/ShortCodeController.php:41
+msgid "Too many requests"
+msgstr ""
+
+#: app/Http/Controllers/ShortCodeController.php:51
+msgid "Chart ID is required"
+msgstr ""
+
+#: app/Http/Controllers/ShortCodeController.php:61
+msgid "Security check failed"
+msgstr ""
+
+#: app/Http/Controllers/ShortCodeController.php:113
+msgid "Invalid ShortCode...!"
+msgstr ""
+
+#: app/Http/Controllers/SourceController.php:57
+#: app/Http/Controllers/SourceController.php:72
+msgid "Ninja Tables plugin is not active."
+msgstr ""
+
+#. translators: %s: data source name
+#: app/Modules/Provider.php:20
+#, php-format
+msgid "Couldn't find %s data provider."
+msgstr ""
+
+#. translators: %s: data source name
+#: app/Modules/Provider.php:38
+#, php-format
+msgid "The required plugin for %s is not active."
+msgstr ""
+
+#: app/Services/ChartUsage.php:262
+msgid "(no title)"
+msgstr ""
+
+#: app/Services/CountryName.php:9
+msgid "Afghanistan"
+msgstr ""
+
+#: app/Services/CountryName.php:10
+msgid "Åland Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:11
+msgid "Albania"
+msgstr ""
+
+#: app/Services/CountryName.php:12
+msgid "Algeria"
+msgstr ""
+
+#: app/Services/CountryName.php:13
+msgid "American Samoa"
+msgstr ""
+
+#: app/Services/CountryName.php:14
+msgid "Andorra"
+msgstr ""
+
+#: app/Services/CountryName.php:15
+msgid "Angola"
+msgstr ""
+
+#: app/Services/CountryName.php:16
+msgid "Anguilla"
+msgstr ""
+
+#: app/Services/CountryName.php:17
+msgid "Antarctica"
+msgstr ""
+
+#: app/Services/CountryName.php:18
+msgid "Antigua and Barbuda"
+msgstr ""
+
+#: app/Services/CountryName.php:19
+msgid "Argentina"
+msgstr ""
+
+#: app/Services/CountryName.php:20
+msgid "Armenia"
+msgstr ""
+
+#: app/Services/CountryName.php:21
+msgid "Aruba"
+msgstr ""
+
+#: app/Services/CountryName.php:22
+msgid "Australia"
+msgstr ""
+
+#: app/Services/CountryName.php:23
+msgid "Austria"
+msgstr ""
+
+#: app/Services/CountryName.php:24
+msgid "Azerbaijan"
+msgstr ""
+
+#: app/Services/CountryName.php:25
+msgid "Bahamas"
+msgstr ""
+
+#: app/Services/CountryName.php:26
+msgid "Bahrain"
+msgstr ""
+
+#: app/Services/CountryName.php:27
+msgid "Bangladesh"
+msgstr ""
+
+#: app/Services/CountryName.php:28
+msgid "Barbados"
+msgstr ""
+
+#: app/Services/CountryName.php:29
+msgid "Belarus"
+msgstr ""
+
+#: app/Services/CountryName.php:30
+msgid "Belgium"
+msgstr ""
+
+#: app/Services/CountryName.php:31
+msgid "Belau"
+msgstr ""
+
+#: app/Services/CountryName.php:32
+msgid "Belize"
+msgstr ""
+
+#: app/Services/CountryName.php:33
+msgid "Benin"
+msgstr ""
+
+#: app/Services/CountryName.php:34
+msgid "Bermuda"
+msgstr ""
+
+#: app/Services/CountryName.php:35
+msgid "Bhutan"
+msgstr ""
+
+#: app/Services/CountryName.php:36
+msgid "Bolivia"
+msgstr ""
+
+#: app/Services/CountryName.php:37
+msgid "Bonaire, Saint Eustatius and Saba"
+msgstr ""
+
+#: app/Services/CountryName.php:38
+msgid "Bosnia and Herzegovina"
+msgstr ""
+
+#: app/Services/CountryName.php:39
+msgid "Botswana"
+msgstr ""
+
+#: app/Services/CountryName.php:40
+msgid "Bouvet Island"
+msgstr ""
+
+#: app/Services/CountryName.php:41
+msgid "Brazil"
+msgstr ""
+
+#: app/Services/CountryName.php:42
+msgid "British Indian Ocean Territory"
+msgstr ""
+
+#: app/Services/CountryName.php:43
+msgid "British Virgin Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:44
+msgid "Brunei"
+msgstr ""
+
+#: app/Services/CountryName.php:45
+msgid "Bulgaria"
+msgstr ""
+
+#: app/Services/CountryName.php:46
+msgid "Burkina Faso"
+msgstr ""
+
+#: app/Services/CountryName.php:47
+msgid "Burundi"
+msgstr ""
+
+#: app/Services/CountryName.php:48
+msgid "Cambodia"
+msgstr ""
+
+#: app/Services/CountryName.php:49
+msgid "Cameroon"
+msgstr ""
+
+#: app/Services/CountryName.php:50
+msgid "Canada"
+msgstr ""
+
+#: app/Services/CountryName.php:51
+msgid "Cape Verde"
+msgstr ""
+
+#: app/Services/CountryName.php:52
+msgid "Cayman Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:53
+msgid "Central African Republic"
+msgstr ""
+
+#: app/Services/CountryName.php:54
+msgid "Chad"
+msgstr ""
+
+#: app/Services/CountryName.php:55
+msgid "Chile"
+msgstr ""
+
+#: app/Services/CountryName.php:56
+msgid "China"
+msgstr ""
+
+#: app/Services/CountryName.php:57
+msgid "Christmas Island"
+msgstr ""
+
+#: app/Services/CountryName.php:58
+msgid "Cocos (Keeling) Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:59
+msgid "Colombia"
+msgstr ""
+
+#: app/Services/CountryName.php:60
+msgid "Comoros"
+msgstr ""
+
+#: app/Services/CountryName.php:61
+msgid "Congo (Brazzaville)"
+msgstr ""
+
+#: app/Services/CountryName.php:62
+msgid "Congo (Kinshasa)"
+msgstr ""
+
+#: app/Services/CountryName.php:63
+msgid "Cook Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:64
+msgid "Costa Rica"
+msgstr ""
+
+#: app/Services/CountryName.php:65
+msgid "Croatia"
+msgstr ""
+
+#: app/Services/CountryName.php:66
+msgid "Cuba"
+msgstr ""
+
+#: app/Services/CountryName.php:67
+msgid "Cura&ccedil;ao"
+msgstr ""
+
+#: app/Services/CountryName.php:68
+msgid "Cyprus"
+msgstr ""
+
+#: app/Services/CountryName.php:69
+msgid "Czech Republic"
+msgstr ""
+
+#: app/Services/CountryName.php:70
+msgid "Denmark"
+msgstr ""
+
+#: app/Services/CountryName.php:71
+msgid "Djibouti"
+msgstr ""
+
+#: app/Services/CountryName.php:72
+msgid "Dominica"
+msgstr ""
+
+#: app/Services/CountryName.php:73
+msgid "Dominican Republic"
+msgstr ""
+
+#: app/Services/CountryName.php:74
+msgid "Ecuador"
+msgstr ""
+
+#: app/Services/CountryName.php:75
+msgid "Egypt"
+msgstr ""
+
+#: app/Services/CountryName.php:76
+msgid "El Salvador"
+msgstr ""
+
+#: app/Services/CountryName.php:77
+msgid "Equatorial Guinea"
+msgstr ""
+
+#: app/Services/CountryName.php:78
+msgid "Eritrea"
+msgstr ""
+
+#: app/Services/CountryName.php:79
+msgid "Estonia"
+msgstr ""
+
+#: app/Services/CountryName.php:80
+msgid "Ethiopia"
+msgstr ""
+
+#: app/Services/CountryName.php:81
+msgid "Falkland Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:82
+msgid "Faroe Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:83
+msgid "Fiji"
+msgstr ""
+
+#: app/Services/CountryName.php:84
+msgid "Finland"
+msgstr ""
+
+#: app/Services/CountryName.php:85
+msgid "France"
+msgstr ""
+
+#: app/Services/CountryName.php:86
+msgid "French Guiana"
+msgstr ""
+
+#: app/Services/CountryName.php:87
+msgid "French Polynesia"
+msgstr ""
+
+#: app/Services/CountryName.php:88
+msgid "French Southern Territories"
+msgstr ""
+
+#: app/Services/CountryName.php:89
+msgid "Gabon"
+msgstr ""
+
+#: app/Services/CountryName.php:90
+msgid "Gambia"
+msgstr ""
+
+#: app/Services/CountryName.php:91
+msgid "Georgia"
+msgstr ""
+
+#: app/Services/CountryName.php:92
+msgid "Germany"
+msgstr ""
+
+#: app/Services/CountryName.php:93
+msgid "Ghana"
+msgstr ""
+
+#: app/Services/CountryName.php:94
+msgid "Gibraltar"
+msgstr ""
+
+#: app/Services/CountryName.php:95
+msgid "Greece"
+msgstr ""
+
+#: app/Services/CountryName.php:96
+msgid "Greenland"
+msgstr ""
+
+#: app/Services/CountryName.php:97
+msgid "Grenada"
+msgstr ""
+
+#: app/Services/CountryName.php:98
+msgid "Guadeloupe"
+msgstr ""
+
+#: app/Services/CountryName.php:99
+msgid "Guam"
+msgstr ""
+
+#: app/Services/CountryName.php:100
+msgid "Guatemala"
+msgstr ""
+
+#: app/Services/CountryName.php:101
+msgid "Guernsey"
+msgstr ""
+
+#: app/Services/CountryName.php:102
+msgid "Guinea"
+msgstr ""
+
+#: app/Services/CountryName.php:103
+msgid "Guinea-Bissau"
+msgstr ""
+
+#: app/Services/CountryName.php:104
+msgid "Guyana"
+msgstr ""
+
+#: app/Services/CountryName.php:105
+msgid "Haiti"
+msgstr ""
+
+#: app/Services/CountryName.php:106
+msgid "Heard Island and McDonald Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:107
+msgid "Honduras"
+msgstr ""
+
+#: app/Services/CountryName.php:108
+msgid "Hong Kong"
+msgstr ""
+
+#: app/Services/CountryName.php:109
+msgid "Hungary"
+msgstr ""
+
+#: app/Services/CountryName.php:110
+msgid "Iceland"
+msgstr ""
+
+#: app/Services/CountryName.php:111
+msgid "India"
+msgstr ""
+
+#: app/Services/CountryName.php:112
+msgid "Indonesia"
+msgstr ""
+
+#: app/Services/CountryName.php:113
+msgid "Iran"
+msgstr ""
+
+#: app/Services/CountryName.php:114
+msgid "Iraq"
+msgstr ""
+
+#: app/Services/CountryName.php:115
+msgid "Ireland"
+msgstr ""
+
+#: app/Services/CountryName.php:116
+msgid "Isle of Man"
+msgstr ""
+
+#: app/Services/CountryName.php:117
+msgid "Israel"
+msgstr ""
+
+#: app/Services/CountryName.php:118
+msgid "Italy"
+msgstr ""
+
+#: app/Services/CountryName.php:119
+msgid "Ivory Coast"
+msgstr ""
+
+#: app/Services/CountryName.php:120
+msgid "Jamaica"
+msgstr ""
+
+#: app/Services/CountryName.php:121
+msgid "Japan"
+msgstr ""
+
+#: app/Services/CountryName.php:122
+msgid "Jersey"
+msgstr ""
+
+#: app/Services/CountryName.php:123
+msgid "Jordan"
+msgstr ""
+
+#: app/Services/CountryName.php:124
+msgid "Kazakhstan"
+msgstr ""
+
+#: app/Services/CountryName.php:125
+msgid "Kenya"
+msgstr ""
+
+#: app/Services/CountryName.php:126
+msgid "Kiribati"
+msgstr ""
+
+#: app/Services/CountryName.php:127
+msgid "Kosovo"
+msgstr ""
+
+#: app/Services/CountryName.php:128
+msgid "Kuwait"
+msgstr ""
+
+#: app/Services/CountryName.php:129
+msgid "Kyrgyzstan"
+msgstr ""
+
+#: app/Services/CountryName.php:130
+msgid "Laos"
+msgstr ""
+
+#: app/Services/CountryName.php:131
+msgid "Latvia"
+msgstr ""
+
+#: app/Services/CountryName.php:132
+msgid "Lebanon"
+msgstr ""
+
+#: app/Services/CountryName.php:133
+msgid "Lesotho"
+msgstr ""
+
+#: app/Services/CountryName.php:134
+msgid "Liberia"
+msgstr ""
+
+#: app/Services/CountryName.php:135
+msgid "Libya"
+msgstr ""
+
+#: app/Services/CountryName.php:136
+msgid "Liechtenstein"
+msgstr ""
+
+#: app/Services/CountryName.php:137
+msgid "Lithuania"
+msgstr ""
+
+#: app/Services/CountryName.php:138
+msgid "Luxembourg"
+msgstr ""
+
+#: app/Services/CountryName.php:139
+msgid "Macao S.A.R., China"
+msgstr ""
+
+#: app/Services/CountryName.php:140
+msgid "Macedonia"
+msgstr ""
+
+#: app/Services/CountryName.php:141
+msgid "Madagascar"
+msgstr ""
+
+#: app/Services/CountryName.php:142
+msgid "Malawi"
+msgstr ""
+
+#: app/Services/CountryName.php:143
+msgid "Malaysia"
+msgstr ""
+
+#: app/Services/CountryName.php:144
+msgid "Maldives"
+msgstr ""
+
+#: app/Services/CountryName.php:145
+msgid "Mali"
+msgstr ""
+
+#: app/Services/CountryName.php:146
+msgid "Malta"
+msgstr ""
+
+#: app/Services/CountryName.php:147
+msgid "Marshall Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:148
+msgid "Martinique"
+msgstr ""
+
+#: app/Services/CountryName.php:149
+msgid "Mauritania"
+msgstr ""
+
+#: app/Services/CountryName.php:150
+msgid "Mauritius"
+msgstr ""
+
+#: app/Services/CountryName.php:151
+msgid "Mayotte"
+msgstr ""
+
+#: app/Services/CountryName.php:152
+msgid "Mexico"
+msgstr ""
+
+#: app/Services/CountryName.php:153
+msgid "Micronesia"
+msgstr ""
+
+#: app/Services/CountryName.php:154
+msgid "Moldova"
+msgstr ""
+
+#: app/Services/CountryName.php:155
+msgid "Monaco"
+msgstr ""
+
+#: app/Services/CountryName.php:156
+msgid "Mongolia"
+msgstr ""
+
+#: app/Services/CountryName.php:157
+msgid "Montenegro"
+msgstr ""
+
+#: app/Services/CountryName.php:158
+msgid "Montserrat"
+msgstr ""
+
+#: app/Services/CountryName.php:159
+msgid "Morocco"
+msgstr ""
+
+#: app/Services/CountryName.php:160
+msgid "Mozambique"
+msgstr ""
+
+#: app/Services/CountryName.php:161
+msgid "Myanmar"
+msgstr ""
+
+#: app/Services/CountryName.php:162
+msgid "Namibia"
+msgstr ""
+
+#: app/Services/CountryName.php:163
+msgid "Nauru"
+msgstr ""
+
+#: app/Services/CountryName.php:164
+msgid "Nepal"
+msgstr ""
+
+#: app/Services/CountryName.php:165
+msgid "Netherlands"
+msgstr ""
+
+#: app/Services/CountryName.php:166
+msgid "New Caledonia"
+msgstr ""
+
+#: app/Services/CountryName.php:167
+msgid "New Zealand"
+msgstr ""
+
+#: app/Services/CountryName.php:168
+msgid "Nicaragua"
+msgstr ""
+
+#: app/Services/CountryName.php:169
+msgid "Niger"
+msgstr ""
+
+#: app/Services/CountryName.php:170
+msgid "Nigeria"
+msgstr ""
+
+#: app/Services/CountryName.php:171
+msgid "Niue"
+msgstr ""
+
+#: app/Services/CountryName.php:172
+msgid "Norfolk Island"
+msgstr ""
+
+#: app/Services/CountryName.php:173
+msgid "Northern Mariana Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:174
+msgid "North Korea"
+msgstr ""
+
+#: app/Services/CountryName.php:175
+msgid "Norway"
+msgstr ""
+
+#: app/Services/CountryName.php:176
+msgid "Oman"
+msgstr ""
+
+#: app/Services/CountryName.php:177
+msgid "Pakistan"
+msgstr ""
+
+#: app/Services/CountryName.php:178
+msgid "Palestinian Territory"
+msgstr ""
+
+#: app/Services/CountryName.php:179
+msgid "Panama"
+msgstr ""
+
+#: app/Services/CountryName.php:180
+msgid "Papua New Guinea"
+msgstr ""
+
+#: app/Services/CountryName.php:181
+msgid "Paraguay"
+msgstr ""
+
+#: app/Services/CountryName.php:182
+msgid "Peru"
+msgstr ""
+
+#: app/Services/CountryName.php:183
+msgid "Philippines"
+msgstr ""
+
+#: app/Services/CountryName.php:184
+msgid "Pitcairn"
+msgstr ""
+
+#: app/Services/CountryName.php:185
+msgid "Poland"
+msgstr ""
+
+#: app/Services/CountryName.php:186
+msgid "Portugal"
+msgstr ""
+
+#: app/Services/CountryName.php:187
+msgid "Puerto Rico"
+msgstr ""
+
+#: app/Services/CountryName.php:188
+msgid "Qatar"
+msgstr ""
+
+#: app/Services/CountryName.php:189
+msgid "Reunion"
+msgstr ""
+
+#: app/Services/CountryName.php:190
+msgid "Romania"
+msgstr ""
+
+#: app/Services/CountryName.php:191
+msgid "Russia"
+msgstr ""
+
+#: app/Services/CountryName.php:192
+msgid "Rwanda"
+msgstr ""
+
+#: app/Services/CountryName.php:193
+msgid "Saint Barth&eacute;lemy"
+msgstr ""
+
+#: app/Services/CountryName.php:194
+msgid "Saint Helena"
+msgstr ""
+
+#: app/Services/CountryName.php:195
+msgid "Saint Kitts and Nevis"
+msgstr ""
+
+#: app/Services/CountryName.php:196
+msgid "Saint Lucia"
+msgstr ""
+
+#: app/Services/CountryName.php:197
+msgid "Saint Martin (French part)"
+msgstr ""
+
+#: app/Services/CountryName.php:198
+msgid "Saint Martin (Dutch part)"
+msgstr ""
+
+#: app/Services/CountryName.php:199
+msgid "Saint Pierre and Miquelon"
+msgstr ""
+
+#: app/Services/CountryName.php:200
+msgid "Saint Vincent and the Grenadines"
+msgstr ""
+
+#: app/Services/CountryName.php:201
+msgid "San Marino"
+msgstr ""
+
+#: app/Services/CountryName.php:202
+msgid "S&atilde;o Tom&eacute; and Pr&iacute;ncipe"
+msgstr ""
+
+#: app/Services/CountryName.php:203
+msgid "Saudi Arabia"
+msgstr ""
+
+#: app/Services/CountryName.php:204
+msgid "Senegal"
+msgstr ""
+
+#: app/Services/CountryName.php:205
+msgid "Serbia"
+msgstr ""
+
+#: app/Services/CountryName.php:206
+msgid "Seychelles"
+msgstr ""
+
+#: app/Services/CountryName.php:207
+msgid "Sierra Leone"
+msgstr ""
+
+#: app/Services/CountryName.php:208
+msgid "Singapore"
+msgstr ""
+
+#: app/Services/CountryName.php:209
+msgid "Slovakia"
+msgstr ""
+
+#: app/Services/CountryName.php:210
+msgid "Slovenia"
+msgstr ""
+
+#: app/Services/CountryName.php:211
+msgid "Solomon Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:212
+msgid "Somalia"
+msgstr ""
+
+#: app/Services/CountryName.php:213
+msgid "South Africa"
+msgstr ""
+
+#: app/Services/CountryName.php:214
+msgid "South Georgia/Sandwich Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:215
+msgid "South Korea"
+msgstr ""
+
+#: app/Services/CountryName.php:216
+msgid "South Sudan"
+msgstr ""
+
+#: app/Services/CountryName.php:217
+msgid "Spain"
+msgstr ""
+
+#: app/Services/CountryName.php:218
+msgid "Sri Lanka"
+msgstr ""
+
+#: app/Services/CountryName.php:219
+msgid "Sudan"
+msgstr ""
+
+#: app/Services/CountryName.php:220
+msgid "Suriname"
+msgstr ""
+
+#: app/Services/CountryName.php:221
+msgid "Svalbard and Jan Mayen"
+msgstr ""
+
+#: app/Services/CountryName.php:222
+msgid "Swaziland"
+msgstr ""
+
+#: app/Services/CountryName.php:223
+msgid "Sweden"
+msgstr ""
+
+#: app/Services/CountryName.php:224
+msgid "Switzerland"
+msgstr ""
+
+#: app/Services/CountryName.php:225
+msgid "Syria"
+msgstr ""
+
+#: app/Services/CountryName.php:226
+msgid "Taiwan"
+msgstr ""
+
+#: app/Services/CountryName.php:227
+msgid "Tajikistan"
+msgstr ""
+
+#: app/Services/CountryName.php:228
+msgid "Tanzania"
+msgstr ""
+
+#: app/Services/CountryName.php:229
+msgid "Thailand"
+msgstr ""
+
+#: app/Services/CountryName.php:230
+msgid "Timor-Leste"
+msgstr ""
+
+#: app/Services/CountryName.php:231
+msgid "Togo"
+msgstr ""
+
+#: app/Services/CountryName.php:232
+msgid "Tokelau"
+msgstr ""
+
+#: app/Services/CountryName.php:233
+msgid "Tonga"
+msgstr ""
+
+#: app/Services/CountryName.php:234
+msgid "Trinidad and Tobago"
+msgstr ""
+
+#: app/Services/CountryName.php:235
+msgid "Tunisia"
+msgstr ""
+
+#: app/Services/CountryName.php:236
+msgid "Turkey"
+msgstr ""
+
+#: app/Services/CountryName.php:237
+msgid "Turkmenistan"
+msgstr ""
+
+#: app/Services/CountryName.php:238
+msgid "Turks and Caicos Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:239
+msgid "Tuvalu"
+msgstr ""
+
+#: app/Services/CountryName.php:240
+msgid "Uganda"
+msgstr ""
+
+#: app/Services/CountryName.php:241
+msgid "Ukraine"
+msgstr ""
+
+#: app/Services/CountryName.php:242
+msgid "United Arab Emirates"
+msgstr ""
+
+#: app/Services/CountryName.php:243
+msgid "United Kingdom (UK)"
+msgstr ""
+
+#: app/Services/CountryName.php:244
+msgid "United States (US)"
+msgstr ""
+
+#: app/Services/CountryName.php:245
+msgid "United States (US) Minor Outlying Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:246
+msgid "United States (US) Virgin Islands"
+msgstr ""
+
+#: app/Services/CountryName.php:247
+msgid "Uruguay"
+msgstr ""
+
+#: app/Services/CountryName.php:248
+msgid "Uzbekistan"
+msgstr ""
+
+#: app/Services/CountryName.php:249
+msgid "Vanuatu"
+msgstr ""
+
+#: app/Services/CountryName.php:250
+msgid "Vatican"
+msgstr ""
+
+#: app/Services/CountryName.php:251
+msgid "Venezuela"
+msgstr ""
+
+#: app/Services/CountryName.php:252
+msgid "Vietnam"
+msgstr ""
+
+#: app/Services/CountryName.php:253
+msgid "Wallis and Futuna"
+msgstr ""
+
+#: app/Services/CountryName.php:254
+msgid "Western Sahara"
+msgstr ""
+
+#: app/Services/CountryName.php:255
+msgid "Samoa"
+msgstr ""
+
+#: app/Services/CountryName.php:256
+msgid "Yemen"
+msgstr ""
+
+#: app/Services/CountryName.php:257
+msgid "Zambia"
+msgstr ""
+
+#: app/Services/CountryName.php:258
+msgid "Zimbabwe"
+msgstr ""
+
+#: app/Views/admin/show-preview.php:14
+msgid "Preview Chart"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:50
+msgid "Multiple datasets will merge into one ring"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:51
+msgid "Each data point will get its own color"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:53
+msgid "Color arrays will convert to single colors per dataset"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:55
+msgid "Labels will be removed"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:56
+msgid "Values will convert to X/Y coordinates"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:58
+msgid "Points will convert back to simple values"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:59
+msgid "Labels will be auto-generated"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:61
+msgid "Slices will convert to X/Y coordinates"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:62
+msgid "Color arrays will be removed"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:64
+msgid "Points will convert to slices"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:65
+msgid "Each slice will get its own color"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:86
+msgid "Change chart type?"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:95
+#: resources/block/js/components/EngineSelect.jsx:63
+#: resources/block/js/toolbar/EditDataModal.jsx:73
+msgid "Cancel"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:98
+msgid "Change type"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+msgid "Changing from"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+msgid "to"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+msgid "requires data conversion:"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:116
+msgid "Some data may be lost or modified. This action cannot be undone."
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:19
+msgid "Compare categories"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:20
+msgid "Long category names"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:21
+msgid "Trends over time"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:22
+msgid "Totals over time"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:23
+msgid "Parts of a whole"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:24
+msgid "Parts, with a center"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:25
+msgid "Compare in a circle"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:26
+msgid "Compare many traits"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:27
+msgid "Find correlations"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:28
+msgid "Three values at once"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:29
+msgid "Stages of a process"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:72
+#: resources/block/js/ninja-charts-block.jsx:210
+#: resources/block/js/sidebar/DesignTab.jsx:104
+msgid "Chart type"
+msgstr ""
+
+#: resources/block/js/components/EngineSelect.jsx:47
+msgid "Chart engine"
+msgstr ""
+
+#: resources/block/js/components/EngineSelect.jsx:55
+msgid "Switch chart engine?"
+msgstr ""
+
+#: resources/block/js/components/EngineSelect.jsx:66
+msgid "Switch engine"
+msgstr ""
+
+#: resources/block/js/components/EngineSelect.jsx:72
+msgid "Switching the chart engine will reset your chart options to defaults. Your data (labels and datasets) will be preserved."
+msgstr ""
+
+#: resources/block/js/components/EngineSelect.jsx:75
+msgid "Some chart types may not be available in the new engine."
+msgstr ""
+
+#: resources/block/js/engines/chartjs/panels/AnimationPanel.jsx:17
+#: resources/block/js/engines/google/panels/GoogleAnimationPanel.jsx:30
+msgid "Easing"
+msgstr ""
+
+#: resources/block/js/engines/chartjs/panels/AnimationPanel.jsx:17
+msgid "How the chart moves as it draws."
+msgstr ""
+
+#: resources/block/js/engines/chartjs/panels/AnimationPanel.jsx:26
+msgid "Fill to"
+msgstr ""
+
+#: resources/block/js/engines/chartjs/panels/AnimationPanel.jsx:26
+msgid "Where the filled area under the line stops."
+msgstr ""
+
+#: resources/block/js/engines/google/panels/GoogleAnimationPanel.jsx:17
+msgid "Startup animation"
+msgstr ""
+
+#: resources/block/js/engines/google/panels/GoogleAnimationPanel.jsx:17
+msgid "Animate chart on initial draw"
+msgstr ""
+
+#: resources/block/js/engines/google/panels/GoogleAnimationPanel.jsx:20
+msgid "Duration (ms)"
+msgstr ""
+
+#: resources/block/js/engines/google/panels/ThreeDPanel.jsx:12
+msgid "Enable 3D"
+msgstr ""
+
+#: resources/block/js/engines/google/panels/ThreeDPanel.jsx:12
+msgid "Display the chart with a 3D effect"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:130
+msgid "Add ring"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:130
+msgid "Add series"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:137
+msgid "Add point"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:138
+msgid "Add slice"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:138
+msgid "Add row"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:144
+#: resources/block/js/sidebar/DataTab.jsx:58
+#: resources/block/js/toolbar/EditDataModal.jsx:64
+msgid "Edit data"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:189
+msgid "Let's make a chart"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:191
+msgid "Pick a style, then add your numbers. You can change anything later."
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:198
+msgid "Choose a chart"
+msgstr ""
+
+#. translators: %d: number of chart types not shown yet
+#: resources/block/js/ninja-charts-block.jsx:219
+#, js-format
+msgid "Show %d more chart types"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:230
+msgid "Add your data"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:236
+msgid "Type your own data"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:237
+msgid "Start from an empty sheet"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:243
+msgid "Try sample data"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:244
+msgid "See the chart now, edit the numbers later"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:259
+msgid "Mobile preview"
+msgstr ""
+
+#: resources/block/js/ninja-charts-block.jsx:260
+msgid "Tablet preview"
+msgstr ""
+
+#: resources/block/js/sidebar/DataTab.jsx:15
+#: resources/block/js/toolbar/DataSheet.jsx:152
+#, js-format
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] ""
+msgstr[1] ""
+
+#: resources/block/js/sidebar/DataTab.jsx:16
+#: resources/block/js/sidebar/DataTab.jsx:27
+#: resources/block/js/toolbar/DataSheet.jsx:157
+#, js-format
+msgid "%d series"
+msgid_plural "%d series"
+msgstr[0] ""
+msgstr[1] ""
+
+#: resources/block/js/sidebar/DataTab.jsx:21
+#: resources/block/js/toolbar/DataSheet.jsx:151
+#, js-format
+msgid "%d slice"
+msgid_plural "%d slices"
+msgstr[0] ""
+msgstr[1] ""
+
+#: resources/block/js/sidebar/DataTab.jsx:22
+#: resources/block/js/toolbar/DataSheet.jsx:156
+#, js-format
+msgid "%d ring"
+msgid_plural "%d rings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: resources/block/js/sidebar/DataTab.jsx:26
+#: resources/block/js/toolbar/DataSheet.jsx:153
+#, js-format
+msgid "%d row"
+msgid_plural "%d rows"
+msgstr[0] ""
+msgstr[1] ""
+
+#: resources/block/js/sidebar/DataTab.jsx:41
+msgid "Typed-in data"
+msgstr ""
+
+#: resources/block/js/sidebar/DataTab.jsx:53
+#: resources/block/js/toolbar/DataSheet.jsx:144
+#, js-format
+msgid "Dataset %d"
+msgstr ""
+
+#: resources/block/js/sidebar/DataTab.jsx:63
+msgid "This chart has no data yet. Add the first dataset, slice or point from the chart placeholder or the block toolbar."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:103
+msgid "Chart"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:116
+msgid "Rename series in the data editor."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:124
+msgid "Labels"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:125
+#: resources/block/js/sidebar/ResponsiveTab.jsx:138
+msgid "Title"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:126
+msgid "Chart title"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:130
+msgid "Enter chart title"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:134
+#: resources/block/js/sidebar/ResponsiveTab.jsx:140
+msgid "Show title"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:138
+#: resources/block/js/sidebar/DesignTab.jsx:168
+#: resources/block/js/sidebar/DesignTab.jsx:287
+msgid "Position"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:147
+#: resources/block/js/sidebar/DesignTab.jsx:176
+#: resources/block/js/sidebar/fields/BoxFields.jsx:70
+#: resources/block/js/sidebar/SeriesSection.jsx:51
+#: resources/block/js/sidebar/SeriesSection.jsx:78
+#: resources/block/js/toolbar/DataSheet.jsx:28
+#: resources/block/js/toolbar/DataSheet.jsx:184
+#: resources/block/js/ui/ColorInput.jsx:92
+msgid "Color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:148
+#: resources/block/js/sidebar/DesignTab.jsx:255
+msgid "Title color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:150
+#: resources/block/js/sidebar/DesignTab.jsx:179
+#: resources/block/js/sidebar/DesignTab.jsx:319
+#: resources/block/js/sidebar/ResponsiveTab.jsx:125
+msgid "Font size"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:153
+#: resources/block/js/sidebar/DesignTab.jsx:323
+msgid "Font style"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:159
+#: resources/block/js/sidebar/ResponsiveTab.jsx:162
+msgid "Legend"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:160
+#: resources/block/js/sidebar/ResponsiveTab.jsx:164
+msgid "Show legend"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:164
+msgid "Legend box fill"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:164
+msgid "Filled colour boxes, or outlines when off."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:172
+msgid "Alignment"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:177
+msgid "Legend color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:186
+msgid "Axes"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:188
+msgid "Show grid lines"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:193
+msgid "Stacked"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:193
+msgid "Stack the series on top of each other."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:197
+msgid "Horizontal axis label"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:200
+msgid "Vertical axis label"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:204
+msgid "Vertical axis min"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:208
+#: resources/block/js/sidebar/DesignTab.jsx:216
+msgid "Auto"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:212
+msgid "Vertical axis max"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:222
+msgid "Bubble size label"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:229
+msgid "Tooltip"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:230
+msgid "Show tooltip"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:234
+msgid "Shared tooltip"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:234
+msgid "Show every series at the hovered position."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:239
+msgid "Trigger"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:244
+#: resources/block/js/sidebar/DesignTab.jsx:310
+#: resources/block/js/sidebar/DesignTab.jsx:311
+msgid "Background color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:245
+msgid "Tooltip background color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:250
+#: resources/block/js/sidebar/DesignTab.jsx:314
+msgid "Border"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:256
+msgid "Tooltip title color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:258
+#: resources/block/js/sidebar/ResponsiveTab.jsx:148
+msgid "Title font size"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:263
+msgid "Text color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:264
+msgid "Tooltip text color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:266
+msgid "Text font size"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:272
+msgid "Hover"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:277
+msgid "Layout"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:278
+#: resources/block/js/sidebar/ResponsiveTab.jsx:112
+#: resources/block/js/toolbar/DataSheet.jsx:36
+msgid "Size"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:278
+msgid "Size and spacing"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:279
+msgid "Fit container width"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:279
+msgid "The chart always fills the width of the area it is placed in."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:284
+msgid "Width (px)"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:293
+#: resources/block/js/sidebar/fields/BoxFields.jsx:94
+#: resources/block/js/sidebar/fields/BoxFields.jsx:211
+msgid "Left"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:294
+msgid "Center"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:295
+#: resources/block/js/sidebar/fields/BoxFields.jsx:92
+#: resources/block/js/sidebar/fields/BoxFields.jsx:209
+msgid "Right"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:301
+#: resources/block/js/sidebar/ResponsiveTab.jsx:114
+msgid "Height (px)"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:301
+msgid "Tablets and phones can use their own height, in the Responsive tab."
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:309
+msgid "Background and text"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:327
+#: resources/block/js/sidebar/DesignTab.jsx:328
+msgid "Font color"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:334
+msgid "More"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:336
+msgid "Animation"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:336
+msgid "Animation and fill"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:340
+msgid "Advanced"
+msgstr ""
+
+#: resources/block/js/sidebar/DesignTab.jsx:345
+msgid "Switching resets the design settings, as each engine has its own."
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:31
+msgid "Solid"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:32
+msgid "Dashed"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:33
+msgid "Dotted"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:34
+msgid "Double"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:35
+#: resources/block/js/sidebar/fields/HoverFields.jsx:46
+msgid "None"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:50
+msgid "Width"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:61
+msgid "Style"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:72
+msgid "color"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:91
+#: resources/block/js/sidebar/fields/BoxFields.jsx:208
+msgid "Top"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:93
+#: resources/block/js/sidebar/fields/BoxFields.jsx:210
+msgid "Bottom"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:115
+msgid "All sides"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:116
+msgid "Each side"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:138
+msgid "Top left"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:139
+msgid "Top right"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:140
+msgid "Bottom right"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:141
+msgid "Bottom left"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:157
+msgid "Corner radius"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:163
+msgid "All corners"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:164
+msgid "Each corner"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:169
+msgid "Radius"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/BoxFields.jsx:216
+msgid "Padding (px)"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:24
+msgid "Hover effects"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:25
+msgid "When off, slices and bars are not highlighted under the pointer. Tooltips follow the Tooltip setting."
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:37
+msgid "Hover effect"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:38
+msgid "Highlight shows a stronger shade. None keeps the normal colour."
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:45
+msgid "Highlight"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:47
+msgid "Custom"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:53
+#: resources/block/js/sidebar/fields/HoverFields.jsx:56
+msgid "Hover color"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:54
+msgid "One colour for every bar, slice or point under the pointer."
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:60
+msgid "Hover border width"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:61
+#: resources/block/js/sidebar/fields/HoverFields.jsx:75
+msgid "Leave empty to keep the normal border."
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:69
+msgid "Unchanged"
+msgstr ""
+
+#: resources/block/js/sidebar/fields/HoverFields.jsx:74
+#: resources/block/js/sidebar/fields/HoverFields.jsx:77
+msgid "Hover border color"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:62
+msgid "Same as tablet"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:62
+msgid "Same as desktop"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:70
+#: resources/block/js/sidebar/ResponsiveTab.jsx:71
+msgid "Show"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:70
+#: resources/block/js/sidebar/ResponsiveTab.jsx:72
+msgid "Hide"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:84
+msgid "These settings apply to tablets and phones. The preview shows desktop."
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:86
+msgid "Phones use the tablet settings unless you change them here."
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:87
+msgid "Tablets use the desktop settings unless you change them here."
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:95
+msgid "Device to edit"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:99
+msgid "Tablet"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:100
+msgid "Mobile"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:107
+msgid "Preview desktop"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:172
+msgid "Legend position"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:192
+msgid "Reset to tablet"
+msgstr ""
+
+#: resources/block/js/sidebar/ResponsiveTab.jsx:192
+msgid "Reset to desktop"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:17
+msgid "Circle"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:18
+msgid "Cross"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:19
+msgid "Cross rotated"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:20
+msgid "Dash"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:21
+#: resources/block/js/utils.js:10
+msgid "Line"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:22
+msgid "Rect"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:23
+msgid "Rect rounded"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:24
+msgid "Rect rotated"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:25
+msgid "Star"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:26
+msgid "Triangle"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:31
+msgid "Slices"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:32
+msgid "Points"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:33
+#: resources/block/js/toolbar/DataSheet.jsx:161
+msgid "Series"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:43
+#: resources/block/js/toolbar/DataSheet.jsx:161
+msgid "Ring"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:72
+msgid "Dataset"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:104
+msgid "Show percentages"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:104
+msgid "Display percentage labels on chart slices"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:109
+msgid "Area fill"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:109
+msgid "Fill the area under the lines"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:114
+msgid "Point fill"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:114
+msgid "Fill the data points with color"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:120
+msgid "Straight line"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:120
+msgid "Disable curved lines"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:123
+msgid "Show points"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:123
+msgid "Display data point dots on lines"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:126
+msgid "Line width"
+msgstr ""
+
+#: resources/block/js/sidebar/SeriesSection.jsx:136
+msgid "Point style"
+msgstr ""
+
+#: resources/block/js/sidebar/Sidebar.jsx:45
+msgid "Data"
+msgstr ""
+
+#: resources/block/js/sidebar/Sidebar.jsx:46
+msgid "Design"
+msgstr ""
+
+#: resources/block/js/sidebar/Sidebar.jsx:49
+msgid "Responsive"
+msgstr ""
+
+#: resources/block/js/sidebar/Sidebar.jsx:57
+msgid "Chart settings"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:29
+msgid "Value"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:70
+#: resources/block/js/toolbar/DataSheet.jsx:164
+msgid "Slice"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:70
+#: resources/block/js/toolbar/DataSheet.jsx:164
+msgid "Point"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:70
+msgid "Label"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:71
+msgid "ring"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:71
+msgid "series"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:164
+msgid "Row"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:194
+msgid "Ring name"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:194
+msgid "Series name"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:201
+#, js-format
+msgid "Remove %1$s %2$s"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:202
+msgid "Remove ring"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:202
+msgid "Remove series"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:212
+msgid "Actions"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:237
+#, js-format
+msgid "Row %d, %s"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:251
+#, js-format
+msgid "Color of %1$s in %2$s"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:270
+#, js-format
+msgid "Row %1$d, %2$s"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:286
+#, js-format
+msgid "Delete row %d"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:287
+msgid "Delete row"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:300
+msgid "No rows yet."
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:301
+msgid "Add a row"
+msgstr ""
+
+#: resources/block/js/toolbar/DataSheet.jsx:306
+msgid "Enter moves down and adds a row at the end. Arrow keys move between cells."
+msgstr ""
+
+#: resources/block/js/toolbar/EditDataModal.jsx:57
+msgid "One row per slice, with its value and color in each ring."
+msgstr ""
+
+#: resources/block/js/toolbar/EditDataModal.jsx:59
+msgid "One row per point, with its position in each series."
+msgstr ""
+
+#: resources/block/js/toolbar/EditDataModal.jsx:60
+msgid "One row per label, with a value for each series."
+msgstr ""
+
+#: resources/block/js/toolbar/EditDataModal.jsx:74
+msgid "Save data"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:31
+msgid "Visits"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:31
+msgid "Sign-ups"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:31
+msgid "Trials"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:31
+msgid "Purchases"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:32
+msgid "Direct"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:32
+msgid "Search"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:32
+msgid "Social"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:32
+msgid "Email"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "Jan"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "Feb"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "Mar"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "Apr"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "May"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:46
+msgid "Jun"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:48
+msgid "Sales"
+msgstr ""
+
+#: resources/block/js/toolbar/sampleData.js:49
+msgid "Costs"
+msgstr ""
+
+#: resources/block/js/ui/ColorInput.jsx:94
+msgid "Default"
+msgstr ""
+
+#: resources/block/js/ui/ColorInput.jsx:175
+msgid "Clear color"
+msgstr ""
+
+#: resources/block/js/ui/ColorInput.jsx:218
+msgid "Custom color"
+msgstr ""
+
+#: resources/block/js/ui/Modal.jsx:108
+msgid "Close"
+msgstr ""
+
+#: resources/block/js/ui/NumberInput.jsx:104
+msgid "Increase"
+msgstr ""
+
+#: resources/block/js/ui/NumberInput.jsx:107
+msgid "Decrease"
+msgstr ""
+
+#: resources/block/js/ui/Select.jsx:157
+msgid "Select"
+msgstr ""
+
+#: resources/block/js/utils.js:8
+msgid "Bar"
+msgstr ""
+
+#: resources/block/js/utils.js:9
+msgid "Horizontal bar"
+msgstr ""
+
+#: resources/block/js/utils.js:11
+msgid "Area"
+msgstr ""
+
+#: resources/block/js/utils.js:12
+msgid "Pie"
+msgstr ""
+
+#: resources/block/js/utils.js:13
+msgid "Doughnut"
+msgstr ""
+
+#: resources/block/js/utils.js:14
+msgid "Polar area"
+msgstr ""
+
+#: resources/block/js/utils.js:15
+msgid "Radar"
+msgstr ""
+
+#: resources/block/js/utils.js:16
+msgid "Scatter"
+msgstr ""
+
+#: resources/block/js/utils.js:17
+msgid "Bubble"
+msgstr ""
+
+#: resources/block/js/utils.js:18
+msgid "Funnel"
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block title"
+msgid "Ninja Charts"
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block description"
+msgid "Create a chart."
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block keyword"
+msgid "chart"
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block keyword"
+msgid "chart.js"
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block keyword"
+msgid "ninja chart"
+msgstr ""

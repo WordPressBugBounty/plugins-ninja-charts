@@ -2,6 +2,8 @@
 
 namespace NinjaCharts\App\Helpers;
 
+use NinjaCharts\Framework\Support\Arr;
+
 class Helper
 {
     public static function maybeUnserialize($data)
@@ -64,6 +66,18 @@ class Helper
                 return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
         }
         return false;
+    }
+
+    /**
+     * How many sample rows a request asks for (extra_data.sample_rows), at most 20; 0 when it asks for none.
+     * Samples show what each column or field holds, so only a few are ever read.
+     */
+    public static function sampleSize($extra_data)
+    {
+        $size = Arr::get(is_array($extra_data) ? $extra_data : [], 'sample_rows', 0);
+        $size = is_scalar($size) ? (int) $size : 0;
+
+        return $size > 0 ? min($size, 20) : 0;
     }
 
     public static function getOrderBy($order)

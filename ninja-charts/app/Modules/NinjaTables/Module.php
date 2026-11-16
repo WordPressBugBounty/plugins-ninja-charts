@@ -74,8 +74,26 @@ class Module implements DataSourceInterface
         if (is_string($keys)) {
             $keys = json_decode($keys, true);
         }
+        // A few rows, to show what each column holds, before any row is read for the chart
+        $sample = Helper::sampleSize($extra_data);
+        if ($sample) {
+            return DataTablesRows::applies($table_id)
+                ? DataTablesRows::sample($table_id, $sample)
+                : NinjaTableItem::whereTableId($table_id)->select('value', 'id')->orderBy('id', 'ASC')->limit($sample)->get();
+        }
+
         $ninja_chart              = $id ? NinjaCharts::findOrFail($id) : null;
         $extra_data['chart_type'] = $chart_type;
+
+        // Picking rows by hand lists every row. A DataTables table answers that from its own
+        // storage, before the chart's rows are read, so the table is read only once.
+        if (isset($extra_data['only_all_row']) && DataTablesRows::applies($table_id)) {
+            $options = $ninja_chart && isset($ninja_chart->options) ? json_decode($ninja_chart->options, true) : [];
+            $rows    = Arr::get($extra_data, 'rows') ?: Arr::get($options, 'row');
+
+            return DataTablesRows::pickable($table_id, $rows);
+        }
+
         $tableRows                = $this->getTableRows($extra_data, $table_id, $ninja_chart);
         $labels                   = $this->labelFormat($keys, $tableRows, $chart_type, $extra_data);
         $ntbDataProvider          = ninja_table_get_data_provider($table_id);
@@ -141,6 +159,14 @@ class Module implements DataSourceInterface
         $hasRange     = Arr::get($rows, 'pick_range');
         $hasRangeDate = Arr::get($rows, 'pick_date');
         $remote_csv   = false;
+        // A DataTables table keeps its rows in its own storage, not in the shared items table
+        if (DataTablesRows::applies($table_id)) {
+            return apply_filters(
+                'ninja_charts_ntm_all_table_rows',
+                DataTablesRows::values($table_id, $rows, $this->dateBounds($rows))
+            );
+        }
+
         $sort         = $this->sortBy($table_id);
 
         if (ninja_table_get_data_provider($table_id) === 'google-csv') {
@@ -252,22 +278,36 @@ class Module implements DataSourceInterface
                              ->paginate($number);
     }
 
-    public function getAllRowByDateTime($table_id, $rows = [])
+    /**
+     * The chart's date range as the first and last moment of its days, or null when it is unusable.
+     * The dates arrive as JavaScript date strings ("Mon Jan 01 2024 …"), so the day is cut from them.
+     */
+    private function dateBounds($rows)
     {
-        $dates         = Arr::get($rows, 'date_range');
+        $dates         = Arr::get(is_array($rows) ? $rows : [], 'date_range');
         $date_from     = isset($dates[0]) ? $dates[0] : '';
         $date_to       = isset($dates[1]) ? $dates[1] : '';
         $date_from_str = $date_from ? substr($date_from, 4, 11) : '';
         $date_to_str   = $date_to   ? substr($date_to,   4, 11) : '';
 
         if (!$date_from_str || !$date_to_str || strtotime($date_from_str) === false || strtotime($date_to_str) === false) {
-            return NinjaTableItem::whereTableId($table_id)->whereRaw('0 = 1')->select('value', 'id')->get();
+            return null;
         }
 
         $dt_from = new DateTime($date_from_str);
         $dt_to   = new DateTime($date_to_str);
-        $from    = $dt_from->format('Y-m-d 00:00:00');
-        $to      = $dt_to->format('Y-m-d 23:59:59');
+
+        return [$dt_from->format('Y-m-d 00:00:00'), $dt_to->format('Y-m-d 23:59:59')];
+    }
+
+    public function getAllRowByDateTime($table_id, $rows = [])
+    {
+        $bounds = $this->dateBounds($rows);
+        if (!$bounds) {
+            return NinjaTableItem::whereTableId($table_id)->whereRaw('0 = 1')->select('value', 'id')->get();
+        }
+
+        list($from, $to) = $bounds;
 
         $tableRows = NinjaTableItem::whereBetween('created_at', [$from, $to])
                                    ->whereTableId($table_id)

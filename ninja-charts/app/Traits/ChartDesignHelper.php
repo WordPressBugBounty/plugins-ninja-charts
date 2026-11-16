@@ -180,9 +180,11 @@ trait ChartDesignHelper
                 $labels = $c_labels ? $c_labels : $new_labels;
             }
             return $labels;
-        } else {
-            return $new_labels;
         }
+
+        // A chart that counts answers (a choice field) is labelled by the answers it counted,
+        // whatever its type. Otherwise every submitted value would become a label.
+        return $c_labels ? $c_labels : $new_labels;
     }
 
     public function allBackGroundColorFormat($ninja_chart, $chart_type, $rows, $chart_data, $i = 0)
@@ -279,10 +281,11 @@ trait ChartDesignHelper
         $pointRadius = '';
         $options = $ninja_chart ? $ninja_chart->decodedOptions() : null;
         if (isset($series)) {
-            $pointRadius = isset($series[$i]['pointRadius']) ? $series[$i]['pointRadius'] : 'false';
+            // A series added in the editor has no size yet; 3 as below, as Chart.js cannot draw 'false'
+            $pointRadius = isset($series[$i]['pointRadius']) ? $series[$i]['pointRadius'] : 3;
         } elseif (isset($options->series)) {
             $series = $options->series;
-            $pointRadius =  isset($series[$i]->pointRadius) ? $series[$i]->pointRadius : 'false';
+            $pointRadius =  isset($series[$i]->pointRadius) ? $series[$i]->pointRadius : 3;
         } else {
             $pointRadius = 3;
         }

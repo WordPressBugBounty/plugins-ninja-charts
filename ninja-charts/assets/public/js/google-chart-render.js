@@ -47,12 +47,29 @@ jQuery(document).ready(function () {
 
                 window.NinjaChartsLoader.hide(chartElement);
 
-                let options = renderData.options;
+                // Per-device settings (tablet, mobile): see ninja-charts-device.js
+                const Device = window.NinjaChartsDevice;
+                const savedOptions = renderData.options;
+                const deviceOptions = function (device) {
+                    return Device ? Device.resolveDeviceOptions(savedOptions, device) : savedOptions;
+                };
+                let options = deviceOptions(Device ? Device.currentDevice() : 'desktop');
                 let canvas = document.getElementById(canvasDom);
                 var exportMode = new URLSearchParams(window.location.search).get('ninja_chart_export');
 
                 google.charts.load('current', {'packages': ['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
+                google.charts.setOnLoadCallback(function () {
+                    drawChart();
+
+                    // Redraw with the next device's settings when the viewport crosses a breakpoint.
+                    // The media-query CSS has already resized the box, so Google draws to its new size.
+                    if (Device && exportMode !== 'png' && Device.hasOverrides(savedOptions)) {
+                        Device.onDeviceChange(function (device) {
+                            options = deviceOptions(device);
+                            drawChart();
+                        });
+                    }
+                });
 
                 function drawChart() {
                     let chartType = renderData.chart_type;
@@ -159,6 +176,15 @@ jQuery(document).ready(function () {
 
                     if (renderData.chart_type !== 'ComboChart') {
                         delete chartOption.colors;
+                    }
+
+                    // Hover and tooltips both off: a static chart. Hover off alone hides only
+                    // the highlight (ninja-charts-hover.js)
+                    if (window.NinjaChartsHover) {
+                        if (!window.NinjaChartsHover.googleInteractive(options)) {
+                            chartOption.enableInteractivity = false;
+                        }
+                        window.NinjaChartsHover.markNoHover(canvas, window.NinjaChartsHover.googleHideHighlight(options));
                     }
                     chartType = renderData.chart_type === 'DonutChart' ? 'PieChart' : renderData.chart_type;
                     var chart = new google.visualization[chartType](canvas)

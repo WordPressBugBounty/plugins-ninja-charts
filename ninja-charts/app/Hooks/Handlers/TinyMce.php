@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 use NinjaCharts\App\App;
 use NinjaCharts\App\Models\NinjaCharts;
+use NinjaCharts\App\Services\Vite;
 
 class TinyMce
 {
@@ -67,7 +68,7 @@ class TinyMce
         $formatted = array();
 
         $title = __('Select a Chart', 'ninja-charts');
-        if (!$ninja_charts) {
+        if ($ninja_charts->isEmpty()) {
             $title = __('No Charts found. Please add a chart first', 'ninja-charts');
         }
 
@@ -88,22 +89,16 @@ class TinyMce
     public function gutenBlockLoad()
     {
         add_action('enqueue_block_editor_assets', function () {
-            $app = App::getInstance();
-            $assets = $app['url.assets'];
-
-            wp_enqueue_script(
+            Vite::enqueueScript(
                 'ninja-charts-gutenberg-block',
-                $assets . 'admin/js/ninja-charts-gutenblock-build.js',
-                array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor'),
-                NINJA_CHARTS_VERSION,
-                true
+                'admin/js/ninja-charts-gutenblock-build.js',
+                array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor')
             );
 
-            wp_enqueue_style(
+            Vite::enqueueStyle(
                 'ninja-charts-gutenberg-block',
-                $assets . 'admin/css/gutenblock.css',
-                array('wp-edit-blocks'),
-                NINJA_CHARTS_VERSION
+                'admin/css/gutenblock.css',
+                array('wp-edit-blocks')
             );
         });
     }

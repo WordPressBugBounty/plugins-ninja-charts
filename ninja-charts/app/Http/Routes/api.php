@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 $router->withPolicy('UserPolicy')->group(function ($app) {
     $app->get('charts', 'ChartController@index');
+    $app->get('charts/usage', 'ChartController@usage');
     $app->post('charts', 'ChartController@store');
     $app->post('charts/{id}', 'ChartController@update')->int('id');
     $app->get('charts/{id}', 'ChartController@find')->int('id');

@@ -2,6 +2,8 @@
 
 namespace NinjaCharts\App\Modules\FluentForms;
 
+use NinjaCharts\App\Helpers\Helper;
+
 use DateTime;
 use NinjaCharts\Framework\Support\Arr;
 
@@ -89,6 +91,12 @@ class Module implements DataSourceInterface
         if (is_string($keys)) {
             $keys = json_decode($keys, true);
         }
+        // A few entries, to show what each field holds, before any submission is read for the chart
+        $sample = Helper::sampleSize($extra_data);
+        if ($sample) {
+            return $this->getFormSubmissionRows($table_id, $sample);
+        }
+
         $ninja_chart              = $id ? NinjaCharts::findOrFail($id) : null;
         $extra_data['chart_type'] = $chart_type;
         $tableRows                = $this->getTableRows($extra_data, $table_id, $ninja_chart);
@@ -189,12 +197,21 @@ class Module implements DataSourceInterface
         return apply_filters('ninja_charts_ffm_filter_by_date_rows', $tableRows);
     }
 
-    public function getFormSubmissionRows($table_id = null)
+    /**
+     * @param int|null $table_id
+     * @param int      $limit the newest entries only; 0 for every entry
+     */
+    public function getFormSubmissionRows($table_id = null, $limit = 0)
     {
-        return FluentFormSubmission::whereFormId($table_id)
+        $query = FluentFormSubmission::whereFormId($table_id)
             ->where('status', '!=', 'trashed')
-            ->select('response', 'id')
-            ->get();
+            ->select('response', 'id');
+
+        if ($limit > 0) {
+            $query->orderBy('id', 'DESC')->limit((int) $limit);
+        }
+
+        return $query->get();
     }
 
     public function selectFormSubmissionRow($table_id, $rows)

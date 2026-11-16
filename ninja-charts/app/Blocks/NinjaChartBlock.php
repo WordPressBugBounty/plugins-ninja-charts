@@ -9,6 +9,8 @@ use NinjaCharts\App\Blocks\Engines\ChartJsEngine;
 use NinjaCharts\App\Blocks\Engines\GoogleChartsEngine;
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Services\Vite;
+use NinjaCharts\App\Helpers\DeviceOptions;
 
 
 /**
@@ -70,9 +72,9 @@ class NinjaChartBlock {
 			true
 		);
 
-		wp_register_script(
+		Vite::registerScript(
 			'ninja-charts-block-editor',
-			$asset_url . 'block/js/ninja-charts-block.js',
+			'block/js/ninja-charts-block.js',
 			[
 				'wp-blocks',
 				'wp-element',
@@ -83,7 +85,14 @@ class NinjaChartBlock {
 				'ninja-charts-chartjs-datalabels-editor',
 				'ninja-charts-chartjs-funnel-editor',
 				'ninja-charts-google-editor',
-			],
+			]
+		);
+
+		// Per-device settings (tablet, mobile), read by both block render scripts
+		wp_register_script(
+			'ninja-charts-device',
+			$asset_url . 'public/js/ninja-charts-device.js',
+			[],
 			$version,
 			true
 		);
@@ -91,17 +100,12 @@ class NinjaChartBlock {
 		wp_register_script(
 			'ninja-charts-block-frontend',
 			$asset_url . 'public/js/ninja-charts-block-render.js',
-			[ 'jquery', 'chartjs' ],
+			[ 'jquery', 'chartjs', 'ninja-charts-device' ],
 			$version,
 			true
 		);
 
-		wp_register_style(
-			'ninja-charts-block-editor-style',
-			$asset_url . 'block/css/panel.css',
-			[],
-			$version
-		);
+		Vite::registerStyle('ninja-charts-block-editor-style', 'block/css/panel.css');
 	}
 
 	/**
@@ -130,19 +134,50 @@ class NinjaChartBlock {
 		}
 		$config = $engine_class::buildChartConfig($attributes, $options, $chart_type);
 
+		$devices = self::buildDeviceConfigs($engine_class, $attributes, $options, $chart_type);
+		if ($devices) {
+			$config['devices'] = $devices;
+		}
+
 		$asset_url = NINJA_CHARTS_URL . 'assets/';
 		$engine_class::enqueueFrontendAssets($asset_url, NINJA_CHARTS_VERSION);
 
 		$id = 'ninja-charts-block-' . wp_unique_id();
 		$container_style = self::buildContainerStyle($options);
 
-		return sprintf(
+		// Heights set for tablets and phones, by media query so the box never jumps.
+		// $id comes from wp_unique_id() and the heights are intval()'d in heightCss().
+		$device_css = DeviceOptions::heightCss('#' . $id . ' .ninja-charts-block-container', $options);
+		$device_style = $device_css ? '<style>' . $device_css . '</style>' : '';
+
+		return $device_style . sprintf(
 			'<div class="ninja-charts-block" id="%1$s"><div class="ninja-charts-block-container" style="%2$s" data-chart-config="%3$s" data-engine="%4$s"></div></div>',
 			esc_attr($id),
 			esc_attr($container_style),
 			esc_attr(wp_json_encode($config)),
 			esc_attr($chart_library)
 		);
+	}
+
+	/**
+	 * The config parts that change on tablets and phones, without the chart data, which the
+	 * devices share. Empty when the block has no device settings, so it renders as before.
+	 *
+	 * @return array [device => config without its data]
+	 */
+	private static function buildDeviceConfigs($engine_class, $attributes, $options, $chart_type) {
+		$devices = [];
+
+		foreach (DeviceOptions::DEVICES as $device) {
+			if (! DeviceOptions::overridesFor($options, $device)) {
+				continue;
+			}
+			$device_config = $engine_class::buildChartConfig($attributes, DeviceOptions::resolve($options, $device), $chart_type);
+			unset($device_config['data'], $device_config['chartData']);
+			$devices[ $device ] = $device_config;
+		}
+
+		return $devices;
 	}
 
 	/*
@@ -163,13 +198,16 @@ class NinjaChartBlock {
 		$position   = Arr::get($chart, 'position', 'center');
 		$radius_raw = Arr::get($chart, 'borderRadius', '0px');
 
+		$border = Arr::get($chart, 'border', []);
+
 		$parts = [
 			'height: ' . $height . 'px',
 			'width: ' . ($responsive ? '100%' : $width . 'px'),
+			'max-width: ' . self::buildMaxWidthCss($border),
 			'background-color: ' . $bg_color,
 		];
 
-		$parts = array_merge($parts, self::buildBorderCss(Arr::get($chart, 'border', [])));
+		$parts = array_merge($parts, self::buildBorderCss($border));
 		$parts[] = 'border-radius: ' . self::buildBorderRadiusCss($radius_raw);
 
 		if (! $responsive && in_array($position, ['left', 'center', 'right'], true)) {
@@ -224,6 +262,46 @@ class NinjaChartBlock {
 				self::sanitizeCssColor(Arr::get($border, 'color', 'transparent'), 'transparent')
 			),
 		];
+	}
+
+	/**
+	 * The max-width that keeps a bordered box inside its container.
+	 *
+	 * The box is content-box, so its width plus a border on each side would overflow by the
+	 * two border widths. Like the shortcode view, cap it at calc(100% - both side borders).
+	 * Without a side border this stays '100%', the value every block had before.
+	 * resources/block/js/engines/borderMaxWidth.js does the same for the editor preview.
+	 *
+	 * @param mixed $border Flat { color, style, width } or split { top, right, bottom, left }.
+	 * @return string
+	 */
+	private static function buildMaxWidthCss($border) {
+		if (!is_array($border) || empty($border)) {
+			return '100%';
+		}
+
+		$split = false;
+		foreach (['top', 'right', 'bottom', 'left'] as $side) {
+			if (isset($border[$side]) && is_array($border[$side])) {
+				$split = true;
+				break;
+			}
+		}
+
+		$sides  = $split ? [ Arr::get($border, 'left', []), Arr::get($border, 'right', []) ] : [ $border, $border ];
+		$widths = [];
+
+		foreach ($sides as $side) {
+			if (!is_array($side) || in_array(Arr::get($side, 'style', 'solid'), ['none', 'hidden'], true)) {
+				continue;
+			}
+			$width = self::sanitizeCssDimension(Arr::get($side, 'width', '0px'), '0px');
+			if ((float) $width > 0) {
+				$widths[] = $width;
+			}
+		}
+
+		return $widths ? 'calc(100% - (' . implode(' + ', $widths) . '))' : '100%';
 	}
 
 	/**

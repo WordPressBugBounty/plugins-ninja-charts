@@ -47,228 +47,264 @@ jQuery(document).ready(function () {
                 }
 
                 window.NinjaChartsLoader.hide(chartElement);
-                
-                let options = renderData.options;
+
                 let canvas = document.getElementById(canvasDom);
                 let ctx = canvas.getContext('2d');
-                let chartOptions = {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: options.title.display === 'true',
-                            text: renderData.chart_name,
-                            position: options.title.position,
-                            color: options.title.fontColor,
-                            font: {
-                                size: Number(options.title.fontSize),
-                                style: options.title.fontStyle
-                            }
-                        },
-                        legend: {
-                            display: options.legend.display === 'true',
-                            position: options.legend.position,
-                            labels: {
-                                color: options.legend.fontColor
-                            }
-                        },
-                        tooltip: {
-                            intersect: true,
-                            enabled: options.tooltip.enabled === 'true',
-                            mode: options.tooltip.mode === 'true' ? 'index' : 'nearest',
-                            backgroundColor: options.tooltip.backgroundColor,
-                            titleFontSize: 12,
-                            titleColor: options.tooltip.titleFontColor,
-                            bodyColor: options.tooltip.bodyFontColor,
-                            footerColor: options.tooltip.bodyFontColor,
-                            footerFontSize: 12,
-                            footerAlign: 'right',
-                            footerFontStyle: 'normal',
-                            bodyFontSize: Number(options.tooltip.bodyFontSize),
-                            displayColors: true,
-                            borderColor: options.tooltip.borderColor,
-                            borderWidth: options.tooltip.borderWidth,
-                            callbacks: {
-                                title: function (context) {
-                                    return context[0].label;
-                                },
-                                label: function (context) {
-                                    // Handle polar charts which have object data with 'r' property
-                                    if (context.parsed && typeof context.parsed === 'object' && context.parsed.r !== undefined) {
-                                        return context.dataset.label + ': ' + context.parsed.r;
-                                    }
-                                    
-                                    // Handle bar/line charts which have object data with 'y' property
-                                    if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== undefined) {
-                                        return context.dataset.label + ': ' + context.parsed.y;
-                                    }
-                                    
-                                    // Handle simple parsed values
-                                    if (context.parsed !== undefined && context.parsed !== null && typeof context.parsed !== 'object') {
-                                        return context.dataset.label + ': ' + context.parsed;
-                                    }
-                                    
-                                    // Handle raw data (for bar charts and other charts)
-                                    if (context.raw !== null) {
-                                        return context.dataset.label + ': ' + context.raw;
-                                    }
-                                    
-                                    // Fallback
-                                    return context.dataset.label + ': 0';
-                                }
-                            }
-                        },
-                    },
-                    animation: {
-                        easing: options.animation ? options.animation : 'linear'
-                    },
-                    scales: {
-                        x: {
-                            stacked:  options.axes.stacked === 'true',
-                            title: {
-                                display: options.axes.display === 'true',
-                                text: options.axes.x_axis_label === null ? '' : options.axes.x_axis_label,
-                                color: options.chart.fontColor,
-                                font: {
-                                    size: Number(options.chart.fontSize),
-                                    style: options.chart.fontStyle
-                                }
-                            },
-                            grid: {
-                                display: options.axes.display === 'true'
-                            },
-                            ticks: {
-                                display: options.axes.display === 'true',
-                                color: options.chart.fontColor,
-                                font: {
-                                    size: Number(options.chart.fontSize),
-                                    style: options.chart.fontStyle
-                                },
-                                beginAtZero: true
-                            }
-                        },
-                        y: {
-                            stacked: options.axes.stacked === 'true',
-                            title: {
-                                stacked: options.axes.stacked === 'true',
-                                text: options.axes.y_axis_label === null ? '' : options.axes.y_axis_label,
-                                color: options.chart.fontColor,
-                                font: {
-                                    size: Number(options.chart.fontSize),
-                                    style: options.chart.fontStyle
-                                }
-                            },
-                            grid: {
-                                display: options.axes.display === 'true'
-                            },
-                            ticks: {
-                                display: options.axes.display === 'true',
-                                color: options.chart.fontColor,
-                                font: {
-                                    size: Number(options.chart.fontSize),
-                                    style: options.chart.fontStyle
-                                },
-                                beginAtZero: true,
-                                precision: 2,
-                            },
-                            min: parseInt(options.axes.vertical_min_tick || options.axes.verticle_min_tick) || null,
-                            max: parseInt(options.axes.vertical_max_tick || options.axes.verticle_max_tick) || null
-                        },
-                    },
-                    layout: {
-                        padding: {
-                            left: options.layout.padding.left,
-                            right: options.layout.padding.right,
-                            top: options.layout.padding.top,
-                            bottom: options.layout.padding.bottom
-                        }
-                    }
-                };
+                const exportMode = new URLSearchParams(window.location.search).get('ninja_chart_export');
+                const isExportMode = exportMode === 'png' || exportMode === 'pdf';
+                // Per-device settings (tablet, mobile): see ninja-charts-device.js
+                const Device = window.NinjaChartsDevice;
+                const savedOptions = renderData.options;
+                // Chart.js keeps state on the data it draws, so each drawing gets its own copy
+                const sourceData = JSON.stringify(renderData.chart_data);
 
-                if (options.chart.responsive === 'false') {
-                    let marginStyle = {
-                        'margin-left': 'auto',
-                        'margin-right': 'auto'
+                // The Chart.js config for the options as they apply on one device
+                function buildConfig(options) {
+                    renderData.chart_data = JSON.parse(sourceData);
+                    let chartOptions = {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: options.title.display === 'true',
+                                text: renderData.chart_name,
+                                position: options.title.position,
+                                color: options.title.fontColor,
+                                font: {
+                                    size: Number(options.title.fontSize),
+                                    style: options.title.fontStyle
+                                }
+                            },
+                            legend: {
+                                display: options.legend.display === 'true',
+                                position: options.legend.position,
+                                labels: {
+                                    color: options.legend.fontColor
+                                }
+                            },
+                            tooltip: {
+                                intersect: true,
+                                enabled: options.tooltip.enabled === 'true',
+                                mode: options.tooltip.mode === 'true' ? 'index' : 'nearest',
+                                backgroundColor: options.tooltip.backgroundColor,
+                                titleFontSize: 12,
+                                titleColor: options.tooltip.titleFontColor,
+                                bodyColor: options.tooltip.bodyFontColor,
+                                footerColor: options.tooltip.bodyFontColor,
+                                footerFontSize: 12,
+                                footerAlign: 'right',
+                                footerFontStyle: 'normal',
+                                bodyFontSize: Number(options.tooltip.bodyFontSize),
+                                displayColors: true,
+                                borderColor: options.tooltip.borderColor,
+                                borderWidth: options.tooltip.borderWidth,
+                                callbacks: {
+                                    title: function (context) {
+                                        return context[0].label;
+                                    },
+                                    label: function (context) {
+                                        // Handle polar charts which have object data with 'r' property
+                                        if (context.parsed && typeof context.parsed === 'object' && context.parsed.r !== undefined) {
+                                            return context.dataset.label + ': ' + context.parsed.r;
+                                        }
+                                    
+                                        // Handle bar/line charts which have object data with 'y' property
+                                        if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== undefined) {
+                                            return context.dataset.label + ': ' + context.parsed.y;
+                                        }
+                                    
+                                        // Handle simple parsed values
+                                        if (context.parsed !== undefined && context.parsed !== null && typeof context.parsed !== 'object') {
+                                            return context.dataset.label + ': ' + context.parsed;
+                                        }
+                                    
+                                        // Handle raw data (for bar charts and other charts)
+                                        if (context.raw !== null) {
+                                            return context.dataset.label + ': ' + context.raw;
+                                        }
+                                    
+                                        // Fallback
+                                        return context.dataset.label + ': 0';
+                                    }
+                                }
+                            },
+                        },
+                        animation: {
+                            easing: options.animation ? options.animation : 'linear'
+                        },
+                        scales: {
+                            x: {
+                                stacked:  options.axes.stacked === 'true',
+                                title: {
+                                    display: options.axes.display === 'true',
+                                    text: options.axes.x_axis_label === null ? '' : options.axes.x_axis_label,
+                                    color: options.chart.fontColor,
+                                    font: {
+                                        size: Number(options.chart.fontSize),
+                                        style: options.chart.fontStyle
+                                    }
+                                },
+                                grid: {
+                                    display: options.axes.display === 'true'
+                                },
+                                ticks: {
+                                    display: options.axes.display === 'true',
+                                    color: options.chart.fontColor,
+                                    font: {
+                                        size: Number(options.chart.fontSize),
+                                        style: options.chart.fontStyle
+                                    },
+                                    beginAtZero: true
+                                }
+                            },
+                            y: {
+                                stacked: options.axes.stacked === 'true',
+                                title: {
+                                    stacked: options.axes.stacked === 'true',
+                                    text: options.axes.y_axis_label === null ? '' : options.axes.y_axis_label,
+                                    color: options.chart.fontColor,
+                                    font: {
+                                        size: Number(options.chart.fontSize),
+                                        style: options.chart.fontStyle
+                                    }
+                                },
+                                grid: {
+                                    display: options.axes.display === 'true'
+                                },
+                                ticks: {
+                                    display: options.axes.display === 'true',
+                                    color: options.chart.fontColor,
+                                    font: {
+                                        size: Number(options.chart.fontSize),
+                                        style: options.chart.fontStyle
+                                    },
+                                    beginAtZero: true,
+                                    precision: 2,
+                                },
+                                min: parseInt(options.axes.vertical_min_tick || options.axes.verticle_min_tick) || null,
+                                max: parseInt(options.axes.vertical_max_tick || options.axes.verticle_max_tick) || null
+                            },
+                        },
+                        layout: {
+                            padding: {
+                                left: options.layout.padding.left,
+                                right: options.layout.padding.right,
+                                top: options.layout.padding.top,
+                                bottom: options.layout.padding.bottom
+                            }
+                        }
                     };
 
-                    if (options.chart.position === 'right') {
-                        marginStyle['margin-right'] = '0';
-                    } else if (options.chart.position === 'left') {
-                        marginStyle['margin-left'] = '0';
+                    if (options.chart.responsive === 'false') {
+                        let marginStyle = {
+                            'margin-left': 'auto',
+                            'margin-right': 'auto'
+                        };
+
+                        if (options.chart.position === 'right') {
+                            marginStyle['margin-right'] = '0';
+                        } else if (options.chart.position === 'left') {
+                            marginStyle['margin-left'] = '0';
+                        }
+
+                        let uniqChart = `.ninja-charts-customize${uniqid} .ninja-charts-chart-js-container`;
+                        jQuery(uniqChart).css(marginStyle);
                     }
 
-                    let uniqChart = `.ninja-charts-customize${uniqid} .ninja-charts-chart-js-container`;
-                    jQuery(uniqChart).css(marginStyle);
-                }
+                    let chartType = renderData.chart_type;
+                    if (chartType === 'area') {
+                        chartType = 'line';
+                    } else if (chartType === 'combo') {
+                        chartType = 'bar';
+                    } else if (chartType === 'horizontalBar') {
+                        chartType = 'bar';
+                        chartOptions.indexAxis = 'y';
+                    } else if (chartType === 'funnel') {
+                        chartOptions.indexAxis = 'y';
+                        chartOptions.plugins.legend.display = false;
+                    }
 
-                let chartType = renderData.chart_type;
-                if (chartType === 'area') {
-                    chartType = 'line';
-                } else if (chartType === 'combo') {
-                    chartType = 'bar';
-                } else if (chartType === 'horizontalBar') {
-                    chartType = 'bar';
-                    chartOptions.indexAxis = 'y';
-                } else if (chartType === 'funnel') {
-                    chartOptions.indexAxis = 'y';
-                    chartOptions.plugins.legend.display = false;
-                }
+                    // These types draw x and y axes only when the grid is switched on in the editor
+                    if (['pie', 'doughnut', 'polarArea', 'radar', 'funnel'].includes(renderData.chart_type)
+                        && (renderData.chart_type === 'funnel' || String(options.axes && options.axes.display) !== 'true')) {
+                        delete chartOptions.scales;
+                    }
 
-                const exportMode  = new URLSearchParams(window.location.search).get('ninja_chart_export');
-                const isExportMode = exportMode === 'png' || exportMode === 'pdf';
+                    if (isExportMode) {
+                        chartOptions.animation = false;
+                    }
 
-                if (isExportMode) {
-                    chartOptions.animation = false;
-                }
-
-                let config = {
-                    type: chartType,
-                    data: renderData.chart_data,
-                    options: chartOptions
-                };
+                    let config = {
+                        type: chartType,
+                        data: renderData.chart_data,
+                        options: chartOptions
+                    };
 
 
-                if (renderData.options && renderData.chart_data.datasets) {
-                    let options = renderData.options;
-                    options = (typeof options) === 'string' ? JSON.parse(options) : options;
+                    if (renderData.options && renderData.chart_data.datasets) {
+                        let options = renderData.options;
+                        options = (typeof options) === 'string' ? JSON.parse(options) : options;
 
-                    if (options.series && renderData.chart_data.datasets) {
-                        options.series.forEach((series, index) => {
-                            if (renderData.chart_data.datasets[index]) {
-                                if (chartType === 'line' || chartType === 'area') {
-                                    const pointRadius = series.pointRadius || 2;
-                                    renderData.chart_data.datasets[index].pointRadius = pointRadius;
-                                    renderData.chart_data.datasets[index].pointHoverRadius = pointRadius;
-                                    renderData.chart_data.datasets[index].pointBackgroundColor = series.color;
-                                    renderData.chart_data.datasets[index].pointBorderColor = series.color;
-                                    renderData.chart_data.datasets[index].pointBorderWidth = 2;
+                        if (options.series && renderData.chart_data.datasets) {
+                            options.series.forEach((series, index) => {
+                                if (renderData.chart_data.datasets[index]) {
+                                    // Line charts, and the line of a combo chart, draw their points in the series colour
+                                    if (chartType === 'line' || chartType === 'area' || renderData.chart_data.datasets[index].type === 'line') {
+                                        // Saved as text, and older charts can hold "false", which Chart.js cannot draw
+                                        const radius = parseFloat(series.pointRadius);
+                                        const pointRadius = Number.isFinite(radius) ? radius : 2;
+                                        renderData.chart_data.datasets[index].pointRadius = pointRadius;
+                                        renderData.chart_data.datasets[index].pointHoverRadius = pointRadius;
+                                        renderData.chart_data.datasets[index].pointBackgroundColor = series.color;
+                                        renderData.chart_data.datasets[index].pointBorderColor = series.color;
+                                        renderData.chart_data.datasets[index].pointBorderWidth = 2;
+                                    }
                                 }
-                            }
-                        });
-                    }
-                }
-
-                const labelsChartTypes = ['pie', 'doughnut', 'polarArea', 'bar', 'funnel'];
-                // const calculativeData = ['radio', 'checkbox', 'select', 'selection', 'multiple-select', 'country'];
-
-                if (labelsChartTypes.includes(chartType)) {
-                    const data = renderData.chart_data.datasets[0].data;
-                    config.plugins = [ChartDataLabels];
-                    config.options.plugins.datalabels = {
-                        display: true,
-                        formatter: (value, context) => {
-                            const total = data.reduce((a, b) => Number(a) + Number(b), 0);
-                            const res = (value / total * 100).toFixed(2) + '%';
-                            return res.split('.')[1] === '00%' ? res.split('.')[0] + '%' : res;
-                        },
-                        color: '#ffffff',
-                        font: {
-                            size: 14,
-                            weight: 'normal'
+                            });
                         }
                     }
+
+                    // Hover colours (ninja-charts-hover.js), after the point colours above
+                    if (window.NinjaChartsHover && renderData.chart_data.datasets) {
+                        renderData.chart_data.datasets = window.NinjaChartsHover.applyChartJs(renderData.chart_data.datasets, options, renderData.chart_type);
+                    }
+
+                    const labelsChartTypes = ['pie', 'doughnut', 'polarArea', 'bar', 'funnel'];
+                    // const calculativeData = ['radio', 'checkbox', 'select', 'selection', 'multiple-select', 'country'];
+
+                    if (labelsChartTypes.includes(chartType)) {
+                        config.plugins = [ChartDataLabels];
+                        config.options.plugins.datalabels = {
+                            // White labels sit inside bars and slices; a combo chart's line has nothing behind them
+                            display: (context) => context.dataset.type !== 'line',
+                            // Each value as a share of its own series
+                            formatter: (value, context) => {
+                                const total = (context.dataset.data || []).reduce((a, b) => Number(a) + Number(b), 0);
+                                const res = (value / total * 100).toFixed(2) + '%';
+                                return res.split('.')[1] === '00%' ? res.split('.')[0] + '%' : res;
+                            },
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'normal'
+                            }
+                        }
+                    }
+
+                    return config;
                 }
 
-                new Chart(ctx, config);
+                const deviceOptions = function (device) {
+                    return Device ? Device.resolveDeviceOptions(savedOptions, device) : savedOptions;
+                };
+                let chartInstance = new Chart(ctx, buildConfig(deviceOptions(Device ? Device.currentDevice() : 'desktop')));
+
+                // Redraw with the next device's settings when the viewport crosses a breakpoint
+                if (Device && !isExportMode && Device.hasOverrides(savedOptions)) {
+                    Device.onDeviceChange(function (device) {
+                        chartInstance.destroy();
+                        chartInstance = new Chart(ctx, buildConfig(deviceOptions(device)));
+                    });
+                }
 
                 if (isExportMode) {
                     const exportCanvas = document.createElement('canvas');

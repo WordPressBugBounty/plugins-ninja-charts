@@ -4,6 +4,7 @@ namespace NinjaCharts\App\Hooks\Handlers;
 
 use NinjaCharts\App\App;
 use NinjaCharts\App\Hooks\Handlers\ActivationHandler;
+use NinjaCharts\App\Services\Vite;
 use NinjaCharts\Framework\Support\Arr;
 
 class AdminMenuHandler
@@ -102,6 +103,31 @@ class AdminMenuHandler
         }
     }
 
+    /**
+     * No-flash theme class for the shared Fluent admin theme.
+     *
+     * The admin app marks <body> once it runs, which is after the first paint, so a
+     * dark mode user would see a white page first. This reads the key shared with
+     * Ninja Tables and marks <html> before anything is drawn. It has to be inline:
+     * a file is a request the paint waits on.
+     */
+    public function printThemeClass()
+    {
+        $page = sanitize_text_field(Arr::get($_GET, 'page', '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+        if ($page !== 'ninja-charts') {
+            return;
+        }
+
+        $script = <<<'JS'
+(function(){try{var s=localStorage.getItem('fluent_theme_mode')||'';
+var m=s.split(':')[0];if(m!=='light'&&m!=='dark'){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+if(m==='dark'){document.documentElement.classList.add('fluent_theme_dark');}}catch(e){}})();
+JS;
+
+        echo '<script id="ninja-charts-theme-class">' . $script . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
+
     public function enqueueCssJs()
     {
         $app = App::getInstance();
@@ -110,30 +136,18 @@ class AdminMenuHandler
 
         $slug = $app->config->get('app.slug');
 
-        wp_enqueue_style(
-            $slug . '_admin_app',
-            $assets . '/admin/css/admin.css',
-            [],
-            NINJA_CHARTS_VERSION
-        );
+        Vite::enqueueStyle($slug . '_admin_app', 'admin/css/admin.css');
+
+        if (!Vite::isDev()) {
+            // The SPA's extracted CSS. In dev, Vite injects it from the start.js module.
+            Vite::enqueueStyle($slug . '_admin_app_start', 'admin/css/start.css', [$slug . '_admin_app']);
+        }
 
         do_action($slug . '_loading_app'); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
-        wp_enqueue_script(
-            $slug . '_admin_app_start',
-            $assets . '/admin/js/start.js',
-            array(),
-            NINJA_CHARTS_VERSION,
-            true
-        );
+        Vite::enqueueScript($slug . '_admin_app_start', 'admin/js/start.js');
 
-        wp_enqueue_script(
-            $slug . '_global_admin',
-            $assets . 'admin/js/global_admin.js',
-            array('jquery'),
-            NINJA_CHARTS_VERSION,
-            true
-        );
+        Vite::enqueueScript($slug . '_global_admin', 'admin/js/global_admin.js', array('jquery'));
 
 //        wp_enqueue_script(
 //            $slug.'_admin_app_chart_label_format',
