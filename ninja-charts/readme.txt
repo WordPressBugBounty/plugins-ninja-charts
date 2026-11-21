@@ -4,7 +4,7 @@ Tags: Charts, Data Visualization, WordPress Chart Plugin, CSV Data, Responsive C
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 3.5.0
+Stable tag: 3.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,6 +156,13 @@ You can get dedicated support from our excellent support team for this beautiful
 8. Rendered chart in the frontend
 
 == Changelog ==
+
+= 3.6.0 (Date: November 20, 2026) =
+* Added: Apache ECharts engine for new charts; existing Chart.js and Google Charts charts keep working
+* Added: New chart types: gauge, heatmap, calendar heatmap, pictorial bar, polar bar, step line, effect scatter, box plot, candlestick, theme river, parallel, histogram and map
+* Improved: Smaller chart type cards and a Continue button that stays in view
+* Fix: Hardened admin REST requests against path traversal
+* Fix: Escaped the Edit link on the chart preview page
 
 = 3.5.0 (Date: November 16, 2026) =
 * Added: Redesigned admin with a live chart builder, light and dark themes

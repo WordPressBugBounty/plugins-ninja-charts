@@ -6,7 +6,7 @@
 	"category": "widgets",
 	"icon": "chart-bar",
 	"description": "Create a chart.",
-	"keywords": ["chart", "chart.js", "ninja chart"],
+	"keywords": ["chart", "echarts", "chart.js", "ninja chart"],
 	"textdomain": "ninja-charts",
 	"attributes": {
 		"chartLibrary": {

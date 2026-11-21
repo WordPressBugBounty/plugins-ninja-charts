@@ -10,11 +10,84 @@ use NinjaCharts\App\Modules\NinjaTables\CalculativeModule as NinjaTableCalculati
 use NinjaCharts\App\Modules\FluentForms\CalculativeModule as FluentFormCalculative;
 use NinjaCharts\App\Modules\FluentForms\Module;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\App;
+use NinjaCharts\App\Modules\RenderEngineInterface;
 
-class GoogleChartModule
+class GoogleChartModule implements RenderEngineInterface
 {
     use ChartGenerator;
     use ChartDesignHelper;
+
+    public static function id(): string
+    {
+        return ChartConstants::ENGINE_GOOGLE_CHARTS;
+    }
+
+    public static function chartTypes(): array
+    {
+        return [
+            'ColumnChart', 'BarChart', 'LineChart', 'AreaChart', 'PieChart',
+            'DonutChart', 'ScatterChart', 'BubbleChart', 'ComboChart', 'Histogram',
+        ];
+    }
+
+    public function shortcodeView(): string
+    {
+        return 'public.google_charts';
+    }
+
+    public function enqueueShortcodeAssets(): void
+    {
+        $app = App::getInstance();
+        $assets = $app['url.assets'];
+
+        wp_enqueue_script(
+            'googlechart',
+            $assets . 'common/js/google-charts.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'google_chart_render_js',
+            $assets . 'public/js/google-chart-render.js',
+            array('googlechart', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
+            NINJA_CHARTS_VERSION,
+            true
+        );
+
+        wp_localize_script('google_chart_render_js', 'googleChartPublic', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+        ]);
+    }
+
+    public function writeCsv($output, $chart_data): void
+    {
+        // Already a 2D array (first row is headers)
+        foreach ((array) $chart_data as $row) {
+            fputcsv($output, (array) $row);
+        }
+    }
+
+    public function seedColors(string $chart_type, array $manual_inputs): array
+    {
+        $series = [];
+
+        if (in_array($chart_type, ['PieChart', 'DonutChart'], true)) {
+            $series = array_map(function ($row) {
+                return ['color' => $this->randomColor(), 'label' => isset($row['text_input']) ? (string) $row['text_input'] : ''];
+            }, array_values($manual_inputs));
+        } else {
+            $first_row  = !empty($manual_inputs) ? (array) $manual_inputs[0] : [];
+            $num_series = max(1, count(array_filter(array_keys($first_row), function ($k) { return $k !== 'text_input'; })));
+            for ($i = 0; $i < $num_series; $i++) {
+                $series[] = ['color' => $this->randomColor()];
+            }
+        }
+
+        return ['datasets' => [], 'series' => $series];
+    }
 
     public function chartDataFormat($data, $extra_data = [])
     {

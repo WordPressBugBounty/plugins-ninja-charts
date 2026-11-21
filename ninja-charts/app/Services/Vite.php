@@ -30,6 +30,7 @@ class Vite
         'admin/js/global_admin.js'                 => 'admin/global_admin.js',
         'admin/js/ninja-charts-gutenblock-build.js' => 'admin/tinymce/gutenBlock.js',
         'block/js/ninja-charts-block.js'           => 'block/js/ninja-charts-block.jsx',
+        'public/echarts/echarts-render.js'         => 'public/echarts/echarts-render.js',
         'admin/css/admin.css'                      => 'scss/admin.scss',
         'admin/css/gutenblock.css'                 => 'scss/gutenblock.scss',
         'admin/css/preview.css'                    => 'scss/preview.scss',

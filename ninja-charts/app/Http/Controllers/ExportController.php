@@ -5,7 +5,7 @@ namespace NinjaCharts\App\Http\Controllers;
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Modules\Provider;
-use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Modules\RenderEngineRegistry;
 
 class ExportController extends Controller
 {
@@ -43,28 +43,9 @@ class ExportController extends Controller
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- in-memory stream for fputcsv(), not a filesystem operation; WP_Filesystem has no equivalent.
         $output = fopen('php://temp', 'r+');
 
-        if ($render_engine === ChartConstants::ENGINE_CHART_JS) {
-            $labels   = Arr::get($chart_data, 'labels', []);
-            $datasets = Arr::get($chart_data, 'datasets', []);
-
-            $header = ['Label'];
-            foreach ($datasets as $dataset) {
-                $header[] = Arr::get($dataset, 'label', '');
-            }
-            fputcsv($output, $header);
-
-            foreach ($labels as $i => $label) {
-                $row = [$label];
-                foreach ($datasets as $dataset) {
-                    $row[] = isset($dataset['data'][$i]) ? $dataset['data'][$i] : '';
-                }
-                fputcsv($output, $row);
-            }
-        } else {
-            // Google Charts: already a 2D array (first row is headers)
-            foreach ($chart_data as $row) {
-                fputcsv($output, (array) $row);
-            }
+        $engine = RenderEngineRegistry::get($render_engine);
+        if ($engine) {
+            $engine->writeCsv($output, $chart_data);
         }
 
         rewind($output);

@@ -185,6 +185,9 @@ JS;
             'rest'       => $this->getRestInfo($app),
             'brand_logo' => $this->getMenuIcon(),
             'asset_url'  => $assets,
+            // Map files for the map chart preview (resources/maps, copied to assets/maps by the build)
+            'maps_url'   => Vite::assetsUrl('maps/'),
+            'maps_ver'   => NINJA_CHARTS_VERSION,
             'site_url'   => site_url('/'),
             'me'         => [
                 'id'        => $currentUser->ID,
@@ -204,7 +207,9 @@ JS;
             'url'       => rest_url($ns . '/' . $ver),
             'nonce'     => wp_create_nonce('wp_rest'),
             'namespace' => $ns,
-            'version'   => $ver
+            'version'   => $ver,
+            // rest.js refuses a URL that holds any other character PHP splits the query on
+            'query_separators' => (string) ini_get('arg_separator.input')
         ];
     }
 

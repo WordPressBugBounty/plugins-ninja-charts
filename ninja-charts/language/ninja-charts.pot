@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ninja Charts - Interactive Charts and Graphs 3.5.0\n"
+"Project-Id-Version: Ninja Charts - Interactive Charts and Graphs 3.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ninja-charts\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-16T11:55:51+00:00\n"
+"POT-Creation-Date: 2026-11-20T15:04:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ninja-charts\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "https://wpmanageninja.com/"
 msgstr ""
 
-#: app/Blocks/NinjaChartBlock.php:133
+#: app/Blocks/NinjaChartBlock.php:137
 msgid "Chart engine not available."
 msgstr ""
 
@@ -92,19 +92,19 @@ msgstr ""
 msgid "No Charts found. Please add a chart first"
 msgstr ""
 
-#: app/Http/Controllers/ChartController.php:152
+#: app/Http/Controllers/ChartController.php:119
 msgid "Invalid chart ID"
 msgstr ""
 
-#: app/Http/Controllers/ChartController.php:207
-msgid "Invalid chart type"
-msgstr ""
-
-#: app/Http/Controllers/ChartController.php:216
+#: app/Http/Controllers/ChartController.php:172
 msgid "Invalid render engine"
 msgstr ""
 
-#: app/Http/Controllers/ChartController.php:228
+#: app/Http/Controllers/ChartController.php:177
+msgid "Invalid chart type"
+msgstr ""
+
+#: app/Http/Controllers/ChartController.php:189
 #: app/Http/Controllers/ShortCodeController.php:78
 msgid "No chart data could be generated for the given configuration"
 msgstr ""
@@ -144,13 +144,13 @@ msgid "Ninja Tables plugin is not active."
 msgstr ""
 
 #. translators: %s: data source name
-#: app/Modules/Provider.php:20
+#: app/Modules/Provider.php:18
 #, php-format
 msgid "Couldn't find %s data provider."
 msgstr ""
 
 #. translators: %s: data source name
-#: app/Modules/Provider.php:38
+#: app/Modules/Provider.php:36
 #, php-format
 msgid "The required plugin for %s is not active."
 msgstr ""
@@ -1164,76 +1164,80 @@ msgid "Preview Chart"
 msgstr ""
 
 #: resources/block/js/components/ChartTypeChangeModal.jsx:50
+msgid "Only the first series is kept: this chart type draws one"
+msgstr ""
+
+#: resources/block/js/components/ChartTypeChangeModal.jsx:54
 msgid "Multiple datasets will merge into one ring"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:51
+#: resources/block/js/components/ChartTypeChangeModal.jsx:55
 msgid "Each data point will get its own color"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:53
+#: resources/block/js/components/ChartTypeChangeModal.jsx:57
 msgid "Color arrays will convert to single colors per dataset"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:55
+#: resources/block/js/components/ChartTypeChangeModal.jsx:59
 msgid "Labels will be removed"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:56
+#: resources/block/js/components/ChartTypeChangeModal.jsx:60
 msgid "Values will convert to X/Y coordinates"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:58
+#: resources/block/js/components/ChartTypeChangeModal.jsx:62
 msgid "Points will convert back to simple values"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:59
+#: resources/block/js/components/ChartTypeChangeModal.jsx:63
 msgid "Labels will be auto-generated"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:61
+#: resources/block/js/components/ChartTypeChangeModal.jsx:65
 msgid "Slices will convert to X/Y coordinates"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:62
+#: resources/block/js/components/ChartTypeChangeModal.jsx:66
 msgid "Color arrays will be removed"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:64
+#: resources/block/js/components/ChartTypeChangeModal.jsx:68
 msgid "Points will convert to slices"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:65
+#: resources/block/js/components/ChartTypeChangeModal.jsx:69
 msgid "Each slice will get its own color"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:86
+#: resources/block/js/components/ChartTypeChangeModal.jsx:90
 msgid "Change chart type?"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:95
+#: resources/block/js/components/ChartTypeChangeModal.jsx:99
 #: resources/block/js/components/EngineSelect.jsx:63
 #: resources/block/js/toolbar/EditDataModal.jsx:73
 msgid "Cancel"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:98
+#: resources/block/js/components/ChartTypeChangeModal.jsx:102
 msgid "Change type"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+#: resources/block/js/components/ChartTypeChangeModal.jsx:108
 msgid "Changing from"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+#: resources/block/js/components/ChartTypeChangeModal.jsx:108
 msgid "to"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:104
+#: resources/block/js/components/ChartTypeChangeModal.jsx:108
 msgid "requires data conversion:"
 msgstr ""
 
-#: resources/block/js/components/ChartTypeChangeModal.jsx:116
+#: resources/block/js/components/ChartTypeChangeModal.jsx:120
 msgid "Some data may be lost or modified. This action cannot be undone."
 msgstr ""
 
@@ -1281,9 +1285,49 @@ msgstr ""
 msgid "Stages of a process"
 msgstr ""
 
-#: resources/block/js/components/ChartTypePicker.jsx:72
-#: resources/block/js/ninja-charts-block.jsx:210
-#: resources/block/js/sidebar/DesignTab.jsx:104
+#: resources/block/js/components/ChartTypePicker.jsx:30
+msgid "Bars drawn with symbols"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:31
+msgid "Bars around a circle"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:32
+msgid "Changes that happen in steps"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:33
+msgid "Shares flowing over time"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:34
+msgid "Activity by day"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:35
+msgid "One value against a range"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:36
+msgid "Points that stand out"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:37
+msgid "Values across two categories"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:38
+msgid "Spread of values"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:39
+msgid "Compare items across measures"
+msgstr ""
+
+#: resources/block/js/components/ChartTypePicker.jsx:85
+#: resources/block/js/ninja-charts-block.jsx:235
+#: resources/block/js/sidebar/DesignTab.jsx:118
 msgid "Chart type"
 msgstr ""
 
@@ -1300,7 +1344,7 @@ msgid "Switch engine"
 msgstr ""
 
 #: resources/block/js/components/EngineSelect.jsx:72
-msgid "Switching the chart engine will reset your chart options to defaults. Your data (labels and datasets) will be preserved."
+msgid "Your data (labels and datasets) is kept. Chart.js and ECharts keep the design settings too; other switches reset them to defaults."
 msgstr ""
 
 #: resources/block/js/components/EngineSelect.jsx:75
@@ -1344,75 +1388,75 @@ msgstr ""
 msgid "Display the chart with a 3D effect"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:130
+#: resources/block/js/ninja-charts-block.jsx:162
 msgid "Add ring"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:130
+#: resources/block/js/ninja-charts-block.jsx:162
 msgid "Add series"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:137
+#: resources/block/js/ninja-charts-block.jsx:169
 msgid "Add point"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:138
+#: resources/block/js/ninja-charts-block.jsx:170
 msgid "Add slice"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:138
+#: resources/block/js/ninja-charts-block.jsx:170
 msgid "Add row"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:144
+#: resources/block/js/ninja-charts-block.jsx:176
 #: resources/block/js/sidebar/DataTab.jsx:58
 #: resources/block/js/toolbar/EditDataModal.jsx:64
 msgid "Edit data"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:189
+#: resources/block/js/ninja-charts-block.jsx:222
 msgid "Let's make a chart"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:191
+#: resources/block/js/ninja-charts-block.jsx:224
 msgid "Pick a style, then add your numbers. You can change anything later."
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:198
+#: resources/block/js/ninja-charts-block.jsx:231
 msgid "Choose a chart"
 msgstr ""
 
 #. translators: %d: number of chart types not shown yet
-#: resources/block/js/ninja-charts-block.jsx:219
+#: resources/block/js/ninja-charts-block.jsx:244
 #, js-format
 msgid "Show %d more chart types"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:230
+#: resources/block/js/ninja-charts-block.jsx:255
 msgid "Add your data"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:236
+#: resources/block/js/ninja-charts-block.jsx:261
 msgid "Type your own data"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:237
+#: resources/block/js/ninja-charts-block.jsx:262
 msgid "Start from an empty sheet"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:243
+#: resources/block/js/ninja-charts-block.jsx:268
 msgid "Try sample data"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:244
+#: resources/block/js/ninja-charts-block.jsx:269
 msgid "See the chart now, edit the numbers later"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:259
+#: resources/block/js/ninja-charts-block.jsx:284
 msgid "Mobile preview"
 msgstr ""
 
-#: resources/block/js/ninja-charts-block.jsx:260
+#: resources/block/js/ninja-charts-block.jsx:285
 msgid "Tablet preview"
 msgstr ""
 
@@ -1471,275 +1515,275 @@ msgstr ""
 msgid "This chart has no data yet. Add the first dataset, slice or point from the chart placeholder or the block toolbar."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:103
+#: resources/block/js/sidebar/DesignTab.jsx:117
 msgid "Chart"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:116
+#: resources/block/js/sidebar/DesignTab.jsx:131
 msgid "Rename series in the data editor."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:124
+#: resources/block/js/sidebar/DesignTab.jsx:139
 msgid "Labels"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:125
-#: resources/block/js/sidebar/ResponsiveTab.jsx:138
+#: resources/block/js/sidebar/DesignTab.jsx:140
+#: resources/block/js/sidebar/ResponsiveTab.jsx:139
 msgid "Title"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:126
+#: resources/block/js/sidebar/DesignTab.jsx:141
 msgid "Chart title"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:130
+#: resources/block/js/sidebar/DesignTab.jsx:145
 msgid "Enter chart title"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:134
-#: resources/block/js/sidebar/ResponsiveTab.jsx:140
+#: resources/block/js/sidebar/DesignTab.jsx:149
+#: resources/block/js/sidebar/ResponsiveTab.jsx:141
 msgid "Show title"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:138
-#: resources/block/js/sidebar/DesignTab.jsx:168
-#: resources/block/js/sidebar/DesignTab.jsx:287
+#: resources/block/js/sidebar/DesignTab.jsx:153
+#: resources/block/js/sidebar/DesignTab.jsx:183
+#: resources/block/js/sidebar/DesignTab.jsx:308
 msgid "Position"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:147
-#: resources/block/js/sidebar/DesignTab.jsx:176
+#: resources/block/js/sidebar/DesignTab.jsx:162
+#: resources/block/js/sidebar/DesignTab.jsx:191
 #: resources/block/js/sidebar/fields/BoxFields.jsx:70
-#: resources/block/js/sidebar/SeriesSection.jsx:51
-#: resources/block/js/sidebar/SeriesSection.jsx:78
+#: resources/block/js/sidebar/SeriesSection.jsx:52
+#: resources/block/js/sidebar/SeriesSection.jsx:79
 #: resources/block/js/toolbar/DataSheet.jsx:28
-#: resources/block/js/toolbar/DataSheet.jsx:184
+#: resources/block/js/toolbar/DataSheet.jsx:187
 #: resources/block/js/ui/ColorInput.jsx:92
 msgid "Color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:148
-#: resources/block/js/sidebar/DesignTab.jsx:255
+#: resources/block/js/sidebar/DesignTab.jsx:163
+#: resources/block/js/sidebar/DesignTab.jsx:276
 msgid "Title color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:150
-#: resources/block/js/sidebar/DesignTab.jsx:179
-#: resources/block/js/sidebar/DesignTab.jsx:319
-#: resources/block/js/sidebar/ResponsiveTab.jsx:125
+#: resources/block/js/sidebar/DesignTab.jsx:165
+#: resources/block/js/sidebar/DesignTab.jsx:194
+#: resources/block/js/sidebar/DesignTab.jsx:340
+#: resources/block/js/sidebar/ResponsiveTab.jsx:126
 msgid "Font size"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:153
-#: resources/block/js/sidebar/DesignTab.jsx:323
+#: resources/block/js/sidebar/DesignTab.jsx:168
+#: resources/block/js/sidebar/DesignTab.jsx:344
 msgid "Font style"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:159
-#: resources/block/js/sidebar/ResponsiveTab.jsx:162
+#: resources/block/js/sidebar/DesignTab.jsx:174
+#: resources/block/js/sidebar/ResponsiveTab.jsx:163
 msgid "Legend"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:160
-#: resources/block/js/sidebar/ResponsiveTab.jsx:164
+#: resources/block/js/sidebar/DesignTab.jsx:175
+#: resources/block/js/sidebar/ResponsiveTab.jsx:165
 msgid "Show legend"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:164
+#: resources/block/js/sidebar/DesignTab.jsx:179
 msgid "Legend box fill"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:164
+#: resources/block/js/sidebar/DesignTab.jsx:179
 msgid "Filled colour boxes, or outlines when off."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:172
+#: resources/block/js/sidebar/DesignTab.jsx:187
 msgid "Alignment"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:177
+#: resources/block/js/sidebar/DesignTab.jsx:192
 msgid "Legend color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:186
+#: resources/block/js/sidebar/DesignTab.jsx:201
 msgid "Axes"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:188
+#: resources/block/js/sidebar/DesignTab.jsx:203
 msgid "Show grid lines"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:193
+#: resources/block/js/sidebar/DesignTab.jsx:208
 msgid "Stacked"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:193
+#: resources/block/js/sidebar/DesignTab.jsx:208
 msgid "Stack the series on top of each other."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:197
+#: resources/block/js/sidebar/DesignTab.jsx:214
 msgid "Horizontal axis label"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:200
+#: resources/block/js/sidebar/DesignTab.jsx:217
 msgid "Vertical axis label"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:204
+#: resources/block/js/sidebar/DesignTab.jsx:223
 msgid "Vertical axis min"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:208
-#: resources/block/js/sidebar/DesignTab.jsx:216
+#: resources/block/js/sidebar/DesignTab.jsx:227
+#: resources/block/js/sidebar/DesignTab.jsx:235
 msgid "Auto"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:212
+#: resources/block/js/sidebar/DesignTab.jsx:231
 msgid "Vertical axis max"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:222
+#: resources/block/js/sidebar/DesignTab.jsx:241
 msgid "Bubble size label"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:229
+#: resources/block/js/sidebar/DesignTab.jsx:250
 msgid "Tooltip"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:230
+#: resources/block/js/sidebar/DesignTab.jsx:251
 msgid "Show tooltip"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:234
+#: resources/block/js/sidebar/DesignTab.jsx:255
 msgid "Shared tooltip"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:234
+#: resources/block/js/sidebar/DesignTab.jsx:255
 msgid "Show every series at the hovered position."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:239
+#: resources/block/js/sidebar/DesignTab.jsx:260
 msgid "Trigger"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:244
-#: resources/block/js/sidebar/DesignTab.jsx:310
-#: resources/block/js/sidebar/DesignTab.jsx:311
+#: resources/block/js/sidebar/DesignTab.jsx:265
+#: resources/block/js/sidebar/DesignTab.jsx:331
+#: resources/block/js/sidebar/DesignTab.jsx:332
 msgid "Background color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:245
+#: resources/block/js/sidebar/DesignTab.jsx:266
 msgid "Tooltip background color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:250
-#: resources/block/js/sidebar/DesignTab.jsx:314
+#: resources/block/js/sidebar/DesignTab.jsx:271
+#: resources/block/js/sidebar/DesignTab.jsx:335
 msgid "Border"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:256
+#: resources/block/js/sidebar/DesignTab.jsx:277
 msgid "Tooltip title color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:258
-#: resources/block/js/sidebar/ResponsiveTab.jsx:148
+#: resources/block/js/sidebar/DesignTab.jsx:279
+#: resources/block/js/sidebar/ResponsiveTab.jsx:149
 msgid "Title font size"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:263
+#: resources/block/js/sidebar/DesignTab.jsx:284
 msgid "Text color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:264
+#: resources/block/js/sidebar/DesignTab.jsx:285
 msgid "Tooltip text color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:266
+#: resources/block/js/sidebar/DesignTab.jsx:287
 msgid "Text font size"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:272
+#: resources/block/js/sidebar/DesignTab.jsx:293
 msgid "Hover"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:277
+#: resources/block/js/sidebar/DesignTab.jsx:298
 msgid "Layout"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:278
-#: resources/block/js/sidebar/ResponsiveTab.jsx:112
+#: resources/block/js/sidebar/DesignTab.jsx:299
+#: resources/block/js/sidebar/ResponsiveTab.jsx:113
 #: resources/block/js/toolbar/DataSheet.jsx:36
 msgid "Size"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:278
+#: resources/block/js/sidebar/DesignTab.jsx:299
 msgid "Size and spacing"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:279
+#: resources/block/js/sidebar/DesignTab.jsx:300
 msgid "Fit container width"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:279
+#: resources/block/js/sidebar/DesignTab.jsx:300
 msgid "The chart always fills the width of the area it is placed in."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:284
+#: resources/block/js/sidebar/DesignTab.jsx:305
 msgid "Width (px)"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:293
+#: resources/block/js/sidebar/DesignTab.jsx:314
 #: resources/block/js/sidebar/fields/BoxFields.jsx:94
 #: resources/block/js/sidebar/fields/BoxFields.jsx:211
 msgid "Left"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:294
+#: resources/block/js/sidebar/DesignTab.jsx:315
 msgid "Center"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:295
+#: resources/block/js/sidebar/DesignTab.jsx:316
 #: resources/block/js/sidebar/fields/BoxFields.jsx:92
 #: resources/block/js/sidebar/fields/BoxFields.jsx:209
 msgid "Right"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:301
-#: resources/block/js/sidebar/ResponsiveTab.jsx:114
+#: resources/block/js/sidebar/DesignTab.jsx:322
+#: resources/block/js/sidebar/ResponsiveTab.jsx:115
 msgid "Height (px)"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:301
+#: resources/block/js/sidebar/DesignTab.jsx:322
 msgid "Tablets and phones can use their own height, in the Responsive tab."
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:309
+#: resources/block/js/sidebar/DesignTab.jsx:330
 msgid "Background and text"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:327
-#: resources/block/js/sidebar/DesignTab.jsx:328
+#: resources/block/js/sidebar/DesignTab.jsx:348
+#: resources/block/js/sidebar/DesignTab.jsx:349
 msgid "Font color"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:334
+#: resources/block/js/sidebar/DesignTab.jsx:356
 msgid "More"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:336
+#: resources/block/js/sidebar/DesignTab.jsx:359
 msgid "Animation"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:336
+#: resources/block/js/sidebar/DesignTab.jsx:359
 msgid "Animation and fill"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:340
+#: resources/block/js/sidebar/DesignTab.jsx:365
 msgid "Advanced"
 msgstr ""
 
-#: resources/block/js/sidebar/DesignTab.jsx:345
-msgid "Switching resets the design settings, as each engine has its own."
+#: resources/block/js/sidebar/DesignTab.jsx:370
+msgid "New charts use ECharts. A Chart.js block keeps its settings when it moves to ECharts; other switches reset them, as each engine has its own."
 msgstr ""
 
 #: resources/block/js/sidebar/fields/BoxFields.jsx:31
@@ -1880,202 +1924,204 @@ msgstr ""
 msgid "Hover border color"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:62
+#: resources/block/js/sidebar/ResponsiveTab.jsx:63
 msgid "Same as tablet"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:62
+#: resources/block/js/sidebar/ResponsiveTab.jsx:63
 msgid "Same as desktop"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:70
 #: resources/block/js/sidebar/ResponsiveTab.jsx:71
+#: resources/block/js/sidebar/ResponsiveTab.jsx:72
 msgid "Show"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:70
-#: resources/block/js/sidebar/ResponsiveTab.jsx:72
+#: resources/block/js/sidebar/ResponsiveTab.jsx:71
+#: resources/block/js/sidebar/ResponsiveTab.jsx:73
 msgid "Hide"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:84
+#: resources/block/js/sidebar/ResponsiveTab.jsx:85
 msgid "These settings apply to tablets and phones. The preview shows desktop."
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:86
+#: resources/block/js/sidebar/ResponsiveTab.jsx:87
 msgid "Phones use the tablet settings unless you change them here."
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:87
+#: resources/block/js/sidebar/ResponsiveTab.jsx:88
 msgid "Tablets use the desktop settings unless you change them here."
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:95
+#: resources/block/js/sidebar/ResponsiveTab.jsx:96
 msgid "Device to edit"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:99
+#: resources/block/js/sidebar/ResponsiveTab.jsx:100
 msgid "Tablet"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:100
+#: resources/block/js/sidebar/ResponsiveTab.jsx:101
 msgid "Mobile"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:107
+#: resources/block/js/sidebar/ResponsiveTab.jsx:108
 msgid "Preview desktop"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:172
+#: resources/block/js/sidebar/ResponsiveTab.jsx:173
 msgid "Legend position"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:192
+#: resources/block/js/sidebar/ResponsiveTab.jsx:193
 msgid "Reset to tablet"
 msgstr ""
 
-#: resources/block/js/sidebar/ResponsiveTab.jsx:192
+#: resources/block/js/sidebar/ResponsiveTab.jsx:193
 msgid "Reset to desktop"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:17
+#: resources/block/js/sidebar/SeriesSection.jsx:18
 msgid "Circle"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:18
+#: resources/block/js/sidebar/SeriesSection.jsx:19
 msgid "Cross"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:19
+#: resources/block/js/sidebar/SeriesSection.jsx:20
 msgid "Cross rotated"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:20
+#: resources/block/js/sidebar/SeriesSection.jsx:21
 msgid "Dash"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:21
-#: resources/block/js/utils.js:10
+#: resources/block/js/sidebar/SeriesSection.jsx:22
+#: resources/block/js/utils.js:11
 msgid "Line"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:22
+#: resources/block/js/sidebar/SeriesSection.jsx:23
 msgid "Rect"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:23
+#: resources/block/js/sidebar/SeriesSection.jsx:24
 msgid "Rect rounded"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:24
+#: resources/block/js/sidebar/SeriesSection.jsx:25
 msgid "Rect rotated"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:25
+#: resources/block/js/sidebar/SeriesSection.jsx:26
 msgid "Star"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:26
+#: resources/block/js/sidebar/SeriesSection.jsx:27
 msgid "Triangle"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:31
+#: resources/block/js/sidebar/SeriesSection.jsx:32
 msgid "Slices"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:32
+#: resources/block/js/sidebar/SeriesSection.jsx:33
 msgid "Points"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:33
-#: resources/block/js/toolbar/DataSheet.jsx:161
+#: resources/block/js/sidebar/SeriesSection.jsx:34
+#: resources/block/js/toolbar/DataSheet.jsx:163
+#: resources/block/js/toolbar/sampleData.js:23
 msgid "Series"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:43
-#: resources/block/js/toolbar/DataSheet.jsx:161
+#: resources/block/js/sidebar/SeriesSection.jsx:44
+#: resources/block/js/toolbar/DataSheet.jsx:163
 msgid "Ring"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:72
+#: resources/block/js/sidebar/SeriesSection.jsx:73
 msgid "Dataset"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:104
+#: resources/block/js/sidebar/SeriesSection.jsx:105
 msgid "Show percentages"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:104
+#: resources/block/js/sidebar/SeriesSection.jsx:105
 msgid "Display percentage labels on chart slices"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:109
+#: resources/block/js/sidebar/SeriesSection.jsx:110
 msgid "Area fill"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:109
+#: resources/block/js/sidebar/SeriesSection.jsx:110
 msgid "Fill the area under the lines"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:114
+#: resources/block/js/sidebar/SeriesSection.jsx:115
 msgid "Point fill"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:114
+#: resources/block/js/sidebar/SeriesSection.jsx:115
 msgid "Fill the data points with color"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:120
+#: resources/block/js/sidebar/SeriesSection.jsx:121
 msgid "Straight line"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:120
+#: resources/block/js/sidebar/SeriesSection.jsx:121
 msgid "Disable curved lines"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:123
+#: resources/block/js/sidebar/SeriesSection.jsx:124
 msgid "Show points"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:123
+#: resources/block/js/sidebar/SeriesSection.jsx:124
 msgid "Display data point dots on lines"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:126
+#: resources/block/js/sidebar/SeriesSection.jsx:127
 msgid "Line width"
 msgstr ""
 
-#: resources/block/js/sidebar/SeriesSection.jsx:136
+#: resources/block/js/sidebar/SeriesSection.jsx:137
 msgid "Point style"
 msgstr ""
 
-#: resources/block/js/sidebar/Sidebar.jsx:45
+#: resources/block/js/sidebar/Sidebar.jsx:46
 msgid "Data"
 msgstr ""
 
-#: resources/block/js/sidebar/Sidebar.jsx:46
+#: resources/block/js/sidebar/Sidebar.jsx:47
 msgid "Design"
 msgstr ""
 
-#: resources/block/js/sidebar/Sidebar.jsx:49
+#: resources/block/js/sidebar/Sidebar.jsx:50
 msgid "Responsive"
 msgstr ""
 
-#: resources/block/js/sidebar/Sidebar.jsx:57
+#: resources/block/js/sidebar/Sidebar.jsx:58
 msgid "Chart settings"
 msgstr ""
 
 #: resources/block/js/toolbar/DataSheet.jsx:29
+#: resources/block/js/toolbar/sampleData.js:23
 msgid "Value"
 msgstr ""
 
 #: resources/block/js/toolbar/DataSheet.jsx:70
-#: resources/block/js/toolbar/DataSheet.jsx:164
+#: resources/block/js/toolbar/DataSheet.jsx:167
 msgid "Slice"
 msgstr ""
 
 #: resources/block/js/toolbar/DataSheet.jsx:70
-#: resources/block/js/toolbar/DataSheet.jsx:164
+#: resources/block/js/toolbar/DataSheet.jsx:167
 msgid "Point"
 msgstr ""
 
@@ -2091,68 +2137,68 @@ msgstr ""
 msgid "series"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:164
+#: resources/block/js/toolbar/DataSheet.jsx:167
 msgid "Row"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:194
+#: resources/block/js/toolbar/DataSheet.jsx:197
 msgid "Ring name"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:194
+#: resources/block/js/toolbar/DataSheet.jsx:197
 msgid "Series name"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:201
+#: resources/block/js/toolbar/DataSheet.jsx:204
 #, js-format
 msgid "Remove %1$s %2$s"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:202
+#: resources/block/js/toolbar/DataSheet.jsx:205
 msgid "Remove ring"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:202
+#: resources/block/js/toolbar/DataSheet.jsx:205
 msgid "Remove series"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:212
+#: resources/block/js/toolbar/DataSheet.jsx:215
 msgid "Actions"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:237
+#: resources/block/js/toolbar/DataSheet.jsx:240
 #, js-format
 msgid "Row %d, %s"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:251
+#: resources/block/js/toolbar/DataSheet.jsx:254
 #, js-format
 msgid "Color of %1$s in %2$s"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:270
+#: resources/block/js/toolbar/DataSheet.jsx:273
 #, js-format
 msgid "Row %1$d, %2$s"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:286
+#: resources/block/js/toolbar/DataSheet.jsx:289
 #, js-format
 msgid "Delete row %d"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:287
+#: resources/block/js/toolbar/DataSheet.jsx:290
 msgid "Delete row"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:300
+#: resources/block/js/toolbar/DataSheet.jsx:303
 msgid "No rows yet."
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:301
+#: resources/block/js/toolbar/DataSheet.jsx:304
 msgid "Add a row"
 msgstr ""
 
-#: resources/block/js/toolbar/DataSheet.jsx:306
+#: resources/block/js/toolbar/DataSheet.jsx:309
 msgid "Enter moves down and adds a row at the end. Arrow keys move between cells."
 msgstr ""
 
@@ -2172,67 +2218,67 @@ msgstr ""
 msgid "Save data"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:31
+#: resources/block/js/toolbar/sampleData.js:53
 msgid "Visits"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:31
+#: resources/block/js/toolbar/sampleData.js:53
 msgid "Sign-ups"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:31
+#: resources/block/js/toolbar/sampleData.js:53
 msgid "Trials"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:31
+#: resources/block/js/toolbar/sampleData.js:53
 msgid "Purchases"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:32
+#: resources/block/js/toolbar/sampleData.js:54
 msgid "Direct"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:32
+#: resources/block/js/toolbar/sampleData.js:54
 msgid "Search"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:32
+#: resources/block/js/toolbar/sampleData.js:54
 msgid "Social"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:32
+#: resources/block/js/toolbar/sampleData.js:54
 msgid "Email"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "Jan"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "Feb"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "Mar"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "Apr"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "May"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:46
+#: resources/block/js/toolbar/sampleData.js:68
 msgid "Jun"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:48
+#: resources/block/js/toolbar/sampleData.js:70
 msgid "Sales"
 msgstr ""
 
-#: resources/block/js/toolbar/sampleData.js:49
+#: resources/block/js/toolbar/sampleData.js:71
 msgid "Costs"
 msgstr ""
 
@@ -2264,44 +2310,84 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: resources/block/js/utils.js:8
+#: resources/block/js/utils.js:9
 msgid "Bar"
 msgstr ""
 
-#: resources/block/js/utils.js:9
+#: resources/block/js/utils.js:10
 msgid "Horizontal bar"
 msgstr ""
 
-#: resources/block/js/utils.js:11
+#: resources/block/js/utils.js:12
 msgid "Area"
 msgstr ""
 
-#: resources/block/js/utils.js:12
+#: resources/block/js/utils.js:13
 msgid "Pie"
 msgstr ""
 
-#: resources/block/js/utils.js:13
+#: resources/block/js/utils.js:14
 msgid "Doughnut"
 msgstr ""
 
-#: resources/block/js/utils.js:14
+#: resources/block/js/utils.js:15
 msgid "Polar area"
 msgstr ""
 
-#: resources/block/js/utils.js:15
+#: resources/block/js/utils.js:16
 msgid "Radar"
 msgstr ""
 
-#: resources/block/js/utils.js:16
+#: resources/block/js/utils.js:17
 msgid "Scatter"
 msgstr ""
 
-#: resources/block/js/utils.js:17
+#: resources/block/js/utils.js:18
 msgid "Bubble"
 msgstr ""
 
-#: resources/block/js/utils.js:18
+#: resources/block/js/utils.js:19
 msgid "Funnel"
+msgstr ""
+
+#: resources/block/js/utils.js:21
+msgid "Pictorial bar"
+msgstr ""
+
+#: resources/block/js/utils.js:22
+msgid "Polar bar"
+msgstr ""
+
+#: resources/block/js/utils.js:23
+msgid "Step line"
+msgstr ""
+
+#: resources/block/js/utils.js:24
+msgid "Theme river"
+msgstr ""
+
+#: resources/block/js/utils.js:25
+msgid "Calendar heatmap"
+msgstr ""
+
+#: resources/block/js/utils.js:26
+msgid "Gauge"
+msgstr ""
+
+#: resources/block/js/utils.js:27
+msgid "Effect scatter"
+msgstr ""
+
+#: resources/block/js/utils.js:28
+msgid "Heatmap"
+msgstr ""
+
+#: resources/block/js/utils.js:29
+msgid "Histogram"
+msgstr ""
+
+#: resources/block/js/utils.js:30
+msgid "Parallel"
 msgstr ""
 
 #: app/Blocks/block.json
@@ -2317,6 +2403,11 @@ msgstr ""
 #: app/Blocks/block.json
 msgctxt "block keyword"
 msgid "chart"
+msgstr ""
+
+#: app/Blocks/block.json
+msgctxt "block keyword"
+msgid "echarts"
 msgstr ""
 
 #: app/Blocks/block.json

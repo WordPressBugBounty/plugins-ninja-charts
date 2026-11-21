@@ -13,8 +13,7 @@ use NinjaCharts\App\Models\FluentForm;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Models\FluentFormSubmission;
 use NinjaCharts\App\Modules\CalculativeFields;
-use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
-use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Modules\RenderEngineRegistry;
 use NinjaCharts\App\Modules\DataSourceInterface;
 use NinjaCharts\App\Constants\ChartConstants;
 
@@ -113,15 +112,11 @@ class Module implements DataSourceInterface
         ];
         if (isset($extra_data['only_all_row'])) {
             return ($this->getFormSubmissionRows($table_id));
-        } else {
-            if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
-                return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-            } else if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
-                return (new ChartJsModule())->chartDataFormat($data, $extra_data);
-            }
         }
 
-        return [];
+        $engine = RenderEngineRegistry::get(Arr::get($extra_data, 'render_engine'));
+
+        return $engine ? $engine->chartDataFormat($data, $extra_data) : [];
     }
 
     public function renderChart($data)

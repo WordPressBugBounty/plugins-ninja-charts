@@ -2,8 +2,6 @@
 
 namespace NinjaCharts\App\Modules;
 
-use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
-use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
 use NinjaCharts\App\Constants\ChartConstants;
 
 class Provider
@@ -41,12 +39,11 @@ class Provider
         );
     }
 
+    /**
+     * The engine for a render_engine value, or null. Kept for callers outside the plugin.
+     */
     public static function renderEngine($render_engine)
     {
-        if ($render_engine === ChartConstants::ENGINE_CHART_JS) {
-            return new ChartJsModule();
-        } else if ($render_engine === ChartConstants::ENGINE_GOOGLE_CHARTS){
-            return new GoogleChartModule();
-        }
+        return RenderEngineRegistry::get($render_engine);
     }
 }

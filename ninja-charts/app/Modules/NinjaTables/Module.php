@@ -11,8 +11,7 @@ use NinjaCharts\App\Models\NinjaTable;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Models\NinjaTableItem;
 use NinjaCharts\App\Models\NinjaTableMeta;
-use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
-use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
+use NinjaCharts\App\Modules\RenderEngineRegistry;
 use NinjaCharts\App\Modules\DataSourceInterface;
 use NinjaCharts\App\Helpers\Helper;
 use NinjaCharts\App\Constants\ChartConstants;
@@ -118,13 +117,9 @@ class Module implements DataSourceInterface
 
     public function checkRenderEngine($data, $extra_data)
     {
-        if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
-            return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-        } elseif (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
-            return (new ChartJsModule())->chartDataFormat($data, $extra_data);
-        }
+        $engine = RenderEngineRegistry::get(Arr::get($extra_data, 'render_engine'));
 
-        return [];
+        return $engine ? $engine->chartDataFormat($data, $extra_data) : [];
     }
 
     public function renderChart($data)

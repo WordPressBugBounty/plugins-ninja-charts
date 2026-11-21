@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use NinjaCharts\App\Blocks\Engines\EngineRegistry;
 use NinjaCharts\App\Blocks\Engines\ChartJsEngine;
 use NinjaCharts\App\Blocks\Engines\GoogleChartsEngine;
+use NinjaCharts\App\Blocks\Engines\EChartsEngine;
 use NinjaCharts\Framework\Support\Arr;
 use NinjaCharts\App\Constants\ChartConstants;
 use NinjaCharts\App\Services\Vite;
@@ -27,6 +28,8 @@ class NinjaChartBlock {
 		// Register chart engines
 		EngineRegistry::register(ChartJsEngine::class);
 		EngineRegistry::register(GoogleChartsEngine::class);
+		// New blocks use ECharts; Chart.js and Google Charts blocks keep theirs
+		EngineRegistry::register(EChartsEngine::class);
 
 		self::registerScripts();
 		register_block_type(
@@ -81,6 +84,7 @@ class NinjaChartBlock {
 				'wp-block-editor',
 				'wp-components',
 				'wp-i18n',
+				'wp-data',
 				'ninja-charts-chartjs-editor',
 				'ninja-charts-chartjs-datalabels-editor',
 				'ninja-charts-chartjs-funnel-editor',

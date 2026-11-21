@@ -6,8 +6,6 @@ use NinjaCharts\Framework\Support\Arr;
 
 use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Models\NinjaCharts;
-use NinjaCharts\App\Modules\ChartJsCharts\ChartJsModule;
-use NinjaCharts\App\Modules\GoogleCharts\GoogleChartModule;
 use NinjaCharts\App\Modules\DataSourceInterface;
 use NinjaCharts\App\Constants\ChartConstants;
 
@@ -48,13 +46,9 @@ class ManualModule implements DataSourceInterface
             "data_source"   => ChartConstants::SOURCE_MANUAL_DATA,
             "field"         => ''
         ];
-        if (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_GOOGLE_CHARTS) {
-            return (new GoogleChartModule())->chartDataFormat($data, $extra_data);
-        } elseif (Arr::get($extra_data, 'render_engine') === ChartConstants::ENGINE_CHART_JS) {
-            return (new ChartJsModule())->chartDataFormat($data, $extra_data);
-        }
+        $engine = RenderEngineRegistry::get(Arr::get($extra_data, 'render_engine'));
 
-        return [];
+        return $engine ? $engine->chartDataFormat($data, $extra_data) : [];
     }
 
     public function labelFormat($rows)

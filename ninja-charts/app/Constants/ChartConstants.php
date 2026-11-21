@@ -7,6 +7,7 @@ class ChartConstants
     // Rendering engines
     const ENGINE_CHART_JS      = 'chart_js';
     const ENGINE_GOOGLE_CHARTS = 'google_charts';
+    const ENGINE_ECHARTS       = 'echarts';
 
     // Data source identifiers — used in Provider::get() and as data_source markers in data arrays
     const SOURCE_NINJA_TABLE  = 'ninja_table';

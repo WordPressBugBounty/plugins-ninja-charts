@@ -7,7 +7,7 @@ use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Traits\ChartOption;
 use NinjaCharts\App\Modules\Provider;
-use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\Modules\RenderEngineRegistry;
 use NinjaCharts\App\Helpers\DeviceOptions;
 use NinjaCharts\App\Helpers\HoverOptions;
 use NinjaCharts\App\Services\ChartUsage;
@@ -92,47 +92,14 @@ class ChartController extends Controller
             $options = [];
         }
 
-        $pie_chartjs    = ['pie', 'doughnut', 'polarArea', 'funnel'];
-        $pie_google     = ['PieChart', 'DonutChart'];
-        $xy_chartjs     = ['bubble', 'scatter'];
-
-        $datasets      = [];
-        $series_colors = [];
-
-        if ($render_engine === ChartConstants::ENGINE_CHART_JS) {
-            if (in_array($chart_type, $pie_chartjs, true)) {
-                $colors = array_map(function () { return $this->randomColor(); }, $manual_inputs);
-                $datasets[]    = ['backgroundColor' => $colors, 'borderColor' => $colors];
-                $series_colors = array_map(function ($c, $row) {
-                    return ['color' => $c, 'label' => isset($row['text_input']) ? (string) $row['text_input'] : ''];
-                }, $colors, array_values($manual_inputs));
-            } elseif (in_array($chart_type, $xy_chartjs, true)) {
-                $color         = $this->randomColor();
-                $datasets[]    = ['backgroundColor' => $color, 'borderColor' => $color];
-                $series_colors = [['color' => $color]];
-            } else {
-                // Line-type: one colour per series column (every key except text_input)
-                $first_row  = !empty($manual_inputs) ? (array) $manual_inputs[0] : [];
-                $num_series = max(1, count(array_filter(array_keys($first_row), function ($k) { return $k !== 'text_input'; })));
-                for ($i = 0; $i < $num_series; $i++) {
-                    $color         = $this->randomColor();
-                    $datasets[]    = ['backgroundColor' => $color, 'borderColor' => $color];
-                    $series_colors[] = ['color' => $color];
-                }
-            }
-        } elseif ($render_engine === ChartConstants::ENGINE_GOOGLE_CHARTS) {
-            if (in_array($chart_type, $pie_google, true)) {
-                $series_colors = array_map(function ($row) {
-                    return ['color' => $this->randomColor(), 'label' => isset($row['text_input']) ? (string) $row['text_input'] : ''];
-                }, array_values($manual_inputs));
-            } else {
-                $first_row  = !empty($manual_inputs) ? (array) $manual_inputs[0] : [];
-                $num_series = max(1, count(array_filter(array_keys($first_row), function ($k) { return $k !== 'text_input'; })));
-                for ($i = 0; $i < $num_series; $i++) {
-                    $series_colors[] = ['color' => $this->randomColor()];
-                }
-            }
+        $engine = RenderEngineRegistry::get($render_engine);
+        if (!$engine) {
+            return $data;
         }
+
+        $seeded        = $engine->seedColors((string) $chart_type, is_array($manual_inputs) ? array_values($manual_inputs) : []);
+        $datasets      = $seeded['datasets'];
+        $series_colors = $seeded['series'];
 
         if (!empty($datasets)) {
             $data['datasets'] = json_encode($datasets);
@@ -195,25 +162,19 @@ class ChartController extends Controller
         $keys = (is_array($this->request->keys)) ? ninjaChartsSanitizeArray($this->request->keys) : sanitize_text_field($this->request->keys);
         $chart_type = sanitize_text_field($this->request->chart_type);
 
-        $allowed_chart_types = [
-            // Chart.js types
-            'bar', 'horizontalBar', 'line', 'area', 'pie', 'doughnut',
-            'polarArea', 'radar', 'bubble', 'scatter', 'combo', 'funnel',
-            // Google Charts types
-            'ColumnChart', 'BarChart', 'LineChart', 'AreaChart', 'PieChart',
-            'DonutChart', 'ScatterChart', 'BubbleChart', 'ComboChart', 'Histogram',
-        ];
-        if (!in_array($chart_type, $allowed_chart_types, true)) {
-            return $this->sendError(['message' => __('Invalid chart type', 'ninja-charts')], 400);
-        }
-
         $extra_data = ninjaChartsSanitizeArray($this->request->get('extra_data', []));
         $id = intval($this->request->get('id', ''));
         $data_source = sanitize_text_field($this->request->data_source);
 
         $render_engine = Arr::get($extra_data, 'render_engine', '');
-        if (!in_array($render_engine, [ChartConstants::ENGINE_CHART_JS, ChartConstants::ENGINE_GOOGLE_CHARTS], true)) {
+        $engine        = RenderEngineRegistry::get($render_engine);
+        if (!$engine) {
             return $this->sendError(['message' => __('Invalid render engine', 'ninja-charts')], 400);
+        }
+
+        // Each engine draws only its own types: echarts or chart_js with ColumnChart has no renderer
+        if (!in_array($chart_type, $engine::chartTypes(), true)) {
+            return $this->sendError(['message' => __('Invalid chart type', 'ninja-charts')], 400);
         }
 
         if (isset($extra_data['manual_inputs']) || $keys) {

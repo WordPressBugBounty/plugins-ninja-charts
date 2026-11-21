@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </ul>
         </div>
         <div class="chart_preview_header_action">
-            <a href="<?php echo esc_url_raw(admin_url('admin.php?page=ninja-charts#/edit-chart/' . $chartId)) ?>">Edit</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=ninja-charts#/edit-chart/' . $chartId)) ?>">Edit</a>
         </div>
     </div>
 

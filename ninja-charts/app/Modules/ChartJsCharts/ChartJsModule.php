@@ -11,12 +11,133 @@ use NinjaCharts\App\Modules\FluentForms\CalculativeModule as FluentFormCalculati
 use NinjaCharts\App\Modules\FluentForms\Module;
 use NinjaCharts\App\Modules\ManualModule;
 use NinjaCharts\App\Constants\ChartConstants;
+use NinjaCharts\App\App;
+use NinjaCharts\App\Modules\RenderEngineInterface;
 
-class ChartJsModule
+class ChartJsModule implements RenderEngineInterface
 {
 
     use ChartGenerator;
     use ChartDesignHelper;
+
+    public static function id(): string
+    {
+        return ChartConstants::ENGINE_CHART_JS;
+    }
+
+    public static function chartTypes(): array
+    {
+        return [
+            'bar', 'horizontalBar', 'line', 'area', 'pie', 'doughnut',
+            'polarArea', 'radar', 'bubble', 'scatter', 'combo', 'funnel',
+        ];
+    }
+
+    public function shortcodeView(): string
+    {
+        return 'public.chart_js';
+    }
+
+    public function enqueueShortcodeAssets(): void
+    {
+        $app = App::getInstance();
+        $assets = $app['url.assets'];
+
+        wp_enqueue_script(
+            'chartjs',
+            $assets . 'public/js/library/chart.umd.js',
+            array('jquery'),
+            '4.4.2',
+            true
+        );
+
+        wp_enqueue_script(
+            'chartjs_plugin_labels',
+            $assets . 'common/js/chartjs-plugin-datalabels.js',
+            array('chartjs'),
+            '2.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'chartjs-chart-funnel',
+            $assets . 'public/js/library/chartjs-chart-funnel.umd.min.js',
+            array('chartjs'),
+            '4.2.0',
+            true
+        );
+
+        // Registered only — loaded on demand by render.js when a PDF export is triggered.
+        wp_register_script(
+            'ninja_charts_jspdf',
+            $assets . 'public/js/library/jspdf.umd.min.js',
+            array(),
+            '2.5.1',
+            true
+        );
+
+        wp_enqueue_script(
+            'chart_js_chart_render_js',
+            $assets . 'public/js/render.js',
+            array('chartjs', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
+            NINJA_CHARTS_VERSION,
+            true
+        );
+
+        wp_localize_script('chart_js_chart_render_js', 'chartJSPublic', [
+            'ajax_url'  => admin_url('admin-ajax.php'),
+            'jspdf_url' => $assets . 'public/js/library/jspdf.umd.min.js',
+        ]);
+    }
+
+    public function writeCsv($output, $chart_data): void
+    {
+        $labels   = Arr::get($chart_data, 'labels', []);
+        $datasets = Arr::get($chart_data, 'datasets', []);
+
+        $header = ['Label'];
+        foreach ($datasets as $dataset) {
+            $header[] = Arr::get($dataset, 'label', '');
+        }
+        fputcsv($output, $header);
+
+        foreach ($labels as $i => $label) {
+            $row = [$label];
+            foreach ($datasets as $dataset) {
+                $row[] = isset($dataset['data'][$i]) ? $dataset['data'][$i] : '';
+            }
+            fputcsv($output, $row);
+        }
+    }
+
+    public function seedColors(string $chart_type, array $manual_inputs): array
+    {
+        $datasets = [];
+        $series   = [];
+
+        if (in_array($chart_type, ['pie', 'doughnut', 'polarArea', 'funnel'], true)) {
+            $colors = array_map(function () { return $this->randomColor(); }, $manual_inputs);
+            $datasets[] = ['backgroundColor' => $colors, 'borderColor' => $colors];
+            $series     = array_map(function ($c, $row) {
+                return ['color' => $c, 'label' => isset($row['text_input']) ? (string) $row['text_input'] : ''];
+            }, $colors, array_values($manual_inputs));
+        } elseif (in_array($chart_type, ['bubble', 'scatter'], true)) {
+            $color      = $this->randomColor();
+            $datasets[] = ['backgroundColor' => $color, 'borderColor' => $color];
+            $series     = [['color' => $color]];
+        } else {
+            // Line-type: one colour per series column (every key except text_input)
+            $first_row  = !empty($manual_inputs) ? (array) $manual_inputs[0] : [];
+            $num_series = max(1, count(array_filter(array_keys($first_row), function ($k) { return $k !== 'text_input'; })));
+            for ($i = 0; $i < $num_series; $i++) {
+                $color      = $this->randomColor();
+                $datasets[] = ['backgroundColor' => $color, 'borderColor' => $color];
+                $series[]   = ['color' => $color];
+            }
+        }
+
+        return ['datasets' => $datasets, 'series' => $series];
+    }
 
     public function chartDataFormat($data, $extra_data = [])
     {

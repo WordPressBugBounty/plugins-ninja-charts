@@ -9,8 +9,8 @@ use NinjaCharts\App\Traits\ChartDesignHelper;
 use NinjaCharts\App\Models\NinjaCharts;
 use NinjaCharts\App\Traits\ChartOption;
 use NinjaCharts\App\Modules\Provider;
+use NinjaCharts\App\Modules\RenderEngineRegistry;
 use NinjaCharts\Framework\Support\Arr;
-use NinjaCharts\App\Constants\ChartConstants;
 
 class ShortCodeController extends Controller
 {
@@ -132,15 +132,15 @@ class ShortCodeController extends Controller
 
         self::enqueueLoaderScript();
 
-        if ($ninjaCharts->render_engine === ChartConstants::ENGINE_CHART_JS) {
-            self::chartJsAssets();
-            do_action('ninja_charts_shortcode_assets_loaded');
-            return $app->view->make('public.chart_js', compact('options', 'chart_keys'));
-        } else if ($ninjaCharts->render_engine === ChartConstants::ENGINE_GOOGLE_CHARTS){
-            self::googleChartsAssets();
-            do_action('ninja_charts_shortcode_assets_loaded');
-            return $app->view->make('public.google_charts', compact('options', 'chart_keys'));
+        $engine = RenderEngineRegistry::get($ninjaCharts->render_engine);
+        if (!$engine) {
+            return null;
         }
+
+        $engine->enqueueShortcodeAssets();
+        do_action('ninja_charts_shortcode_assets_loaded');
+
+        return $app->view->make($engine->shortcodeView(), compact('options', 'chart_keys'));
     }
 
     private static function enqueueLoaderScript()
@@ -174,83 +174,5 @@ class ShortCodeController extends Controller
             NINJA_CHARTS_VERSION,
             true
         );
-    }
-
-    private static function chartJsAssets()
-    {
-        $app = App::getInstance();
-        $assets = $app['url.assets'];
-
-        wp_enqueue_script(
-            'chartjs',
-            $assets . 'public/js/library/chart.umd.js',
-            array('jquery'),
-            '4.4.2',
-            true
-        );
-
-        wp_enqueue_script(
-            'chartjs_plugin_labels',
-            $assets . 'common/js/chartjs-plugin-datalabels.js',
-            array('chartjs'),
-            '2.0.0',
-            true
-        );
-
-        wp_enqueue_script(
-            'chartjs-chart-funnel',
-            $assets . 'public/js/library/chartjs-chart-funnel.umd.min.js',
-            array('chartjs'),
-            '4.2.0',
-            true
-        );
-
-        // Registered only — loaded on demand by render.js when a PDF export is triggered.
-        wp_register_script(
-            'ninja_charts_jspdf',
-            $assets . 'public/js/library/jspdf.umd.min.js',
-            array(),
-            '2.5.1',
-            true
-        );
-
-        wp_enqueue_script(
-            'chart_js_chart_render_js',
-            $assets . 'public/js/render.js',
-            array('chartjs', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
-            NINJA_CHARTS_VERSION,
-            true
-        );
-
-        wp_localize_script('chart_js_chart_render_js', 'chartJSPublic', [
-            'ajax_url'  => admin_url('admin-ajax.php'),
-            'jspdf_url' => $assets . 'public/js/library/jspdf.umd.min.js',
-        ]);
-    }
-
-    private static function googleChartsAssets()
-    {
-        $app = App::getInstance();
-        $assets = $app['url.assets'];
-
-        wp_enqueue_script(
-            'googlechart',
-            $assets . 'common/js/google-charts.js',
-            array('jquery'),
-            '1.0.0',
-            true
-        );
-
-        wp_enqueue_script(
-            'google_chart_render_js',
-            $assets . 'public/js/google-chart-render.js',
-            array('googlechart', 'ninja_charts_loader', 'ninja-charts-device', 'ninja-charts-hover'),
-            NINJA_CHARTS_VERSION,
-            true
-        );
-
-        wp_localize_script('google_chart_render_js', 'googleChartPublic', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-        ]);
     }
 }
